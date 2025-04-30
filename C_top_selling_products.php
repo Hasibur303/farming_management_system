@@ -145,9 +145,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to_cart'])) {
     }
 
     if ($stmt->execute()) {
-        $_SESSION['message'] = "Product added to cart successfully!";
+        $_SESSION['message'] = "পণ্যটি সফলভাবে কার্টে যোগ করা হয়েছে!";
     } else {
-        $_SESSION['error'] = "Error adding product to cart.";
+        $_SESSION['error'] = "কার্টে পণ্য যোগ করার সময় সমস্যা হয়েছে।";
     }
 }
 
@@ -183,11 +183,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to_cart'])) {
     
         $stmt->bind_param("ii", $userId, $productId);
         if ($stmt->execute()) {
-            $_SESSION['message'] = "Cart updated successfully!";
+            $_SESSION['message'] = "কার্ট সফলভাবে আপডেট করা হয়েছে!";
             header("Location: " . $_SERVER['PHP_SELF']);
     exit();
         } else {
-            $_SESSION['error'] = "Error updating cart.";
+            $_SESSION['error'] = "কার্ট আপডেট করার সময় ত্রুটি।";
         }
     
        
@@ -279,7 +279,7 @@ if ($result->num_rows > 0) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=0.5">
-    <title>Customer Dashboard - SmartAgri</title>
+    <title>সর্বাধিক বিক্রিত পণ্য- স্মার্টকৃষি</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Add Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
@@ -295,21 +295,21 @@ if ($result->num_rows > 0) {
 <!-- Sidebar -->
 <div class="sidebar">
     <ul>
-        <li><a href="customer.php" class="nav-link"><i class="fas fa-home"></i> Dashboard</a></li>
-        <li><a href="C_market.php" class="nav-link"><i class="fas fa-store"></i> Market</a></li>
-        <li><a href="C_review.php" class="nav-link"><i class="fas fa-star"></i> Review</a></li>
-        <li><a href="C_top_selling_products.php" class="nav-link"><i class="fas fa-chart-line"></i> Top Selling</a></li>
-        <li><a href="C_order_history.php" class="nav-link"><i class="fas fa-history"></i> Order History</a></li>
-        <li><a href="C_purchase_history.php" class="nav-link"><i class="fas fa-shopping-cart"></i> Purchase History</a></li>
-        <li><a href="logout.php" class="nav-link"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+        <li><a href="customer.php" class="nav-link"><i class="fas fa-home"></i> ড্যাশবোর্ড</a></li>
+        <li><a href="C_market.php" class="nav-link"><i class="fas fa-store"></i> বাজার</a></li>
+        <li><a href="C_review.php" class="nav-link"><i class="fas fa-star"></i> পর্যালোচনা</a></li>
+        <li><a href="C_top_selling_products.php" class="nav-link"><i class="fas fa-chart-line"></i> সর্বাধিক বিক্রিত</a></li>
+        <li><a href="C_order_history.php" class="nav-link"><i class="fas fa-history"></i> অর্ডার ইতিহাস</a></li>
+        <li><a href="C_purchase_history.php" class="nav-link"><i class="fas fa-shopping-cart"></i> ক্রয়ের ইতিহাস</a></li>
+        <li><a href="logout.php" class="nav-link"><i class="fas fa-sign-out-alt"></i> লগআউট</a></li>
     </ul>
 </div>
 <header>
-        <h1>Top Selling Products - SmartAgri </h1>
-        <a href="logout.php" class="button">Logout</a>
+        <h1>সর্বাধিক বিক্রিত পণ্য- স্মার্টকৃষি </h1>
+        <a href="logout.php" class="button">লগআউট</a>
         <!-- Cart Icon -->
         <div class="cart-icon" onclick="toggleCart()">
-            Cart <span class="cart-count"><?= count($_SESSION['cart'] ?? []) ?></span>
+            কার্ট <span class="cart-count"><?= count($_SESSION['cart'] ?? []) ?></span>
         </div>
 
 
@@ -317,7 +317,7 @@ if ($result->num_rows > 0) {
 
         <!-- Update the cart section with confirmation -->
         <div class="cart-sidebar" id="cartSidebar">
-            <h2>Shopping Cart</h2>
+            <h2>বাজারের কার্ট</h2>
             <span class="close" onclick="toggleCart()">&times;</span>
             <div id="cartItems">
                 <?php if (!empty($cartItems)): ?>
@@ -346,7 +346,7 @@ if ($result->num_rows > 0) {
             </div>
             <form method="POST">
                 <input type="hidden" name="product_id" value="<?= $item['product_id'] ?>">
-                <button type="submit" name="remove_from_cart" class="remove-btn">Remove</button>
+                <button type="submit" name="remove_from_cart" class="remove-btn">অপসারণ</button>
             </form>
         </div>
 
@@ -355,10 +355,10 @@ if ($result->num_rows > 0) {
                         Total: TK. <?= htmlspecialchars($cartTotal) ?>
                     </div>
                     <form method="POST" class="place-order-form" onsubmit="return confirmOrder()">
-                        <button type="submit" name="place_order" class="btn-primary">Place Order</button>
+                        <button type="submit" name="place_order" class="btn-primary">অর্ডার দিন</button>
                     </form>
                 <?php else: ?>
-                    <p>Your cart is empty</p>
+                    <p>তোমার কার্ট খালি।</p>
                 <?php endif; ?>
             </div>
         </div>
@@ -396,12 +396,12 @@ if ($result->num_rows > 0) {
                 <form method="POST">
                     <input type="hidden" name="product_id" value="<?= htmlspecialchars($product['product_id']); ?>">
                     <input type="hidden" name="farmer_id" value="<?= htmlspecialchars($product['farmer_id']); ?>">
-                    <button type="submit" name="add_to_cart" class="add-to-cart-button">Add to Cart</button>
+                    <button type="submit" name="add_to_cart" class="add-to-cart-button">কার্ট এ যোগ করুন</button>
                 </form>
             </div>
         <?php endforeach; ?>
     <?php else: ?>
-        <p>No top-selling products available at the moment.</p>
+        <p>এই মুহূর্তে কোনও সর্বাধিক বিক্রিত পণ্য পাওয়া যাচ্ছে না।</p>
     <?php endif; ?>
 </div>
 
@@ -412,7 +412,7 @@ function toggleCart() {
     document.getElementById('cartSidebar').classList.toggle('active');
 }
 function confirmOrder() {
-    return confirm('Are you sure you want to place this order?');
+    return confirm('আপনি কি নিশ্চিত যে আপনি এই অর্ডারটি দিতে চান?');
 }
 </script>
 </body>

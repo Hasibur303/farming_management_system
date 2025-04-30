@@ -206,30 +206,30 @@ while ($row = $result->fetch_assoc()) {
 </head>
 <body>
 <header>
-    <h1>Customer Review - SmartAgri</h1>
+    <h1>গ্রাহক পর্যালোচনা - স্মার্টকৃষি</h1>
     <div class="header-right">
-        <span class="customer-name">Welcome, John Doe</span>
-        <a href="logout.php" class="logout-btn">Logout</a>
+        <span class="customer-name">আপনাকে স্বাগতম</span>
+        <a href="logout.php" class="logout-btn">লগআউট</a>
     </div>
 </header>
 
 <!-- Sidebar -->
 <div class="sidebar">
     <ul>
-        <li><a href="customer.php" class="nav-link"><i class="fas fa-home"></i> Dashboard</a></li>
-        <li><a href="C_market.php" class="nav-link"><i class="fas fa-store"></i> Market</a></li>
-        <li><a href="C_review.php" class="nav-link"><i class="fas fa-star"></i> Review</a></li>
-        <li><a href="C_top_selling_products.php" class="nav-link"><i class="fas fa-chart-line"></i> Top Selling</a></li>
-        <li><a href="C_order_history.php" class="nav-link"><i class="fas fa-history"></i> Order History</a></li>
-        <li><a href="C_purchase_history.php" class="nav-link"><i class="fas fa-shopping-cart"></i> Purchase History</a></li>
-        <li><a href="logout.php" class="nav-link"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+        <li><a href="customer.php" class="nav-link"><i class="fas fa-home"></i> ড্যাশবোর্ড</a></li>
+        <li><a href="C_market.php" class="nav-link"><i class="fas fa-store"></i> বাজার</a></li>
+        <li><a href="C_review.php" class="nav-link"><i class="fas fa-star"></i> পর্যালোচনা</a></li>
+        <li><a href="C_top_selling_products.php" class="nav-link"><i class="fas fa-chart-line"></i> সর্বাধিক বিক্রিত</a></li>
+        <li><a href="C_order_history.php" class="nav-link"><i class="fas fa-history"></i> অর্ডার ইতিহাস</a></li>
+        <li><a href="C_purchase_history.php" class="nav-link"><i class="fas fa-shopping-cart"></i> ক্রয়ের ইতিহাস</a></li>
+        <li><a href="logout.php" class="nav-link"><i class="fas fa-sign-out-alt"></i> লগআউট</a></li>
     </ul>
 </div>
 
 
 
 <div class="review-container">
-    <h2>Review Your Products</h2>
+    <h2>আপনার পণ্য পর্যালোচনা করুন</h2>
 
     <!-- Success/Error Messages -->
     <?php if (isset($success_message)): ?>
@@ -240,9 +240,9 @@ while ($row = $result->fetch_assoc()) {
 
     <form method="POST" action="C_review.php">
         <div class="form-group">
-            <label for="product_id">Select Product:</label>
+            <label for="product_id">পণ্য নির্বাচন করুন:</label>
             <select id="product_id" name="product_id" style="width: 100%;" required>
-                <option value="" disabled selected>Select a product...</option>
+                <option value="" disabled selected>একটি পণ্য নির্বাচন করুন...</option>
                 <?php foreach ($eligible_products as $product): ?>
                     <option value="<?= $product['product_id']; ?>" 
                             data-farmer-id="<?= $product['farmer_id']; ?>">
@@ -256,16 +256,16 @@ while ($row = $result->fetch_assoc()) {
         <input type="hidden" id="farmer_id" name="farmer_id">
 
         <div class="form-group">
-            <label for="rating">Rating (1-5):</label>
+            <label for="rating">রেটিং (১-৫):</label>
             <input type="number" id="rating" name="rating" min="1" max="5" required>
         </div>
 
         <div class="form-group">
-            <label for="review">Your Review:</label>
+            <label for="review">তোমার পর্যালোচনা:</label>
             <textarea id="review" name="review" rows="4" required></textarea>
         </div>
 
-        <button type="submit" class="btn">Submit Review</button>
+        <button type="submit" class="btn">জমা দিন</button>
     </form>
 </div>
 
@@ -279,7 +279,7 @@ while ($row = $result->fetch_assoc()) {
 
         // Initialize Select2
         $('#product_id').select2({
-            placeholder: 'Select a product...'
+            placeholder: 'একটি পণ্য নির্বাচন করুন...'
         });
 
         // Update farmer_id hidden field when product is selected

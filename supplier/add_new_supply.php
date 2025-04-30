@@ -425,54 +425,54 @@ header {
 <body>
 <div class="sidebar">
     <ul class="sidebar-menu">
-<li><a href="../supplier.php"><i class="fas fa-home"></i> Dashboard</a></li>
-                <li><a href="supplier_orders.php" <?php echo (basename($_SERVER['PHP_SELF']) == 'supplier_orders.php') ? 'class="active"' : ''; ?>>Order Management</a></li>
-                <li><a href="add_new_supply.php" <?php echo (basename($_SERVER['PHP_SELF']) == 'add_new_supply.php') ? 'class="active"' : ''; ?>>Add New Supply</a></li>
-                <li><a href="my_supplies.php" <?php echo (basename($_SERVER['PHP_SELF']) == 'my_supplies.php') ? 'class="active"' : ''; ?>>My Supplies</a></li>
+<li><a href="../supplier.php"><i class="fas fa-home"></i> ড্যাশবোর্ড</a></li>
+                <li><a href="supplier_orders.php" <?php echo (basename($_SERVER['PHP_SELF']) == 'supplier_orders.php') ? 'class="active"' : ''; ?>>অর্ডার ম্যানেজমেন্ট</a></li>
+                <li><a href="add_new_supply.php" <?php echo (basename($_SERVER['PHP_SELF']) == 'add_new_supply.php') ? 'class="active"' : ''; ?>>নতুন সরবরাহ যোগ করুন</a></li>
+                <li><a href="my_supplies.php" <?php echo (basename($_SERVER['PHP_SELF']) == 'my_supplies.php') ? 'class="active"' : ''; ?>>আমার সরবরাহ</a></li>
 
 
-        <li><a href="logout.php" class="logout-btn">Logout</a></li>
+        <li><a href="logout.php" class="logout-btn">লগআউট</a></li>
     </ul>
 </div>
 
 
     <header>
-        <h1>Add New Supply - SmartAgri</h1>
+        <h1>নতুন সরবরাহ যোগ করুন - স্মার্টকৃষি</h1>
 
     </header>
 
         <!-- Add New Supply Form -->
-        <div class="form-container">
-            <h2>Add New Supply</h2>
-            <?php if (!empty($error)): ?>
-                <div class="error"><?= htmlspecialchars($error); ?></div>
-            <?php endif; ?>
-            <?php if (!empty($success_message)): ?>
-                <div class="success"><?= htmlspecialchars($success_message); ?></div>
-            <?php endif; ?>
-            <form method="POST" action="supplier.php" enctype="multipart/form-data">
-                <label for="supply_name">Supply Name:</label>
-                <input type="text" name="supply_name" required>
+                <div class="form-container">
+                    <h2>নতুন সরবরাহ যোগ করুন</h2>
+                    <?php if (!empty($error)): ?>
+                        <div class="error"><?= htmlspecialchars($error); ?></div>
+                    <?php endif; ?>
+                    <?php if (!empty($success_message)): ?>
+                        <div class="success"><?= htmlspecialchars($success_message); ?></div>
+                    <?php endif; ?>
+                    <form method="POST" action="supplier.php" enctype="multipart/form-data">
+                        <label for="supply_name">সরবরাহের নাম:</label>
+                        <input type="text" name="supply_name" required>
 
-                <label for="quantity">Quantity:</label>
-                <input type="number" name="quantity" required>
+                        <label for="quantity">পরিমাণ:</label>
+                        <input type="number" name="quantity" required>
 
-                <label for="quantity_type">Quantity Type:</label>
-                <select name="quantity_type" required>
-                    <option value="Per-Piece" selected>Per-Piece</option>
-                    <option value="Per-Kg">Per-Kg</option>
-                </select>
+                        <label for="quantity_type">পরিমাণের ধরণ:</label>
+                        <select name="quantity_type" required>
+                            <option value="Per-Piece" selected>প্রতি-পিস</option>
+                            <option value="Per-Kg">প্রতি কেজি</option>
+                        </select>
 
 
-                <label for="price">Price:</label>
-                <input type="text" name="price" required>
+                        <label for="price">দাম:</label>
+                        <input type="text" name="price" required>
 
-                <label for="supply_image">Image:</label>
-                <input type="file" name="supply_image" accept="image/*">
+                        <label for="supply_image">ছবি:</label>
+                        <input type="file" name="supply_image" accept="image/*">
 
-                <input type="submit" name="add_supply" value="Add Supply">
-            </form>
-        </div>
+                        <input type="submit" name="add_supply" value="Add Supply">
+                    </form>
+                </div>
 
 
 

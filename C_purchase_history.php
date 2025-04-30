@@ -911,20 +911,20 @@ form input:focus, form select:focus, .form-control:focus {
 <!-- Sidebar -->
 <div class="sidebar">
     <ul>
-        <li><a href="customer.php" class="nav-link"><i class="fas fa-home"></i> Dashboard</a></li>
-        <li><a href="C_market.php" class="nav-link"><i class="fas fa-store"></i> Market</a></li>
-        <li><a href="C_review.php" class="nav-link"><i class="fas fa-star"></i> Review</a></li>
-        <li><a href="C_top_selling_products.php" class="nav-link"><i class="fas fa-chart-line"></i> Top Selling</a></li>
-        <li><a href="C_order_history.php" class="nav-link"><i class="fas fa-history"></i> Order History</a></li>
-        <li><a href="C_purchase_history.php" class="nav-link"><i class="fas fa-shopping-cart"></i> Purchase History</a></li>
-        <li><a href="logout.php" class="nav-link"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+        <li><a href="customer.php" class="nav-link"><i class="fas fa-home"></i> ড্যাশবোর্ড</a></li>
+        <li><a href="C_market.php" class="nav-link"><i class="fas fa-store"></i> বাজার</a></li>
+        <li><a href="C_review.php" class="nav-link"><i class="fas fa-star"></i> পর্যালোচনা</a></li>
+        <li><a href="C_top_selling_products.php" class="nav-link"><i class="fas fa-chart-line"></i> সর্বাধিক বিক্রিত</a></li>
+        <li><a href="C_order_history.php" class="nav-link"><i class="fas fa-history"></i> অর্ডার ইতিহাস</a></li>
+        <li><a href="C_purchase_history.php" class="nav-link"><i class="fas fa-shopping-cart"></i> ক্রয়ের ইতিহাস</a></li>
+        <li><a href="logout.php" class="nav-link"><i class="fas fa-sign-out-alt"></i> লগআউট</a></li>
     </ul>
 </div>
 <header>
-        <h1>Customer Dashboard - SmartAgri </h1>
-        <a href="logout.php" class="button">Logout</a>
+        <h1>গ্রাহক ড্যাশবোর্ড - স্মার্টকৃষি </h1>
+        <a href="logout.php" class="button">লগআউট</a>
     </header>
-    <h1>Welcome, <?= htmlspecialchars($_SESSION['username']); ?>!</h1>
+    <h1>স্বাগতম, <?= htmlspecialchars($_SESSION['username']); ?>!</h1>
 
 
 
@@ -932,14 +932,14 @@ form input:focus, form select:focus, .form-control:focus {
 
 <!-- Cart Icon -->
 <div class="cart-icon" onclick="toggleCart()">
-    Cart <span class="cart-count"><?= count($_SESSION['cart'] ?? []) ?></span>
+    কার্ট <span class="cart-count"><?= count($_SESSION['cart'] ?? []) ?></span>
 </div>
 
 
 
 <!-- Update the cart section with confirmation -->
 <div class="cart-sidebar" id="cartSidebar">
-    <h2>Shopping Cart</h2>
+    <h2>শপিং কার্ট</h2>
     <span class="close" onclick="toggleCart()">&times;</span>
     <div id="cartItems">
         <?php if (!empty($cartItems)): ?>
@@ -947,7 +947,7 @@ form input:focus, form select:focus, .form-control:focus {
                 <div class="cart-item">
     <div>
         <h4><?= htmlspecialchars($item['name']) ?></h4>
-        <p>Price: TK. <?= htmlspecialchars($item['price']) ?></p>
+        <p>দাম: <?= htmlspecialchars($item['price']) ?> টাকা</p>
         <div class="quantity-controls">
             <form method="POST" style="display: inline;">
                 <input type="hidden" name="product_id" value="<?= $item['product_id'] ?>">
@@ -961,23 +961,23 @@ form input:focus, form select:focus, .form-control:focus {
                 <button type="submit" class="btn-increment">+</button>
             </form>
         </div>
-        <p>Total: TK. <?= htmlspecialchars($item['price'] * $item['quantity']) ?></p>
+        <p>মোট: <?= htmlspecialchars($item['price'] * $item['quantity']) ?> টাকা </p>
     </div>
     <form method="POST">
         <input type="hidden" name="product_id" value="<?= $item['product_id'] ?>">
-        <button type="submit" name="remove_from_cart" class="remove-btn">Remove</button>
+        <button type="submit" name="remove_from_cart" class="remove-btn">অপসারণ</button>
     </form>
 </div>
 
             <?php endforeach; ?>
             <div class="cart-total">
-                Total: TK. <?= htmlspecialchars($cartTotal) ?>
+                মোট:  <?= htmlspecialchars($cartTotal) ?> টাকা
             </div>
             <form method="POST" class="place-order-form" onsubmit="return confirmOrder()">
-                <button type="submit" name="place_order" class="btn-primary">Place Order</button>
+                <button type="submit" name="place_order" class="btn-primary">অর্ডার দিন</button>
             </form>
         <?php else: ?>
-            <p>Your cart is empty</p>
+            <p>তোমার কার্ট খালি।</p>
         <?php endif; ?>
     </div>
 </div>
@@ -1094,18 +1094,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 
-<h2 id="orderHistory">Your Order History</h2>
+<h2 id="orderHistory">আপনার অর্ডার ইতিহাস</h2>
 
 <?php if ($orderHistory->num_rows > 0): ?>
     <div class="order-history">
         <?php while ($order = $orderHistory->fetch_assoc()): ?>
             <div class="order-item">
                 <div class="order-details">
-                    <h4><?= htmlspecialchars($order['crop_name']) ?></h4>
-                    <p>Quantity: <?= htmlspecialchars($order['quantity']) ?> <?= htmlspecialchars($order['quantity_type']) ?></p>
-                    <p>Total Amount: TK. <?= htmlspecialchars($order['total_amount']) ?></p>
-                    <p>Status: <?= htmlspecialchars(ucfirst($order['status'])) ?></p>
-                    <p>Order Date: <?= htmlspecialchars(date("d-M-Y H:i:s", strtotime($order['order_date']))) ?></p>
+                    <h4>পণ্যের নাম : <?= htmlspecialchars($order['crop_name']) ?></h4>
+                    <p>পরিমাণ: <?= htmlspecialchars($order['quantity']) ?> <?= htmlspecialchars($order['quantity_type']) ?></p>
+                    <p>মোট পরিমাণ: <?= htmlspecialchars($order['total_amount']) ?> টাকা</p>
+                    <p>অবস্থা: <?= htmlspecialchars(ucfirst($order['status'])) ?></p>
+                    <p>অর্ডারের তারিখ: <?= htmlspecialchars(date("d-M-Y H:i:s", strtotime($order['order_date']))) ?></p>
                 </div>
                 <img
                     src="<?= htmlspecialchars($order['image']) ?>"
@@ -1117,7 +1117,7 @@ document.addEventListener('DOMContentLoaded', function() {
         <?php endwhile; ?>
     </div>
 <?php else: ?>
-    <p>You have not placed any orders yet.</p>
+    <p>তুমি এখনও কোন অর্ডার দাওনি।</p>
 <?php endif; ?>
 
 

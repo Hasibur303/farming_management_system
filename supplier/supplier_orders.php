@@ -55,7 +55,7 @@ $result = $stmt->get_result();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manage Orders</title>
+    <title>অর্ডার পরিচালনা করুন</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
@@ -192,9 +192,9 @@ $result = $stmt->get_result();
     <!-- Sidebar -->
     <div class="sidebar">
         <ul class="sidebar-menu">
-            <li><a href="../supplier.php"><i class="fas fa-home"></i> Dashboard</a></li>
-            <li><a href="supplier_orders.php" class="active"><i class="fas fa-box"></i> Order Management</a></li>
-            <li><a href="../logout.php" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+            <li><a href="../supplier.php"><i class="fas fa-home"></i> ড্যাশবোর্ড</a></li>
+            <li><a href="supplier_orders.php" class="active"><i class="fas fa-box"></i> অর্ডার ম্যানেজমেন্ট</a></li>
+            <li><a href="../logout.php" class="logout-btn"><i class="fas fa-sign-out-alt"></i> লগআউট</a></li>
         </ul>
     </div>
 
@@ -202,7 +202,7 @@ $result = $stmt->get_result();
     <div class="main-content">
         <!-- Header -->
         <div class="header">
-            <h2><i class="fas fa-box"></i> Manage Orders</h2>
+            <h2><i class="fas fa-box"></i> অর্ডার পরিচালনা করুন</h2>
         </div>
 
         <!-- Success Message -->
@@ -219,12 +219,12 @@ $result = $stmt->get_result();
                     <table class="table table-striped">
                         <thead>
                             <tr>
-                                <th>Order ID</th>
-                                <th>Farmer Name</th>
-                                <th>Total Amount</th>
-                                <th>Order Date</th>
-                                <th>Status</th>
-                                <th>Action</th>
+                                <th>অর্ডার আইডি</th>
+                                <th>কৃষকের নাম</th>
+                                <th>মোট পরিমাণ</th>
+                                <th>অর্ডারের তারিখ</th>
+                                <th>অবস্থা</th>
+                                <th>প্রক্রিয়া</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -242,13 +242,13 @@ $result = $stmt->get_result();
                                     <form method="POST" action="supplier_orders.php">
                                         <input type="hidden" name="order_id" value="<?php echo $row['supplies_sale_id']; ?>">
                                         <select name="status" class="form-select">
-                                            <option value="Pending" <?php echo ($row['status'] == 'Pending') ? 'selected' : ''; ?>>Pending</option>
-                                            <option value="Processing" <?php echo ($row['status'] == 'Processing') ? 'selected' : ''; ?>>Processing</option>
-                                            <option value="Shipping" <?php echo ($row['status'] == 'Shipping') ? 'selected' : ''; ?>>Shipping</option>
-                                            <option value="Delivered" <?php echo ($row['status'] == 'Delivered') ? 'selected' : ''; ?>>Delivered</option>
-                                            <option value="Cancelled" <?php echo ($row['status'] == 'Cancelled') ? 'selected' : ''; ?>>Cancelled</option>
+                                            <option value="Pending" <?php echo ($row['status'] == 'Pending') ? 'selected' : ''; ?>>Pending(মুলতুবি)</option>
+                                            <option value="Processing" <?php echo ($row['status'] == 'Processing') ? 'selected' : ''; ?>>Processing(প্রক্রিয়াকরণ)</option>
+                                            <option value="Shipping" <?php echo ($row['status'] == 'Shipping') ? 'selected' : ''; ?>>Shipping(পরিবহন)</option>
+                                            <option value="Delivered" <?php echo ($row['status'] == 'Delivered') ? 'selected' : ''; ?>>Delivered(বিতরণ করা হয়েছে)</option>
+                                            <option value="Cancelled" <?php echo ($row['status'] == 'Cancelled') ? 'selected' : ''; ?>>Cancelled(বাতিল করা হয়েছে)</option>
                                         </select>
-                                        <button type="submit" name="change_status" class="btn btn-primary mt-2">Change Status</button>
+                                        <button type="submit" name="change_status" class="btn btn-primary mt-2">অবস্থা পরিবর্তন করুন</button>
                                     </form>
                                 </td>
                             </tr>

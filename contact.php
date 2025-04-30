@@ -155,14 +155,24 @@
         </div>
 
         <div class="creator">
-            <img src="AnikDeb.jpg" alt="Anik Debnath Shuvo">
+            <img src="sabbir.jpg" alt="Md Sabbir Ahmed">
             <div class="creator-info">
-                <h3>অনিক দেবনাথ শুভ</h3>
+                <h3>মোঃ সাব্বির আহমেদ</h3>
                 <p><strong>ফোন:</strong> 01780529775</p>
                 <p><strong>ইমেইল:</strong> <a href="mailto:ashuvo223401@bscse.uiu.ac.bd">ashuvo223401@bscse.uiu.ac.bd</a></p>
                 <p><strong>ফেসবুক:</strong> <a href="https://www.facebook.com/anildebnath.shuvo" target="_blank">Anik's Facebook</a></p>
             </div>
         </div>
+
+        <div class="creator">
+                    <img src="rafi.jpg" alt="Ar RAfi Hossain Ishty">
+                    <div class="creator-info">
+                        <h3>আর রাফি হোসেন ইশতি</h3>
+                        <p><strong>ফোন:</strong> 01730202960</p>
+                        <p><strong>ইমেইল:</strong> <a href="mailto:hasnayenmasum@gmail.com">hasnayenmasum@gmail.com</a></p>
+                        <p><strong>ফেসবুক:</strong> <a href="https://www.facebook.com/mh.masum.908" target="_blank">Muhtasim's Facebook</a></p>
+                    </div>
+                </div>
     </div>
     <footer>
         <p>&copy; ২০২৫ কৃষি ব্যবস্থাপনা ব্যবস্থা। সর্বস্বত্ব সংরক্ষিত।</p>

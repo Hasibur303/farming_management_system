@@ -451,38 +451,38 @@ header {
 <body>
 <div class="sidebar">
     <ul class="sidebar-menu">
-        <li><a href="supplier.php" <?php echo (basename($_SERVER['PHP_SELF']) == 'supplier.php') ? 'class="active"' : ''; ?>>Dashboard</a></li>
-        <li><a href="supplier/supplier_orders.php" <?php echo (basename($_SERVER['PHP_SELF']) == 'supplier_orders.php') ? 'class="active"' : ''; ?>>Order Management</a></li>
-        <li><a href="supplier/add_new_supply.php" <?php echo (basename($_SERVER['PHP_SELF']) == 'add_new_supply.php') ? 'class="active"' : ''; ?>>Add New Supply</a></li>
-        <li><a href="supplier/my_supplies.php" <?php echo (basename($_SERVER['PHP_SELF']) == 'my_supplies.php') ? 'class="active"' : ''; ?>>My Supplies</a></li>
+        <li><a href="supplier.php" <?php echo (basename($_SERVER['PHP_SELF']) == 'supplier.php') ? 'class="active"' : ''; ?>>ড্যাশবোর্ড</a></li>
+        <li><a href="supplier/supplier_orders.php" <?php echo (basename($_SERVER['PHP_SELF']) == 'supplier_orders.php') ? 'class="active"' : ''; ?>>অর্ডার ম্যানেজমেন্ট</a></li>
+        <li><a href="supplier/add_new_supply.php" <?php echo (basename($_SERVER['PHP_SELF']) == 'add_new_supply.php') ? 'class="active"' : ''; ?>>নতুন সরবরাহ যোগ করুন</a></li>
+        <li><a href="supplier/my_supplies.php" <?php echo (basename($_SERVER['PHP_SELF']) == 'my_supplies.php') ? 'class="active"' : ''; ?>>আমার সরবরাহ</a></li>
 
 
-        <li><a href="logout.php" class="logout-btn">Logout</a></li>
+        <li><a href="logout.php" class="logout-btn">লগআউট</a></li>
     </ul>
 </div>
 
 
     <header>
-        <h1>Supplier Dashboard - SmartAgri</h1>
+        <h1>সরবরাহকারী ড্যাশবোর্ড - স্মার্টকৃষি</h1>
        
     </header>
 
     <div class="container">
         <!-- Filter Form -->
         <div class="form-container">
-            <h2>Filter Supplies</h2>
+            <h2>ফিল্টার সরবরাহ</h2>
             <form method="GET" action="supplier.php">
-                <label for="price_min">Min Price:</label>
+                <label for="price_min">সর্বনিম্ন মূল্য:</label>
                 <input type="number" name="price_min" value="<?= htmlspecialchars($price_min); ?>">
 
-                <label for="price_max">Max Price:</label>
+                <label for="price_max">সর্বোচ্চ মূল্য:</label>
                 <input type="number" name="price_max" value="<?= htmlspecialchars($price_max); ?>">
 
-                <label for="quantity_type">Quantity Type:</label>
+                <label for="quantity_type">পরিমাণের ধরণ:</label>
                 <select name="quantity_type">
-                    <option value="">All</option>
-                    <option value="Per-Kg" <?= $quantity_type === 'Per-Kg' ? 'selected' : ''; ?>>Per-Kg</option>
-                    <option value="Per-Piece" <?= $quantity_type === 'Per-Piece' ? 'selected' : ''; ?>>Per-Piece</option>
+                    <option value="">সব</option>
+                    <option value="Per-Kg" <?= $quantity_type === 'Per-Kg' ? 'selected' : ''; ?>>প্রতি কেজি</option>
+                    <option value="Per-Piece" <?= $quantity_type === 'Per-Piece' ? 'selected' : ''; ?>>প্রতি-পিস</option>
                 </select>
 
                 <input type="submit" value="Filter">
@@ -491,7 +491,7 @@ header {
 
         <!-- Add New Supply Form -->
         <div class="form-container">
-            <h2>Add New Supply</h2>
+            <h2>নতুন সরবরাহ যোগ করুন</h2>
             <?php if (!empty($error)): ?>
                 <div class="error"><?= htmlspecialchars($error); ?></div>
             <?php endif; ?>
@@ -499,23 +499,23 @@ header {
                 <div class="success"><?= htmlspecialchars($success_message); ?></div>
             <?php endif; ?>
             <form method="POST" action="supplier.php" enctype="multipart/form-data">
-                <label for="supply_name">Supply Name:</label>
+                <label for="supply_name">সরবরাহের নাম:</label>
                 <input type="text" name="supply_name" required>
 
-                <label for="quantity">Quantity:</label>
+                <label for="quantity">পরিমাণ:</label>
                 <input type="number" name="quantity" required>
 
-                <label for="quantity_type">Quantity Type:</label>
+                <label for="quantity_type">পরিমাণের ধরণ:</label>
                 <select name="quantity_type" required>
-                    <option value="Per-Piece" selected>Per-Piece</option>
-                    <option value="Per-Kg">Per-Kg</option>
+                    <option value="Per-Piece" selected>প্রতি-পিস</option>
+                    <option value="Per-Kg">প্রতি কেজি</option>
                 </select>
 
 
-                <label for="price">Price:</label>
+                <label for="price">দাম:</label>
                 <input type="text" name="price" required>
 
-                <label for="supply_image">Image:</label>
+                <label for="supply_image">ছবি:</label>
                 <input type="file" name="supply_image" accept="image/*">
 
                 <input type="submit" name="add_supply" value="Add Supply">
@@ -524,28 +524,28 @@ header {
 
         <!-- Most Expensive Supply -->
         <div class="table-container">
-            <h2>Most Expensive Supply</h2>
+            <h2>সবচেয়ে ব্যয়বহুল সরবরাহ</h2>
             <?php if ($most_expensive): ?>
-                <p><strong>Supply Name:</strong> <?= htmlspecialchars($most_expensive['supply_name']); ?></p>
-                <p><strong>Price:</strong> <?= htmlspecialchars($most_expensive['price']); ?></p>
+                <p><strong>সরবরাহের নাম:</strong> <?= htmlspecialchars($most_expensive['supply_name']); ?></p>
+                <p><strong>দাম:</strong> <?= htmlspecialchars($most_expensive['price']); ?></p>
             <?php else: ?>
-                <p>No supplies found.</p>
+                <p>কোনও সরবরাহ পাওয়া যায়নি</p>
             <?php endif; ?>
         </div>
 
         <!-- Supplies Table -->
         <div class="table-container">
-            <h2>Your Supplies</h2>
+            <h2>তোমার সরবরাহ</h2>
             <table>
                 <thead>
                     <tr>
-                        <th>Supply ID</th>
-                        <th>Supply Name</th>
-                        <th>Quantity</th>
-                        <th>Quantity Type</th>
-                        <th>Price</th>
-                        <th>Image</th>
-                        <th>Actions</th>
+                        <th>সরবরাহ আইডি</th>
+                        <th>সরবরাহের নাম</th>
+                        <th>পরিমাণ</th>
+                        <th>পরিমাণের ধরণ</th>
+                        <th>দাম</th>
+                        <th>ছবি</th>
+                        <th>প্রক্রিয়া</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -570,17 +570,17 @@ header {
                                    <input type="hidden" name="existing_image" value="<?= $supply['image']; ?>">
 
                                    <!-- Supply Name -->
-                                   <label>Name:
+                                   <label>নাম:
                                        <input type="text" name="supply_name" value="<?= htmlspecialchars($supply['supply_name']); ?>" required>
                                    </label>
 
                                    <!-- Quantity -->
-                                   <label>Qty:
+                                   <label>পরিমাণ:
                                        <input type="number" name="quantity" value="<?= htmlspecialchars($supply['quantity']); ?>" required>
                                    </label>
 
                                    <!-- Quantity Type -->
-                                   <label>Quantity Type:
+                                   <label>পরিমাণের ধরণ:
                                        <select name="quantity_type" required>
                                            <option value="Per-Kg" <?= $supply['quantity_type'] === 'Per-Kg' ? 'selected' : ''; ?>>Per-Kg</option>
                                            <option value="Per-Piece" <?= $supply['quantity_type'] === 'Per-Piece' ? 'selected' : ''; ?>>Per-Piece</option>
@@ -588,23 +588,23 @@ header {
                                    </label>
 
                                    <!-- Price -->
-                                   <label>Price:
+                                   <label>দাম:
                                        <input type="text" name="price" value="<?= htmlspecialchars($supply['price']); ?>" required>
                                    </label>
 
                                    <!-- Image Upload -->
-                                   <label>Image:
+                                   <label>ছবি:
                                        <input type="file" name="supply_image" accept="image/*">
                                    </label>
 
                                    <!-- Save Button -->
-                                   <input type="submit" name="edit_supply" value="Save">
+                                   <input type="submit" name="edit_supply" value="সংরক্ষণ করুন">
                                </form>
 
                                 <!-- Delete Form -->
                                 <form method="POST" action="supplier.php" style="display: inline-block;">
                                     <input type="hidden" name="supply_id" value="<?= $supply['supply_id']; ?>">
-                                    <input type="submit" name="delete_supply" value="Delete" onclick="return confirm('Are you sure?')">
+                                    <input type="submit" name="delete_supply" value="মুছে ফেলুন" onclick="return confirm('Are you sure?')">
                                 </form>
                             </td>
                         </tr>

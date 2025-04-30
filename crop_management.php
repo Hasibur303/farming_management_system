@@ -255,10 +255,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_product'])) {
         <table class="table table-bordered">
             <thead class="table-dark">
                 <tr>
-                    <th>ID</th>
-                    <th>Crop Name</th>
-                    <th>Photo</th>
-                    <th>Action</th>
+                    <th>আইডি</th>
+                    <th>পণ্যের নাম</th>
+                    <th>ছবি</th>
+                    <th>অ্যাকশন</th>
                 </tr>
             </thead>
             <tbody>
@@ -297,7 +297,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_product'])) {
                     '<?= htmlspecialchars($product['name'] ?? ''); ?>', 
                     '<?= htmlspecialchars($product['quantity_type'] ?? ''); ?>'
                 )">
-            Select
+            নির্বাচন করুন
         </button>
     </td>
 </tr>
@@ -329,10 +329,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_product'])) {
         <table class="table table-bordered">
             <thead class="table-dark">
                 <tr>
-                    <th>ID</th>
-                    <th>Crop Name</th>
-                    <th>Quantity </th>
-                    <th>Price </th>
+                    <th>আইডি</th>
+                    <th>পণ্যের নাম</th>
+                    <th>পরিমাণ </th>
+                    <th>দাম </th>
                    
                    
                 </tr>

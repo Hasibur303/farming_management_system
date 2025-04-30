@@ -257,37 +257,37 @@ $pending_reviews = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 <body>
 
 <header>
-    <h1>Customer Dashboard - SmartAgri</h1>
+    <h1>গ্রাহক ড্যাশবোর্ড - স্মার্টকৃষি</h1>
     <div class="header-right">
-        <span class="customer-name">Welcome, John Doe</span>
-        <a href="logout.php" class="logout-btn">Logout</a>
+        <span class="customer-name">আপনাকে স্বাগতম </span>
+        <a href="logout.php" class="logout-btn">লগআউট</a>
     </div>
 </header>
 
 <div class="sidebar">
     <ul>
-        <li><a href="customer.php" class="nav-link"><i class="fas fa-home"></i> Dashboard</a></li>
-        <li><a href="C_market.php" class="nav-link"><i class="fas fa-store"></i> Market</a></li>
-        <li><a href="C_review.php" class="nav-link"><i class="fas fa-star"></i> Review</a></li>
-        <li><a href="C_top_selling_products.php" class="nav-link"><i class="fas fa-chart-line"></i> Top Selling</a></li>
-        <li><a href="C_order_history.php" class="nav-link"><i class="fas fa-history"></i> Order History</a></li>
-        <li><a href="C_purchase_history.php" class="nav-link"><i class="fas fa-shopping-cart"></i> Purchase History</a></li>
-        <li><a href="logout.php" class="nav-link"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+        <li><a href="customer.php" class="nav-link"><i class="fas fa-home"></i> ড্যাশবোর্ড</a></li>
+        <li><a href="C_market.php" class="nav-link"><i class="fas fa-store"></i> বাজার</a></li>
+        <li><a href="C_review.php" class="nav-link"><i class="fas fa-star"></i> পর্যালোচনা</a></li>
+        <li><a href="C_top_selling_products.php" class="nav-link"><i class="fas fa-chart-line"></i> সর্বাধিক বিক্রিত</a></li>
+        <li><a href="C_order_history.php" class="nav-link"><i class="fas fa-history"></i> অর্ডার ইতিহাস</a></li>
+        <li><a href="C_purchase_history.php" class="nav-link"><i class="fas fa-shopping-cart"></i> ক্রয়ের ইতিহাস</a></li>
+        <li><a href="logout.php" class="nav-link"><i class="fas fa-sign-out-alt"></i> লগআউট</a></li>
     </ul>
 </div>
 
 <div class="content">
     <div class="cart-summary">
-        <h3>Your Cart</h3>
-        <p>You have <strong><?= $cart_count; ?></strong> items in your cart.</p>
-        <a href="C_market.php?action=view_cart" class="btn">View Cart</a>
+        <h3>আপনার কার্ট</h3>
+        <p>আপনার কার্টে <strong><?= $cart_count; ?></strong> টি আইটেম আছে।</p>
+        <a href="C_market.php?action=view_cart" class="btn">কার্ট দেখুন</a>
 
     </div>
 
-    <h3>Products You May Like</h3>
+    <h3>আপনার পছন্দ হতে পারে এমন পণ্য</h3>
     <div class="product-grid">
         <?php if (empty($recommended_products)): ?>
-            <p>No recommendations available. Keep exploring!</p>
+            <p>কোনও সুপারিশ নেই। অন্বেষণ চালিয়ে যান!</p>
         <?php else: ?>
             <?php foreach ($recommended_products as $product): ?>
                 <div class="product-card">
@@ -316,15 +316,15 @@ $pending_reviews = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 
 
     <div class="pending-reviews">
-        <h3>Pending Reviews</h3>
+        <h3>মুলতুবি পর্যালোচনা</h3>
         <?php if (empty($pending_reviews)): ?>
-            <p>No pending reviews. Keep shopping!</p>
+            <p>কোনও পর্যালোচনা বাকি নেই। কেনাকাটা চালিয়ে যান!</p>
         <?php else: ?>
             <ul>
                 <?php foreach ($pending_reviews as $review): ?>
                     <li>
                         <p><strong><?= $review['product_name']; ?></strong> by <?= $review['farmer_name']; ?></p>
-                        <a href="C_review.php?product_id=<?= $review['product_id']; ?>" class="btn">Write a Review</a>
+                        <a href="C_review.php?product_id=<?= $review['product_id']; ?>" class="btn">একটি পর্যালোচনা লিখুন</a>
                     </li>
                 <?php endforeach; ?>
             </ul>

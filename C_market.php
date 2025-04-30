@@ -397,7 +397,7 @@ if ($result->num_rows > 0) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=0.5">
-    <title>Customer Dashboard - SmartAgri</title>
+    <title>Customer Dashboard - SmartKrishi</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Add Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
@@ -413,17 +413,17 @@ if ($result->num_rows > 0) {
 <!-- Sidebar -->
 <div class="sidebar">
     <ul>
-        <li><a href="customer.php" class="nav-link"><i class="fas fa-home"></i> Dashboard</a></li>
-        <li><a href="C_market.php" class="nav-link"><i class="fas fa-store"></i> Market</a></li>
-        <li><a href="C_review.php" class="nav-link"><i class="fas fa-star"></i> Review</a></li>
-        <li><a href="C_top_selling_products.php" class="nav-link"><i class="fas fa-chart-line"></i> Top Selling</a></li>
-        <li><a href="C_order_history.php" class="nav-link"><i class="fas fa-history"></i> Order History</a></li>
-        <li><a href="C_purchase_history.php" class="nav-link"><i class="fas fa-shopping-cart"></i> Purchase History</a></li>
-        <li><a href="logout.php" class="nav-link"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+        <li><a href="customer.php" class="nav-link"><i class="fas fa-home"></i> ড্যাশবোর্ড</a></li>
+        <li><a href="C_market.php" class="nav-link"><i class="fas fa-store"></i> বাজার</a></li>
+        <li><a href="C_review.php" class="nav-link"><i class="fas fa-star"></i> পর্যালোচনা</a></li>
+        <li><a href="C_top_selling_products.php" class="nav-link"><i class="fas fa-chart-line"></i> সর্বাধিক বিক্রিত</a></li>
+        <li><a href="C_order_history.php" class="nav-link"><i class="fas fa-history"></i> অর্ডার ইতিহাস</a></li>
+        <li><a href="C_purchase_history.php" class="nav-link"><i class="fas fa-shopping-cart"></i> ক্রয়ের ইতিহাস</a></li>
+        <li><a href="logout.php" class="nav-link"><i class="fas fa-sign-out-alt"></i> লগআউট</a></li>
     </ul>
 </div>
 <header>
-        <h1>Customer Dashboard - SmartAgri </h1>
+        <h1>গ্রাহক ড্যাশবোর্ড - স্মার্টকৃষি </h1>
        
     </header>
     
@@ -433,25 +433,25 @@ if ($result->num_rows > 0) {
 
 <!-- Cart Icon -->
 <div class="cart-icon" onclick="toggleCart()">
-    Cart <span class="cart-count"><?= count($_SESSION['cart'] ?? []) ?></span>
+    কার্ট <span class="cart-count"><?= count($_SESSION['cart'] ?? []) ?></span>
 </div>
 <div class="search-bar">
     <form method="GET" action="C_market.php">
         <input
             type="text"
             name="search"
-            placeholder="Search for crops or products..."
+            placeholder="ফসল বা পণ্য অনুসন্ধান করুন..."
             value="<?= htmlspecialchars($_GET['search'] ?? '') ?>"
             class="search-input"
         >
-        <button type="submit" class="search-button">Search</button>
+        <button type="submit" class="search-button">অনুসন্ধান করুন</button>
     </form>
 </div>
 
 
 <!-- Update the cart section with confirmation -->
 <div class="cart-sidebar" id="cartSidebar">
-    <h2>Shopping Cart</h2>
+    <h2>শপিং কার্ট</h2>
     <span class="close" onclick="toggleCart()">&times;</span>
     <div id="cartItems">
         <?php if (!empty($cartItems)): ?>
@@ -479,7 +479,7 @@ if ($result->num_rows > 0) {
     </div>
     <form method="POST">
         <input type="hidden" name="product_id" value="<?= $item['product_id'] ?>">
-        <button type="submit" name="remove_from_cart" class="remove-btn">Remove</button>
+        <button type="submit" name="remove_from_cart" class="remove-btn">অপসারণ</button>
     </form>
 </div>
 
@@ -488,10 +488,10 @@ if ($result->num_rows > 0) {
                 Total: TK. <?= htmlspecialchars($cartTotal) ?>
             </div>
             <form method="POST" class="place-order-form" onsubmit="return confirmOrder()">
-                <button type="submit" name="place_order" class="btn-primary">Place Order</button>
+                <button type="submit" name="place_order" class="btn-primary">অর্ডার দিন</button>
             </form>
         <?php else: ?>
-            <p>Your cart is empty</p>
+            <p>তোমার কার্ট খালি।</p>
         <?php endif; ?>
     </div>
 </div>
@@ -526,7 +526,7 @@ if ($result->num_rows > 0) {
 
 
 
-<h2>Available Crops</h2>
+<h2>বাজারের পণ্য</h2>
 
 
 
@@ -552,7 +552,7 @@ if ($result->num_rows > 0) {
             </div>
         <?php endwhile; ?>
     <?php else: ?>
-        <p style="text-align: center;">No products available at the moment.</p>
+        <p style="text-align: center;">এই মুহূর্তে কোনও পণ্য উপলব্ধ নেই।</p>
     <?php endif; ?>
 </div>
 
@@ -563,7 +563,7 @@ function toggleCart() {
     document.getElementById('cartSidebar').classList.toggle('active');
 }
 function confirmOrder() {
-    return confirm('Are you sure you want to place this order?');
+    return confirm('আপনি কি নিশ্চিত যে আপনি এই অর্ডারটি দিতে চান?');
 }
 
 
@@ -578,12 +578,12 @@ function showProductDetails(product) {
     details.innerHTML = `
         <h2>${product.name}</h2>
         <img src="${product.image || product.product_image}" alt="${product.name}" style="max-width: 200px;">
-        <p>Price: TK. ${product.price}</p>
+        <p>দাম :  ${product.price} টাকা</p>
         <form method="POST">
             <input type="hidden" name="product_id" value="${product.product_id}">
              <input type="hidden" name="farmer_id" value="${product.farmer_id}">
             <div class="form-group">
-                <label>Quantity:</label>
+                <label>পরিমাণ:</label>
                 <input type="number"
                        name="quantity"
                        min="1"
@@ -594,7 +594,7 @@ function showProductDetails(product) {
 
 
 
-            <button type="submit" name="add_to_cart" class="btn-primary">Add to Cart</button>
+            <button type="submit" name="add_to_cart" class="btn-primary">কার্ট এ যোগ করুন</button>
         </form>
     `;
 
