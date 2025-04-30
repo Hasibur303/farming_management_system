@@ -241,7 +241,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_product'])) {
                 <input type="text" 
                        name="search" 
                        class="form-control" 
-                       placeholder="Search crops..." 
+                       placeholder="ফসল অনুসন্ধান করুন..."
                        value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
                 <button class="btn btn-primary" type="submit">
                     <i class="fas fa-search"></i> অনুসন্ধান করুন

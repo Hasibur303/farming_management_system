@@ -158,9 +158,9 @@
             <img src="sabbir.jpg" alt="Md Sabbir Ahmed">
             <div class="creator-info">
                 <h3>মোঃ সাব্বির আহমেদ</h3>
-                <p><strong>ফোন:</strong> 01780529775</p>
-                <p><strong>ইমেইল:</strong> <a href="mailto:ashuvo223401@bscse.uiu.ac.bd">ashuvo223401@bscse.uiu.ac.bd</a></p>
-                <p><strong>ফেসবুক:</strong> <a href="https://www.facebook.com/anildebnath.shuvo" target="_blank">Anik's Facebook</a></p>
+                <p><strong>ফোন:</strong> 01722835319</p>
+                <p><strong>ইমেইল:</strong> <a href="mailto:mdsabbirahmed1703@gmail.com">mdsabbirahmed1703@gmail.com</a></p>
+                <p><strong>ফেসবুক:</strong> <a href="https://www.facebook.com/sabbir.ahmed.445453" target="_blank">Sabbir's Facebook</a></p>
             </div>
         </div>
 
@@ -168,9 +168,9 @@
                     <img src="rafi.jpg" alt="Ar RAfi Hossain Ishty">
                     <div class="creator-info">
                         <h3>আর রাফি হোসেন ইশতি</h3>
-                        <p><strong>ফোন:</strong> 01730202960</p>
-                        <p><strong>ইমেইল:</strong> <a href="mailto:hasnayenmasum@gmail.com">hasnayenmasum@gmail.com</a></p>
-                        <p><strong>ফেসবুক:</strong> <a href="https://www.facebook.com/mh.masum.908" target="_blank">Muhtasim's Facebook</a></p>
+                        <p><strong>ফোন:</strong> +880 1867-726881</p>
+                        <p><strong>ইমেইল:</strong> <a href="mailto:aisty223793@bscse.uiu.ac.bd">aisty223793@bscse.uiu.ac.bd</a></p>
+                        <p><strong>ফেসবুক:</strong> <a href="https://www.facebook.com/arrafi.hossain.102" target="_blank">Rafi's Facebook</a></p>
                     </div>
                 </div>
     </div>
