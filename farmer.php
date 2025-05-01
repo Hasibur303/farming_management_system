@@ -264,7 +264,68 @@ include 'database.php';
     }
 }
 
+.weather-widget {
+    position: fixed;
+    top: 200px;
+    right: 20px;
+    width: 250px;
+    background: #007BFF;
+    color: white;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    font-family: 'Segoe UI', sans-serif;
+    z-index: 999;
+    transition: transform 0.3s ease;
+}
 
+.weather-widget:hover {
+    transform: scale(1.03);
+}
+
+.weather-header h3 {
+    margin: 0 0 5px;
+    font-size: 18px;
+}
+
+.weather-info h2 {
+    margin: 10px 0;
+    font-size: 36px;
+    font-weight: bold;
+}
+
+.weather-info p {
+    margin: 5px 0;
+}
+
+.weather-box {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #007BFF;
+
+    color: #fff;
+    padding: 20px;
+    border-radius: 18px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    font-family: 'Segoe UI', sans-serif;
+    z-index: 1000;
+    min-width: 220px;
+    transition: all 0.3s ease;
+}
+#weather-city {
+    font-size: 20px;
+    font-weight: 600;
+}
+#weather-temp {
+    font-size: 36px;
+    font-weight: bold;
+    margin: 5px 0;
+}
+#weather-desc {
+    font-size: 16px;
+    font-style: italic;
+}
     </style>
 
     <!-- Add this script in the head -->
@@ -352,13 +413,6 @@ include 'database.php';
             ?>
             <p class="stat-value">TK. <?= number_format($result['total'], 2) ?></p>
         </div>
-
-
-
-
-
-
-
 
         <div class="stat-card">
             <h3>সক্রিয় তালিকা</h3>
@@ -484,7 +538,107 @@ include 'database.php';
 
 
 
+<!-- Weather Widget -->
+<div id="weather-widget" class="weather-box">
+<h3>🌤️ আবহাওয়ার আপডেট</h3>
+    <div id="weather-city"> Loading weather...</div>
+    <div id="weather-temp"></div>
+    <div id="weather-desc"></div>
+    <p>আর্দ্রতা: <span id="humidity">--%</span></p>
+          <p>বায়ুর গতি: <span id="wind">-- কিমি/ঘণ্টা</span></p>
+    <p>পরবর্তী ২ ঘণ্টার সম্ভাব্য অবস্থা: <span id="next-forecast">লোড হচ্ছে...</span></p>
+</div>
 
+<!-- Weather Script in Bangla -->
+<script>
+const apiKey = "07e734ebc19510e488064f54a0f45dd8"; // OpenWeatherMap API key
+
+// English to Bangla weather mapping
+const banglaDescriptions = {
+    "clear sky": "পরিষ্কার আকাশ",
+    "few clouds": "হালকা মেঘ",
+    "scattered clouds": "বিক্ষিপ্ত মেঘ",
+    "broken clouds": "ভাঙা মেঘ",
+    "overcast clouds": "ঘন মেঘ",
+    "shower rain": "বৃষ্টির ঝরনা",
+    "light rain": "হালকা বৃষ্টি",
+    "moderate rain": "মাঝারি বৃষ্টি",
+    "heavy intensity rain": "ভারী বৃষ্টি",
+    "rain": "বৃষ্টি",
+    "thunderstorm": "বজ্রসহ ঝড়",
+    "snow": "তুষারপাত",
+    "mist": "কুয়াশা"
+};
+
+function translate(desc) {
+    return banglaDescriptions[desc.toLowerCase()] || desc;
+}
+
+// Fetch current weather
+function fetchWeather(lat, lon) {
+    fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`)
+        .then(res => res.json())
+        .then(data => {
+            updateWeather(data);
+            fetchForecast(data.name); // Call forecast with city name
+        })
+        .catch(() => fetchWeatherByCity("Dhaka,BD"));
+}
+
+function fetchWeatherByCity(city) {
+    fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`)
+        .then(res => res.json())
+        .then(data => {
+            updateWeather(data);
+            fetchForecast(city); // Call forecast with city name
+        })
+        .catch(() => {
+            document.getElementById('weather-city').textContent = "আবহাওয়া তথ্য পাওয়া যায়নি";
+        });
+}
+
+function updateWeather(data) {
+    document.getElementById('weather-city').textContent = `${data.name} এর আবহাওয়া`;
+    document.getElementById('weather-temp').textContent = `${data.main.temp}°C`;
+    const englishDesc = data.weather[0].description;
+    document.getElementById('weather-desc').textContent = `অবস্থা: ${translate(englishDesc)}`;
+    document.getElementById('humidity').textContent = `${data.main.humidity}%`;
+    document.getElementById('wind').textContent = `${data.wind.speed} কিমি/ঘণ্টা`;
+}
+
+// Fetch forecast for next 2 hours
+function fetchForecast(city) {
+    fetch(`https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}&units=metric`)
+        .then(res => res.json())
+        .then(data => {
+            if (data.list && data.list.length >= 2) {
+                const desc1 = data.list[0].weather[0].description;
+                const desc2 = data.list[1].weather[0].description;
+                const banglaDesc1 = translate(desc1);
+                const banglaDesc2 = translate(desc2);
+                document.getElementById("next-forecast").textContent = `${banglaDesc1} → ${banglaDesc2}`;
+
+                // OPTIONAL: Only include this if you added <span id="rain"> in HTML
+                // document.getElementById("rain").textContent = `${Math.round(data.list[0].pop * 100)}%`;
+            } else {
+                document.getElementById("next-forecast").textContent = "তথ্য নেই";
+            }
+        })
+        .catch(() => {
+            document.getElementById("next-forecast").textContent = "পূর্বাভাস লোড হয়নি";
+        });
+}
+
+
+if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+        pos => fetchWeather(pos.coords.latitude, pos.coords.longitude),
+        () => fetchWeatherByCity("Dhaka,BD")
+    );
+} else {
+    fetchWeatherByCity("Dhaka,BD");
+}
+</script>
 </body>
 
 </html>

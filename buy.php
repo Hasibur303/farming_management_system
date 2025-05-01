@@ -182,16 +182,36 @@ try {
     <style>::after
 
 header h1 {
-            font-size: 1.8rem;
-            font-weight: 600;
+    width: 100%;
+    background-color: #4CAF50;
+    color: white;
+    padding: 15px 20px;
+    z-index: 0; /* Optional: can be removed */
+    /* REMOVE position: fixed; */
+}
+
+
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 0; /* Behind cart button */
         }
 
-        header a {
+        header h3 {
+            background-color: #4CAF50;
+            padding: 30px 0;
+            margin: 0;
+            text-align: center;
+            font-size: 36px;
             color: white;
-            text-decoration: none;
-            font-weight: 500;
-            margin-left: 20px;
         }
+body {
+    margin: 0;
+    padding-top: 120px; /* Adjust according to header height */
+}
+
 
         .sidebar {
             width: 250px;
@@ -222,24 +242,61 @@ header h1 {
             background-color: #4b5563;
             color: white;
         }
+        .cart-button {
+          font-size: 20px;
+          padding: 12px 24px;
+          background-color: #0b100c; /* Green */
+          z-index: 999;
+          color: white;
+          border: none;
+          border-radius: 12px;
+          cursor: pointer;
+          box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+          transition: all 0.3s ease;
+        }
+
+        .cart-button:hover {
+          background-color: #45a049;
+          transform: scale(1.05);
+        }
+
+        .cart-count {
+          background-color: red;
+          color: white;
+          padding: 4px 8px;
+          border-radius: 50%;
+          margin-left: 8px;
+          font-weight: bold;
+          font-size: 16px;
+        }
+        h3 {
+          background-color: #4CAF50;
+          padding: 30px 0;
+          margin: 0;
+          text-align: center;
+          font-size: 36px;
+          color: white;
+        }
+
+
 </style>
 
 </head>
 <body>
 <header>
-    <h1>সরবরাহ থেকে কিনুন</h1>
+    <h3>সরবরাহ থেকে কিনুন</h3>
 </header>
 
 <div class="sidebar">
-        <h2>Navigation</h2>
-        <a href="crop_management.php"><i class="fas fa-seedling"></i> Crop/Product Management</a>
-        <a href="Buy.php"><i class="fas fa-shopping-cart"></i> Buy from Suppliers</a>
-        <a href="addNewProduct.php"><i class="fas fa-plus-circle"></i> Add New Product</a>
-        <a href="farmer/order_management.php"><i class="fas fa-clipboard-list"></i> Order Management</a>
-        <a href="farmer/inventory_management.php"><i class="fas fa-boxes"></i> Inventory Management</a>
-        <a href="farmer/financial_overview.php"><i class="fas fa-wallet"></i> Financial Overview</a>
-        <a href="analytics_report.php"><i class="fas fa-chart-bar"></i> Analytics and Reports</a>
-        
+        <h2>ন্যাভিগেশন</h2>
+        <a href="crop_management.php"><i class="fas fa-seedling"></i> ফসল/পণ্য ব্যবস্থাপনা</a>
+        <a href="Buy.php"><i class="fas fa-shopping-cart"></i> সরবরাহকারীদের কাছ থেকে কিনুন</a>
+        <a href="addNewProduct.php"><i class="fas fa-plus-circle"></i> নতুন পণ্য যোগ করুন</a>
+        <a href="farmer/order_management.php"><i class="fas fa-clipboard-list"></i> অর্ডার ম্যানেজমেন্ট</a>
+        <a href="farmer/inventory_management.php"><i class="fas fa-boxes"></i> ইনভেন্টরি ম্যানেজমেন্ট</a>
+        <a href="farmer/financial_overview.php"><i class="fas fa-wallet"></i> আর্থিক সারসংক্ষেপ</a>
+        <a href="analytics_report.php"><i class="fas fa-chart-bar"></i> বিশ্লেষণ এবং প্রতিবেদন</a>
+
     </div>
 
 
@@ -249,11 +306,11 @@ header h1 {
     <table>
         <thead>
             <tr>
-                <th>Image</th>
-                <th>Supply Name</th>
-                <th>Quantity Available</th>
-                <th>Price</th>
-                <th>Action</th>
+                <th>ছবি</th>
+                <th>সরবরাহের নাম</th>
+                <th>পরিমাণ উপলব্ধ</th>
+                <th>দাম</th>
+                <th>অ্যাকশন</th>
             </tr>
         </thead>
         <tbody>
@@ -284,7 +341,11 @@ header h1 {
     </table>
 </div>
 
-<button class="cart-button" onclick="toggleCart()">🛒 Cart <span class="cart-count"><?= isset($_SESSION['cart']) ? count($_SESSION['cart']) : 0; ?></span></button>
+
+
+<button class="cart-button" onclick="toggleCart()">
+  🛒 Cart <span class="cart-count"><?= isset($_SESSION['cart']) ? count($_SESSION['cart']) : 0; ?></span>
+</button>
 
 <div class="cart-container" id="cartContainer">
     <button class="close-cart" onclick="toggleCart()">×</button>
@@ -317,5 +378,46 @@ function toggleCart() {
     document.getElementById('cartContainer').classList.toggle('active');
 }
 </script>
+
+<!-- ✅ Rental Section -->
+<div class="container">
+    <h2>ভাড়ার জন্য উপলব্ধ পণ্য</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>ছবি</th>
+                <th>ভাড়ার পণ্যের নাম</th>
+                <th>উপলব্ধতা</th>
+                <th>ভাড়া (প্রতি দিন)</th>
+                <th>অ্যাকশন</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php while ($rental = $rentalResult->fetch_assoc()): ?>
+                <tr>
+                    <td>
+                        <?php if (!empty($rental['image'])): ?>
+                            <img src="<?= htmlspecialchars($rental['image']); ?>" alt="Rental Item">
+                        <?php else: ?>
+                            No Image
+                        <?php endif; ?>
+                    </td>
+                    <td><?= htmlspecialchars($rental['item_name']); ?></td>
+                    <td><?= htmlspecialchars($rental['availability']); ?></td>
+                    <td>TK.<?= htmlspecialchars($rental['rent_price_per_day']); ?></td>
+                    <td>
+                        <form method="POST" action="rent.php">
+                            <input type="hidden" name="item_id" value="<?= htmlspecialchars($rental['item_id']); ?>">
+                            <input type="number" name="rental_days" min="1" required placeholder="দিন">
+                            <input type="submit" name="rent_now" value="ভাড়া নিন">
+                        </form>
+                    </td>
+                </tr>
+            <?php endwhile; ?>
+        </tbody>
+    </table>
+</div>
+
+
 </body>
 </html>

@@ -313,64 +313,64 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 <body>
 <div class="sidebar">
-        <h2>Navigation</h2>
-        <a href="../farmer.php"><i class="fas fa-seedling"></i> Dashboard</a>
-        <a href="../crop_management.php"><i class="fas fa-seedling"></i> Crop/Product Management</a>
-        <a href="../Buy.php"><i class="fas fa-shopping-cart"></i> Buy from Suppliers</a>
-        <a href="../addNewProduct.php"><i class="fas fa-plus-circle"></i> Add New Product</a>
-        <a href="order_management.php"><i class="fas fa-clipboard-list"></i> Order Management</a>
-        <a href="inventory_management.php"><i class="fas fa-boxes"></i> Inventory Management</a>
-        <a href="financial_overview.php"><i class="fas fa-wallet"></i> Financial Overview</a>
-        <a href="../analytics_report.php"><i class="fas fa-chart-bar"></i> Analytics and Reports</a>
+        <h2>ন্যাভিগেশন</h2>
+        <a href="../farmer.php"><i class="fas fa-seedling"></i> ড্যাশবোর্ড</a>
+        <a href="../crop_management.php"><i class="fas fa-seedling"></i> ফসল/পণ্য ব্যবস্থাপনা</a>
+        <a href="../Buy.php"><i class="fas fa-shopping-cart"></i> সরবরাহকারীদের কাছ থেকে কিনুন</a>
+        <a href="../addNewProduct.php"><i class="fas fa-plus-circle"></i> নতুন পণ্য যোগ করুন</a>
+        <a href="order_management.php"><i class="fas fa-clipboard-list"></i> অর্ডার ম্যানেজমেন্ট</a>
+        <a href="inventory_management.php"><i class="fas fa-boxes"></i> ইনভেন্টরি ম্যানেজমেন্ট</a>
+        <a href="financial_overview.php"><i class="fas fa-wallet"></i> আর্থিক সারসংক্ষেপ</a>
+        <a href="../analytics_report.php"><i class="fas fa-chart-bar"></i>  বিশ্লেষণ এবং প্রতিবেদন</a>
         
     </div>
     <div class="container">
-        <h2>Farmers Inventory Management</h2>
+        <h2>কৃষকদের তালিকা ব্যবস্থাপনা</h2>
         <div class="summary">
             <div class="summary-item">
-                <h3>Total Products</h3>
+                <h3>মোট পণ্য</h3>
                 <p id="total-products">0</p>
             </div>
             <div class="summary-item">
-                <h3>Total Stock</h3>
+                <h3>মোট স্টক</h3>
                 <p id="total-stock">0</p>
             </div>
             <div class="summary-item">
-                <h3>Low Stock (<10)</h3>
+                <h3>কম মজুদ (<10)</h3>
                 <p id="low-stock">0</p>
             </div>
         </div>
 
         <div class="form-container">
             <form id="inventory-form">
-                <label for="product_id">Product:</label>
+                <label for="product_id">পণ্য:</label>
                 <select id="product_id" name="product_id" required></select>
 
-                <label for="quantity_change">Quantity Change:</label>
+                <label for="quantity_change">পরিমাণ পরিবর্তন:</label>
                 <input type="number" id="quantity_change" name="quantity_change" required>
 
-                <label for="reason">Reason:</label>
+                <label for="reason">কারণ:</label>
                 <select id="reason" name="reason" required>
-                    <option value="Sale">Sale</option>
-                    <option value="Return">Return</option>
-                    <option value="Spoilage">Spoilage</option>
-                    <option value="Restock">Restock</option>
+                    <option value="Sale">বিক্রয়</option>
+                    <option value="Return">রিটার্ন</option>
+                    <option value="Spoilage">Spoilage(নষ্ট করা)</option>
+                    <option value="Restock">Restock(পুনঃস্থাপন)</option>
                 </select>
 
-                <label for="notes">Notes:</label>
+                <label for="notes">মন্তব্য:</label>
                 <textarea id="notes" name="notes" rows="3"></textarea>
 
-                <button type="submit" class="btn">Add Transaction</button>
+                <button type="submit" class="btn">লেনদেন যোগ করুন</button>
             </form>
         </div>
 
         <table>
             <thead>
                 <tr>
-                    <th>Product Name</th>
-                    <th>Remaining Stock</th>
-                    <th>Quantity Type</th>
-                    <th>Last Updated</th>
+                    <th>পণ্যের নাম</th>
+                    <th>অবশিষ্ট স্টক</th>
+                    <th>পরিমাণের ধরণ</th>
+                    <th>শেষ আপডেট করা হয়েছে</th>
                 </tr>
             </thead>
             <tbody id="inventory-body"></tbody>

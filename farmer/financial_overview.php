@@ -111,7 +111,7 @@ $financial_result = $financial_query->get_result();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Financial Overview - AgriBuzz</title>
+    <title>Financial Overview - SmartKrishi</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
@@ -325,11 +325,11 @@ $financial_result = $financial_query->get_result();
     <!-- Sidebar -->
     <div class="sidebar">
         <ul class="sidebar-menu">
-            <li><a href="../farmer.php"><i class="fas fa-home"></i> Dashboard</a></li>
-            <li><a href="financial_overview.php" class="active"><i class="fas fa-chart-line"></i> Financial Overview</a></li>
-            <li><a href="../crop_management.php"><i class="fas fa-seedling"></i> Crop Management</a></li>
-            <li><a href="order_management.php"><i class="fas fa-shopping-cart"></i> Orders</a></li>
-            <li><a href="../logout.php" class="text-danger"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+            <li><a href="../farmer.php"><i class="fas fa-home"></i> ড্যাশবোর্ড</a></li>
+            <li><a href="financial_overview.php" class="active"><i class="fas fa-chart-line"></i> আর্থিক সারসংক্ষেপ</a></li>
+            <li><a href="../crop_management.php"><i class="fas fa-seedling"></i> ফসল ব্যবস্থাপনা</a></li>
+            <li><a href="order_management.php"><i class="fas fa-shopping-cart"></i> অর্ডার</a></li>
+            <li><a href="../logout.php" class="text-danger"><i class="fas fa-sign-out-alt"></i> লগআউট</a></li>
         </ul>
     </div>
 
@@ -338,8 +338,8 @@ $financial_result = $financial_query->get_result();
         <!-- Header -->
         <div class="card mb-4">
             <div class="card-body bg-success text-white">
-                <h2><i class="fas fa-chart-line"></i> Financial Overview</h2>
-                <p class="mb-0">Track your financial performance and analyze your business growth</p>
+                <h2><i class="fas fa-chart-line"></i> আর্থিক সারসংক্ষেপ</h2>
+                <p class="mb-0">আপনার আর্থিক কর্মক্ষমতা ট্র্যাক করুন এবং আপনার ব্যবসায়িক বৃদ্ধি বিশ্লেষণ করুন</p>
             </div>
         </div>
 
@@ -354,18 +354,18 @@ $financial_result = $financial_query->get_result();
         <div class="col-12">
             <div class="card">
                 <div class="card-header bg-success text-white">
-                    <h5 class="mb-0"><i class="fas fa-chart-line"></i> Monthly Sales Overview</h5>
+                    <h5 class="mb-0"><i class="fas fa-chart-line"></i> মাসিক বিক্রয় ওভারভিউ</h5>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
                         <table class="table table-hover">
                             <thead>
                                 <tr>
-                                    <th>Period</th>
-                                    <th>Total Sales</th>
-                                    <th>Orders</th>
-                                    <th>Avg Order Value</th>
-                                    <th>Growth</th>
+                                    <th>সময়কাল</th>
+                                    <th>মোট বিক্রয়</th>
+                                    <th>অর্ডার</th>
+                                    <th>গড় অর্ডার মূল্য</th>
+                                    <th>বৃদ্ধি</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -403,17 +403,17 @@ $financial_result = $financial_query->get_result();
         <div class="col-md-6 mb-4">
             <div class="card">
                 <div class="card-header bg-success text-white">
-                    <h5 class="mb-0"><i class="fas fa-crown"></i> Top Performing Crops</h5>
+                    <h5 class="mb-0"><i class="fas fa-crown"></i> সেরা ফলনশীল ফসল</h5>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
                         <table class="table">
                             <thead>
                                 <tr>
-                                    <th>Crop</th>
-                                    <th>Revenue</th>
-                                    <th>Quantity Sold</th>
-                                    <th>Revenue Share</th>
+                                    <th>ফসল</th>
+                                    <th>Revenue(রাজস্ব)</th>
+                                    <th>বিক্রির পরিমাণ</th>
+                                    <th>Revenue Share(রাজস্ব ভাগ)</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -448,7 +448,7 @@ $financial_result = $financial_query->get_result();
             <div class="card">
                 <div class="card-header bg-success text-white">
                     <h5 class="mb-0">
-                        <i class="fas fa-chart-line"></i> Financial Overview
+                        <i class="fas fa-chart-line"></i> আর্থিক সারসংক্ষেপ
                     </h5>
                 </div>
                 <div class="card-body">
@@ -474,7 +474,7 @@ $financial_result = $financial_query->get_result();
                         <div class="col-md-4">
                             <div class="card bg-light">
                                 <div class="card-body">
-                                    <h6 class="card-title text-muted">Total Revenue (12 Months)</h6>
+                                    <h6 class="card-title text-muted">মোট রাজস্ব (১২ মাস)</h6>
                                     <h3 class="text-success">৳<?php echo number_format($total_revenue, 2); ?></h3>
                                 </div>
                             </div>
@@ -483,7 +483,7 @@ $financial_result = $financial_query->get_result();
                         <div class="col-md-4">
                             <div class="card bg-light">
                                 <div class="card-body">
-                                    <h6 class="card-title text-muted">Total Expenses (12 Months)</h6>
+                                    <h6 class="card-title text-muted">মোট খরচ (১২ মাস)</h6>
                                     <h3 class="text-danger">৳<?php echo number_format($total_expenses, 2); ?></h3>
                                 </div>
                             </div>
@@ -492,7 +492,7 @@ $financial_result = $financial_query->get_result();
                         <div class="col-md-4">
                             <div class="card bg-light">
                                 <div class="card-body">
-                                    <h6 class="card-title text-muted">Net Profit (12 Months)</h6>
+                                    <h6 class="card-title text-muted">নিট লাভ (১২ মাস)</h6>
                                     <h3 class="<?php echo $total_profit >= 0 ? 'text-success' : 'text-danger'; ?>">
                                         ৳<?php echo number_format($total_profit, 2); ?>
                                     </h3>
@@ -506,13 +506,13 @@ $financial_result = $financial_query->get_result();
                         <table class="table table-hover">
                             <thead class="table-light">
                                 <tr>
-                                    <th>Period</th>
-                                    <th>Revenue</th>
-                                    <th>Expenses</th>
-                                    <th>Net Profit</th>
-                                    <th>Purchases</th>
-                                    <th>Avg Purchase</th>
-                                    <th>Profit Margin</th>
+                                    <th>সময়কাল</th>
+                                    <th>Revenue(রাজস্ব)</th>
+                                    <th>খরচ</th>
+                                    <th>নিট লাভ</th>
+                                    <th>ক্রয়</th>
+                                    <th>গড় ক্রয়</th>
+                                    <th>লাভের মার্জিন</th>
                                 </tr>
                             </thead>
                             <tbody>

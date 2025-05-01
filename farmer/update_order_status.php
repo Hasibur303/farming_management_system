@@ -134,18 +134,18 @@ if (!$order) {
                     <input type="hidden" name="order_id" value="<?php echo $order['order_id']; ?>">
                     
                     <div class="mb-3">
-                        <label for="status" class="form-label">Order Status</label>
+                        <label for="status" class="form-label">অর্ডার স্ট্যাটাস</label>
                         <select class="form-select" id="status" name="status" required>
-                            <option value="Pending" <?php echo ($order['status'] == 'Pending') ? 'selected' : ''; ?>>Pending</option>
-                            <option value="Processing" <?php echo ($order['status'] == 'Processing') ? 'selected' : ''; ?>>Processing</option>
-                            <option value="Shipped" <?php echo ($order['status'] == 'Shipped') ? 'selected' : ''; ?>>Shipped</option>
-                            <option value="Delivered" <?php echo ($order['status'] == 'Delivered') ? 'selected' : ''; ?>>Delivered</option>
-                            <option value="Cancelled" <?php echo ($order['status'] == 'Cancelled') ? 'selected' : ''; ?>>Cancelled</option>
+                            <option value="Pending" <?php echo ($order['status'] == 'Pending') ? 'selected' : ''; ?>>Pending(মুলতুবি)</option>
+                            <option value="Processing" <?php echo ($order['status'] == 'Processing') ? 'selected' : ''; ?>>Processing(প্রক্রিয়াকরণ)</option>
+                            <option value="Shipped" <?php echo ($order['status'] == 'Shipped') ? 'selected' : ''; ?>>Shipped(পাঠানো হয়েছে)</option>
+                            <option value="Delivered" <?php echo ($order['status'] == 'Delivered') ? 'selected' : ''; ?>>Delivered(বিতরণ করা হয়েছে)</option>
+                            <option value="Cancelled" <?php echo ($order['status'] == 'Cancelled') ? 'selected' : ''; ?>>Cancelled(বাতিল করা হয়েছে)</option>
                         </select>
                     </div>
                     
-                    <button type="submit" class="btn btn-primary">Update Status</button>
-                    <a href="order_management.php?id=<?php echo $order['order_id']; ?>" class="btn btn-secondary">Cancel</a>
+                    <button type="submit" class="btn btn-primary">স্ট্যাটাস আপডেট করুন</button>
+                    <a href="order_management.php?id=<?php echo $order['order_id']; ?>" class="btn btn-secondary">বাতিল করুন</a>
                 </form>
             </div>
         </div>

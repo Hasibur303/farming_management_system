@@ -90,19 +90,25 @@ function getDetailedSalesAnalysis($farmer_id) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <style>
-    .chart-container {
+<style>
+.chart-container {
     position: relative;
     height: 400px;
     width: 100%;
     margin: 20px 0;
+    background: #e0f2f1; /* Light greenish background */
+    border: 2px solid #a5d6a7;
+    border-radius: 10px;
 }
+
 .analytics-container {
     padding: 20px;
+    background-color: #f9fbe7; /* Light yellow-green */
 }
 
 .analytics-card {
-    background: white;
+    background: #ffffff;
+    border-left: 6px solid #8bc34a; /* Green accent */
     border-radius: 12px;
     box-shadow: 0 4px 15px rgba(0,0,0,0.1);
     margin-bottom: 25px;
@@ -115,15 +121,15 @@ function getDetailedSalesAnalysis($farmer_id) {
 }
 
 .analytics-header {
-    border-bottom: 2px solid #f0f0f0;
+    border-bottom: 2px solid #c8e6c9;
     margin-bottom: 20px;
     padding-bottom: 15px;
 }
 
 .analytics-header h3 {
-    color: #2c3e50;
-    font-size: 1.5rem;
-    font-weight: 600;
+    color: #33691e; /* Deep green */
+    font-size: 1.8rem;
+    font-weight: 700;
     margin: 0;
 }
 
@@ -135,7 +141,8 @@ function getDetailedSalesAnalysis($farmer_id) {
 }
 
 .stat-card {
-    background: linear-gradient(145deg, #ffffff, #f5f7fa);
+    background: linear-gradient(145deg, #f1f8e9, #ffffff);
+    border-left: 4px solid #cddc39;
     border-radius: 10px;
     padding: 20px;
     text-align: center;
@@ -144,13 +151,13 @@ function getDetailedSalesAnalysis($farmer_id) {
 
 .stat-card .stat-value {
     color: #2c3e50;
-    font-size: 24px;
+    font-size: 26px;
     font-weight: bold;
     margin: 10px 0;
 }
 
 .stat-card .stat-label {
-    color: #7f8c8d;
+    color: #689f38;
     font-size: 14px;
     text-transform: uppercase;
     letter-spacing: 1px;
@@ -161,14 +168,17 @@ function getDetailedSalesAnalysis($farmer_id) {
     height: 350px;
     margin: 20px 0;
     padding: 15px;
-    background: white;
+    background: #f1f8e9;
     border-radius: 10px;
+    border: 2px solid #aed581;
 }
 
 .table-responsive {
     margin-top: 20px;
     border-radius: 10px;
     overflow: hidden;
+    background: #e8f5e9;
+    padding: 10px;
 }
 
 .analytics-table {
@@ -178,36 +188,37 @@ function getDetailedSalesAnalysis($farmer_id) {
 }
 
 .analytics-table th {
-    background-color: #f8f9fa;
-    color: #2c3e50;
+    background-color: #aed581;
+    color: #1b5e20;
     font-weight: 600;
     padding: 15px;
     text-align: left;
-    border-bottom: 2px solid #dee2e6;
+    border-bottom: 2px solid #7cb342;
 }
 
 .analytics-table td {
     padding: 12px 15px;
-    border-bottom: 1px solid #dee2e6;
-    color: #2c3e50;
+    border-bottom: 1px solid #c5e1a5;
+    color: #2e7d32;
 }
 
 .analytics-table tr:hover {
-    background-color: #f8f9fa;
+    background-color: #f1f8e9;
 }
 
 .print-button {
-    background-color: #3498db;
-    color: white;
+    background-color: #fbc02d;
+    color: #4e342e;
     border: none;
     padding: 10px 20px;
     border-radius: 5px;
     cursor: pointer;
+    font-weight: bold;
     transition: background-color 0.3s ease;
 }
 
 .print-button:hover {
-    background-color: #2980b9;
+    background-color: #f9a825;
 }
 
 .trend-indicator {
@@ -220,24 +231,24 @@ function getDetailedSalesAnalysis($farmer_id) {
 }
 
 .trend-up {
-    background-color: #e8f5e9;
-    color: #2e7d32;
+    background-color: #dcedc8;
+    color: #33691e;
 }
 
 .trend-down {
-    background-color: #ffebee;
-    color: #c62828;
+    background-color: #ffccbc;
+    color: #d84315;
 }
 
 @media (max-width: 768px) {
     .stats-grid {
         grid-template-columns: 1fr;
     }
-    
+
     .analytics-card {
         padding: 15px;
     }
-    
+
     .chart-container {
         height: 300px;
     }
@@ -249,7 +260,32 @@ function getDetailedSalesAnalysis($farmer_id) {
     }
 }
 
+.dashboard-button {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: linear-gradient(135deg, #4CAF50, #8BC34A, #CDDC39);
+    color: white;
+    padding: 14px 24px;
+    border-radius: 40px;
+    font-size: 16px;
+    font-weight: bold;
+    text-decoration: none;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    transition: transform 0.2s ease, background 0.3s ease;
+    z-index: 999;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.dashboard-button:hover {
+    background: linear-gradient(135deg, #388E3C, #689F38, #AFB42B);
+    transform: scale(1.05);
+}
+
 </style>
+
 
 
 
@@ -258,9 +294,9 @@ function getDetailedSalesAnalysis($farmer_id) {
     <div class="analytics-container">
         <!-- Page Header -->
         <div class="analytics-header d-flex justify-content-between align-items-center mb-4">
-            <h2>Analytics & Reports</h2>
+            <h2>বিশ্লেষণ এবং প্রতিবেদন</h2>
             <button class="print-button" onclick="window.print()">
-                <i class="fas fa-print me-2"></i> Print Report
+                <i class="fas fa-print me-2"></i> প্রতিবেদন মুদ্রণ করুন
             </button>
         </div>
 
@@ -302,15 +338,15 @@ function getDetailedSalesAnalysis($farmer_id) {
             ?>
             
             <div class="stat-card">
-                <div class="stat-label">Total Revenue (30 Days)</div>
+                <div class="stat-label">মোট (Revenue)রাজস্ব (৩০ দিন)</div>
                 <div class="stat-value">Tk.<?php echo number_format($total_revenue, 2); ?></div>
             </div>
             <div class="stat-card">
-                <div class="stat-label">Total Orders</div>
+                <div class="stat-label">মোট অর্ডার</div>
                 <div class="stat-value"><?php echo number_format($total_orders); ?></div>
             </div>
             <div class="stat-card">
-                <div class="stat-label">Active Products</div>
+                <div class="stat-label">সক্রিয় পণ্য</div>
                 <div class="stat-value"><?php echo number_format($total_products); ?></div>
             </div>
         </div>
@@ -318,17 +354,17 @@ function getDetailedSalesAnalysis($farmer_id) {
         <!-- Product Performance -->
         <div class="analytics-card">
             <div class="analytics-header">
-                <h3>Product Performance (Last 30 Days)</h3>
+                <h3>পণ্যের পারফরম্যান্স (গত ৩০ দিন)</h3>
             </div>
             <div class="table-responsive">
                 <table class="analytics-table">
                     <thead>
                         <tr>
-                            <th>Product Name</th>
-                            <th>Current Stock</th>
-                            <th>Price</th>
-                            <th>Units Sold</th>
-                            <th>Revenue</th>
+                            <th>পণ্যের নাম</th>
+                            <th>বর্তমান স্টক</th>
+                            <th>দাম</th>
+                            <th>বিক্রিত ইউনিট</th>
+                            <th>Revenue(রাজস্ব)</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -356,5 +392,11 @@ function getDetailedSalesAnalysis($farmer_id) {
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <a href="farmer.php" class="dashboard-button">
+        <i class="fas fa-home"></i> ড্যাশবোর্ডে যান
+    </a>
+
+
 </body>
 </html>

@@ -82,35 +82,35 @@ $farmer_id = $_SESSION['user_id'];
 <body>
     
 <div class="sidebar">
-        <h2>Navigation</h2>
-        <a href="../farmer.php"><i class="fas fa-seedling"></i> Dashboard</a>
-        <a href="../crop_management.php"><i class="fas fa-seedling"></i> Crop/Product Management</a>
-        <a href="../Buy.php"><i class="fas fa-shopping-cart"></i> Buy from Suppliers</a>
-        <a href="../addNewProduct.php"><i class="fas fa-plus-circle"></i> Add New Product</a>
-        <a href="order_management.php"><i class="fas fa-clipboard-list"></i> Order Management</a>
-        <a href="inventory_management.php"><i class="fas fa-boxes"></i> Inventory Management</a>
-        <a href="financial_overview.php"><i class="fas fa-wallet"></i> Financial Overview</a>
-        <a href="../analytics_report.php"><i class="fas fa-chart-bar"></i> Analytics and Reports</a>
+        <h2>ন্যাভিগেশন</h2>
+        <a href="../farmer.php"><i class="fas fa-seedling"></i> ড্যাশবোর্ড</a>
+        <a href="../crop_management.php"><i class="fas fa-seedling"></i> ফসল/পণ্য ব্যবস্থাপনা</a>
+        <a href="../Buy.php"><i class="fas fa-shopping-cart"></i>  সরবরাহকারীদের কাছ থেকে কিনুন</a>
+        <a href="../addNewProduct.php"><i class="fas fa-plus-circle"></i> নতুন পণ্য যোগ করুন</a>
+        <a href="order_management.php"><i class="fas fa-clipboard-list"></i> নতুন পণ্য যোগ করুন</a>
+        <a href="inventory_management.php"><i class="fas fa-boxes"></i> ইনভেন্টরি ম্যানেজমেন্ট</a>
+        <a href="financial_overview.php"><i class="fas fa-wallet"></i> আর্থিক সারসংক্ষেপ</a>
+        <a href="../analytics_report.php"><i class="fas fa-chart-bar"></i> বিশ্লেষণ এবং প্রতিবেদন</a>
         
     </div>
     <div class="container py-4">
-        <h1 class="text-center mb-4">Order Management</h1>
+        <h1 class="text-center mb-4">অর্ডার ম্যানেজমেন্ট</h1>
 
         <div class="order-card">
-            <h3>Manage Your Orders</h3>
-            <p class="text-muted">View and manage your incoming orders below.</p>
+            <h3>আপনার অর্ডার পরিচালনা করুন</h3>
+            <p class="text-muted">নিচে আপনার আগত অর্ডারগুলি দেখুন এবং পরিচালনা করুন।</p>
             
             <!-- Orders Table -->
             <table class="table table-bordered table-striped">
                 <thead>
                     <tr>
-                        <th>Order ID</th>
-                        <th>Customer Name</th>
-                        <th>Crop Name</th>
-                        <th>Quantity</th>
-                        <th>Status</th>
-                        <th>Order Date</th>
-                        <th>Actions</th>
+                        <th>অর্ডার আইডি</th>
+                        <th>গ্রাহকের নাম</th>
+                        <th>ফসলের নাম</th>
+                        <th>পরিমাণ</th>
+                        <th>অবস্থা</th>
+                        <th>অর্ডারের তারিখ</th>
+                        <th>অ্যাকশন</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -133,7 +133,7 @@ $farmer_id = $_SESSION['user_id'];
                                 <td>{$row['order_date']}</td>
                                 <td>
                                   
-                                    <a href='update_order_status.php?id={$row['order_id']}' class='btn btn-warning btn-sm btn-action'>Update Status</a>
+                                    <a href='update_order_status.php?id={$row['order_id']}' class='btn btn-warning btn-sm btn-action'>স্ট্যাটাস আপডেট করুন</a>
                                 </td>
                             </tr>";
                     }

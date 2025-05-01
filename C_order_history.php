@@ -945,20 +945,20 @@ form input:focus, form select:focus, .form-control:focus {
 <!-- Sidebar -->
 <div class="sidebar">
     <ul>
-        <li><a href="customer.php" class="nav-link"><i class="fas fa-home"></i> Dashboard</a></li>
-        <li><a href="C_market.php" class="nav-link"><i class="fas fa-store"></i> Market</a></li>
-        <li><a href="C_review.php" class="nav-link"><i class="fas fa-star"></i> Review</a></li>
-        <li><a href="C_top_selling_products.php" class="nav-link"><i class="fas fa-chart-line"></i> Top Selling</a></li>
-        <li><a href="C_order_history.php" class="nav-link"><i class="fas fa-history"></i> Order History</a></li>
-        <li><a href="C_purchase_history.php" class="nav-link"><i class="fas fa-shopping-cart"></i> Purchase History</a></li>
-        <li><a href="logout.php" class="nav-link"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+        <li><a href="customer.php" class="nav-link"><i class="fas fa-home"></i> ড্যাশবোর্ড</a></li>
+        <li><a href="C_market.php" class="nav-link"><i class="fas fa-store"></i> বাজার</a></li>
+        <li><a href="C_review.php" class="nav-link"><i class="fas fa-star"></i> রিভিউ</a></li>
+        <li><a href="C_top_selling_products.php" class="nav-link"><i class="fas fa-chart-line"></i> সর্বাধিক বিক্রিত</a></li>
+        <li><a href="C_order_history.php" class="nav-link"><i class="fas fa-history"></i> অর্ডার ইতিহাস</a></li>
+        <li><a href="C_purchase_history.php" class="nav-link"><i class="fas fa-shopping-cart"></i> ক্রয়ের ইতিহাস</a></li>
+        <li><a href="logout.php" class="nav-link"><i class="fas fa-sign-out-alt"></i> লগআউট</a></li>
     </ul>
 </div>
 <header>
-        <h1>Customer Order History - SmartAgri </h1>
+        <h1>গ্রাহক অর্ডার ইতিহাস - স্মার্টকৃষি </h1>
         <a href="logout.php" class="button">Logout</a>
     </header>
-    <h1>Welcome, <?= htmlspecialchars($_SESSION['username']); ?>!</h1>
+    <h1>স্বাগতম, <?= htmlspecialchars($_SESSION['username']); ?>!</h1>
 
 
 
@@ -966,18 +966,18 @@ form input:focus, form select:focus, .form-control:focus {
 
 
 
-<h2 id="orderHistory">Your Order History</h2>
+<h2 id="orderHistory">আপনার অর্ডার ইতিহাস</h2>
 
 <?php if ($orderHistory->num_rows > 0): ?>
     <div class="order-history">
         <?php while ($order = $orderHistory->fetch_assoc()): ?>
             <div class="order-item">
                 <div class="order-details">
-                    <h4><?= htmlspecialchars($order['crop_name']) ?></h4>
-                    <p>Quantity: <?= htmlspecialchars($order['quantity']) ?> <?= htmlspecialchars($order['quantity_type']) ?></p>
-                    <p>Total Amount: TK. <?= htmlspecialchars($order['total_amount']) ?></p>
-                    <p>Status: <?= htmlspecialchars(ucfirst($order['status'])) ?></p>
-                    <p>Order Date: <?= htmlspecialchars(date("d-M-Y H:i:s", strtotime($order['order_date']))) ?></p>
+                    <h4>পণ্যের নাম: <?= htmlspecialchars($order['crop_name']) ?></h4>
+                    <p>পরিমাণ: <?= htmlspecialchars($order['quantity']) ?> <?= htmlspecialchars($order['quantity_type']) ?></p>
+                    <p>মোট পরিমাণ: <?= htmlspecialchars($order['total_amount']) ?> টাকা</p>
+                    <p>অবস্থা: <?= htmlspecialchars(ucfirst($order['status'])) ?></p>
+                    <p>অর্ডারের তারিখ: <?= htmlspecialchars(date("d-M-Y H:i:s", strtotime($order['order_date']))) ?></p>
                 </div>
                 <img
                     src="<?= htmlspecialchars($order['image']) ?>"
@@ -989,7 +989,7 @@ form input:focus, form select:focus, .form-control:focus {
         <?php endwhile; ?>
     </div>
 <?php else: ?>
-    <p>You have not placed any orders yet.</p>
+    <p>তুমি এখনও কোন অর্ডার দাওনি।</p>
 <?php endif; ?>
 
 

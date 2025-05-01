@@ -404,7 +404,76 @@ if ($result->num_rows > 0) {
 
     <link rel="stylesheet" type="text/css" href="./css/customer.css">
 
+<style>
+.payment-options {
+    display: flex;
+    gap: 15px;
+    margin: 15px 0;
+    flex-wrap: wrap;
+}
 
+.payment-option {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    text-align: center;
+}
+
+.payment-option input[type="radio"] {
+    display: none;
+}
+
+.payment-option img {
+    width: 60px;
+    height: 60px;
+    object-fit: contain;
+    border: 2px solid transparent;
+    border-radius: 10px;
+    padding: 5px;
+    transition: 0.3s;
+}
+
+.payment-option input[type="radio"]:checked + img {
+    border-color: #4CAF50;
+    background-color: #e8f5e9;
+}
+
+
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    padding-top: 100px;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4);
+}
+.modal-content {
+    background-color: #fefefe;
+    margin: auto;
+    padding: 30px;
+    border: 1px solid #888;
+    width: 400px;
+    border-radius: 10px;
+}
+.modal .close {
+    color: red;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+.payment-methods {
+    margin: 20px 0;
+    font-size: 18px;
+}
+
+</style>
 </head>
    
 <body>
@@ -487,12 +556,67 @@ if ($result->num_rows > 0) {
             <div class="cart-total">
                 Total: TK. <?= htmlspecialchars($cartTotal) ?>
             </div>
+
+            <!-- Place Order Button -->
             <form method="POST" class="place-order-form" onsubmit="return confirmOrder()">
                 <button type="submit" name="place_order" class="btn-primary">অর্ডার দিন</button>
             </form>
+
         <?php else: ?>
             <p>তোমার কার্ট খালি।</p>
         <?php endif; ?>
+
+
+        <!-- Payment Method Selection -->
+        <div class="payment-methods">
+            <h3>পেমেন্ট পদ্ধতি নির্বাচন করুন:</h3>
+            <div class="payment-options">
+                                <label class="payment-option">
+                                    <input type="radio" name="payment_method" value="bkash" required>
+                                    <img src="bkash.jpeg" alt="bKash">
+                                    <span>bKash</span>
+                                </label>
+                                <label class="payment-option">
+                                    <input type="radio" name="payment_method" value="nagad">
+                                    <img src="nagad.jpeg" alt="Nagad">
+                                    <span>Nagad</span>
+                                </label>
+                                <label class="payment-option">
+                                    <input type="radio" name="payment_method" value="rocket">
+                                    <img src="rocket.jpg" alt="Rocket">
+                                    <span>Rocket</span>
+                                </label>
+                                <label class="payment-option">
+                                    <input type="radio" name="payment_method" value="cod">
+                                    <img src="cod.jpg" alt="Cash on Delivery">
+                                    <span>COD</span>
+                                </label>
+        </div>
+         </div>
+
+        <!-- Order Button -->
+        <button onclick="handleOrderClick()" class="btn-primary">অর্ডার দিন</button>
+
+        <!-- Payment Modal -->
+        <div id="paymentModal" class="modal" style="display:none;">
+            <div class="modal-content">
+                <span class="close" onclick="closePaymentModal()">&times;</span>
+                <h3>পেমেন্ট তথ্য দিন</h3>
+                <form method="POST">
+                    <label>একাউন্ট নম্বর:</label><br>
+                    <input type="text" name="account_number" required><br><br>
+
+                    <label>পরিমাণ (টাকা):</label><br>
+                    <input type="number" name="amount" required><br><br>
+
+                    <label>পিন নম্বর:</label><br>
+                    <input type="password" name="pin" required><br><br>
+
+                    <button type="submit" name="confirm_payment" class="btn-primary">নিশ্চিত করুন</button>
+                </form>
+            </div>
+        </div>
+
     </div>
 </div>
 
@@ -632,6 +756,28 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 3000);
     });
 });
+
+
+
+function handleOrderClick() {
+    const selectedMethod = document.querySelector('input[name="payment_method"]:checked');
+    if (!selectedMethod) {
+        alert("দয়া করে একটি পেমেন্ট পদ্ধতি নির্বাচন করুন।");
+        return;
+    }
+
+    if (selectedMethod.value === "bkash" || selectedMethod.value === "nagad" || selectedMethod.value === "rocket") {
+        // Show modal for payment details
+        document.getElementById("paymentModal").style.display = "block";
+    } else {
+        // Submit COD directly or continue with order
+        document.querySelector('form.place-order-form').submit();
+    }
+}
+
+function closePaymentModal() {
+    document.getElementById("paymentModal").style.display = "none";
+}
 
 </script>
 
