@@ -379,44 +379,8 @@ function toggleCart() {
 }
 </script>
 
-<!-- ✅ Rental Section -->
-<div class="container">
-    <h2>ভাড়ার জন্য উপলব্ধ পণ্য</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>ছবি</th>
-                <th>ভাড়ার পণ্যের নাম</th>
-                <th>উপলব্ধতা</th>
-                <th>ভাড়া (প্রতি দিন)</th>
-                <th>অ্যাকশন</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php while ($rental = $rentalResult->fetch_assoc()): ?>
-                <tr>
-                    <td>
-                        <?php if (!empty($rental['image'])): ?>
-                            <img src="<?= htmlspecialchars($rental['image']); ?>" alt="Rental Item">
-                        <?php else: ?>
-                            No Image
-                        <?php endif; ?>
-                    </td>
-                    <td><?= htmlspecialchars($rental['item_name']); ?></td>
-                    <td><?= htmlspecialchars($rental['availability']); ?></td>
-                    <td>TK.<?= htmlspecialchars($rental['rent_price_per_day']); ?></td>
-                    <td>
-                        <form method="POST" action="rent.php">
-                            <input type="hidden" name="item_id" value="<?= htmlspecialchars($rental['item_id']); ?>">
-                            <input type="number" name="rental_days" min="1" required placeholder="দিন">
-                            <input type="submit" name="rent_now" value="ভাড়া নিন">
-                        </form>
-                    </td>
-                </tr>
-            <?php endwhile; ?>
-        </tbody>
-    </table>
-</div>
+
+
 
 
 </body>

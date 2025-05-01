@@ -362,6 +362,7 @@ include 'database.php';
         <h2>ন্যাভিগেশন</h2>
         <a href="crop_management.php"><i class="fas fa-seedling"></i> ফসল/পণ্য ব্যবস্থাপনা</a>
         <a href="Buy.php"><i class="fas fa-shopping-cart"></i> সরবরাহকারীদের কাছ থেকে কিনুন</a>
+          <a href="rent_page.php"><i class="fas fa-shopping-cart"></i> ভাড়ার পরিষেবা</a>
         <a href="addNewProduct.php"><i class="fas fa-plus-circle"></i> নতুন পণ্য যোগ করুন</a>
         <a href="farmer/order_management.php"><i class="fas fa-clipboard-list"></i> অর্ডার ম্যানেজমেন্ট</a>
         <a href="farmer/inventory_management.php"><i class="fas fa-boxes"></i> ইনভেন্টরি ম্যানেজমেন্ট</a>

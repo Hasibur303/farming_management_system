@@ -452,6 +452,7 @@ header {
 <div class="sidebar">
     <ul class="sidebar-menu">
         <li><a href="supplier.php" <?php echo (basename($_SERVER['PHP_SELF']) == 'supplier.php') ? 'class="active"' : ''; ?>>ড্যাশবোর্ড</a></li>
+        <li><a href="supplier/add_equipment.php" <?php echo (basename($_SERVER['PHP_SELF']) == 'add_equipment.php') ? 'class="active"' : ''; ?>>ভাড়ার জন্য নতুন সরঞ্জাম যুক্ত করুন</a></li>
         <li><a href="supplier/supplier_orders.php" <?php echo (basename($_SERVER['PHP_SELF']) == 'supplier_orders.php') ? 'class="active"' : ''; ?>>অর্ডার ম্যানেজমেন্ট</a></li>
         <li><a href="supplier/add_new_supply.php" <?php echo (basename($_SERVER['PHP_SELF']) == 'add_new_supply.php') ? 'class="active"' : ''; ?>>নতুন সরবরাহ যোগ করুন</a></li>
         <li><a href="supplier/my_supplies.php" <?php echo (basename($_SERVER['PHP_SELF']) == 'my_supplies.php') ? 'class="active"' : ''; ?>>আমার সরবরাহ</a></li>
