@@ -682,22 +682,18 @@ if ($result->num_rows > 0) {
 
 
 
-    <script>
+<script>
 function toggleCart() {
     document.getElementById('cartSidebar').classList.toggle('active');
 }
+
 function confirmOrder() {
     return confirm('আপনি কি নিশ্চিত যে আপনি এই অর্ডারটি দিতে চান?');
 }
 
-
 function showProductDetails(product) {
-
-
     const modal = document.getElementById('productModal');
     const details = document.getElementById('productDetails');
-
-
 
     details.innerHTML = `
         <h2>${product.name}</h2>
@@ -705,19 +701,11 @@ function showProductDetails(product) {
         <p>দাম :  ${product.price} টাকা</p>
         <form method="POST">
             <input type="hidden" name="product_id" value="${product.product_id}">
-             <input type="hidden" name="farmer_id" value="${product.farmer_id}">
+            <input type="hidden" name="farmer_id" value="${product.farmer_id}">
             <div class="form-group">
                 <label>পরিমাণ:</label>
-                <input type="number"
-                       name="quantity"
-                       min="1"
-                       value="1"
-                       required
-                       class="form-control">
+                <input type="number" name="quantity" min="1" value="1" required class="form-control">
             </div>
-
-
-
             <button type="submit" name="add_to_cart" class="btn-primary">কার্ট এ যোগ করুন</button>
         </form>
     `;
@@ -725,29 +713,18 @@ function showProductDetails(product) {
     modal.style.display = "block";
 }
 
-
 function closeModal() {
     document.getElementById('productModal').style.display = 'none';
 }
 
-function toggleCart() {
-    document.getElementById('cartSidebar').classList.toggle('active');
-}
-
-
-// Close modal when clicking outside
 window.onclick = function(event) {
     const modal = document.getElementById('productModal');
     if (event.target == modal) {
         closeModal();
     }
-}
+};
 
-
-
-// Add to your customer.js
 document.addEventListener('DOMContentLoaded', function() {
-    // Auto-hide alerts after 3 seconds
     const alerts = document.querySelectorAll('.alert');
     alerts.forEach(alert => {
         setTimeout(() => {
@@ -757,8 +734,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-
-
 function handleOrderClick() {
     const selectedMethod = document.querySelector('input[name="payment_method"]:checked');
     if (!selectedMethod) {
@@ -766,20 +741,32 @@ function handleOrderClick() {
         return;
     }
 
-    if (selectedMethod.value === "bkash" || selectedMethod.value === "nagad" || selectedMethod.value === "rocket") {
-        // Show modal for payment details
-        document.getElementById("paymentModal").style.display = "block";
-    } else {
-        // Submit COD directly or continue with order
-        document.querySelector('form.place-order-form').submit();
+    let url = "";
+
+    switch (selectedMethod.value) {
+        case "bkash":
+            url = "bkash.php"; // 🟣 Real Bkash sandbox redirection
+            break;
+        case "nagad":
+            url = "nagad.php"; // 🟠 Mock Nagad page
+            break;
+        case "rocket":
+            url = "rocket.php"; // 🔵 Mock Rocket page
+            break;
+        default:
+            document.querySelector('form.place-order-form').submit();
+            return;
     }
+
+    // Redirect to payment page
+    window.location.href = url;
 }
 
 function closePaymentModal() {
     document.getElementById("paymentModal").style.display = "none";
 }
-
 </script>
+
 
 
 

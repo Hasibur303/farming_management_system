@@ -84,9 +84,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['rent_now'])) {
         }
 
         td img {
-            width: 80px;
+            width: 250px;
             height: auto;
-            border-radius: 6px;
+            border-radius: 1px;
         }
 
         input[type="number"], input[type="date"] {
@@ -134,7 +134,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['rent_now'])) {
                     <tr>
                         <td>
                             <?php if (!empty($row['image'])): ?>
-                               <img src="<?= htmlspecialchars($row['image']); ?>" width="80" height="60" />
+                               <img src="<?= htmlspecialchars($row['image']); ?>" width="300" height="250" />
 
 
                             <?php else: ?>
