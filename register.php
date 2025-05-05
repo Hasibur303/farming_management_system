@@ -150,7 +150,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </head>
 <body>
     <div class="form-container">
-        <h2>User Registration</h2>
+        <h2>ব্যবহারকারী নিবন্ধন</h2>
 
         <!-- Display error or success messages -->
         <?php if ($error): ?>
@@ -163,38 +163,41 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         <form method="POST" action="register.php">
             <div class="form-group">
-                <label for="name">Name:</label>
+                <label for="name">নাম:</label>
                 <input type="text" name="name" required>
             </div>
 
             <div class="form-group">
-                <label for="email">Email:</label>
+                <label for="email">ইমেইল:</label>
                 <input type="email" name="email" required>
             </div>
 
             <div class="form-group">
-                <label for="phone_number">Phone Number:</label>
+                <label for="phone_number">ফোন নম্বর:</label>
                 <input type="text" name="phone_number" required>
             </div>
 
             <div class="form-group">
-                <label for="password">Password:</label>
+                <label for="password">পাসওয়ার্ড:</label>
                 <input type="password" name="password" required>
             </div>
 
             <div class="form-group">
-                <label for="confirm_password">Confirm Password:</label>
+                <label for="confirm_password">পাসওয়ার্ড নিশ্চিত করুন:</label>
                 <input type="password" name="confirm_password" required>
             </div>
 
             <div class="form-group">
-                <label for="role">Role:</label>
+                <label for="role">ভূমিকা:</label>
                 <select name="role" required>
-                    <option value="farmer" selected>Farmer</option>
-                    <option value="supplier">Supplier</option>
-                    <option value="customer">Customer</option>
+                    <option value="farmer" selected>কৃষক</option>
+                    <option value="supplier">সরবরাহকারী</option>
+                    <option value="customer">গ্রাহক</option>
+                    <option value="labour">শ্রমিক</option>
+                    <option value="agri_specialist">কৃষি বিশেষজ্ঞ</option>
                 </select>
             </div>
+
 
             <div class="form-group">
                 <input type="submit" value="Register">
@@ -203,7 +206,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </div>
 
     <footer>
-        &copy; <?= date('Y'); ?> Agricultural Management System. All rights reserved.
+        &copy; <?= date('Y'); ?> কৃষি ব্যবস্থাপনা ব্যবস্থা। সর্বস্বত্ব সংরক্ষিত।
     </footer>
 </body>
 </html>
