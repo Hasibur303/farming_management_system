@@ -166,162 +166,151 @@ try {
             font-family: 'Georgia', serif;
             margin: 0;
             padding: 0;
-            background: #f4f4f4; /* Light earth tone background */
+            background: #f4f4f4;
             color: #333;
-            line-height: 1.0;
         }
 
         .container {
-            width: 90%;
+            width: 85%;
             max-width: 1200px;
             margin: 0 auto;
-            padding: 40px;
+            padding: 50px 40px;
         }
 
         /* Header */
         header {
-            background: linear-gradient(135deg, #8bc34a, #4caf50); /* Nature green gradient */
+            background: linear-gradient(135deg, #8bc34a, #4caf50);
             color: white;
-            padding: 40px 60px;
+            padding: 30px 50px;
             text-align: center;
             border-bottom: 5px solid #388e3c;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
         }
 
         header h1 {
             margin: 0;
-            font-size: 1.8em;
-            font-weight: 500;
-            letter-spacing: 3px;
+            font-size: 2em;
+            font-weight: 700;
+            letter-spacing: 2px;
             text-transform: uppercase;
-            color: #fff;
-            text-shadow: 3px 3px 5px rgba(0, 0, 0, 0.3);
-            font-family: 'Georgia', serif;
+            text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.3);
         }
 
         header a {
             color: #fff;
             text-decoration: none;
             font-size: 16px;
-            margin-left: 30px;
+            margin-left: 25px;
             font-weight: 600;
             text-transform: uppercase;
             transition: color 0.3s ease;
         }
 
         header a:hover {
-            color: #d4af37; /* Gold accent on hover */
+            color: #d4af37;
         }
 
-        /* Form and Table Container */
+        /* Containers */
         .form-container, .table-container {
-            background: #ffffff; /* White background for forms and tables */
-            border-radius: 12px;
-            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
-            margin: 30px 0;
-            padding: 30px;
-            position: relative;
-            z-index: 0;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            background: #fff;
+            border-radius: 14px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+            margin: 40px 0;
+            padding: 40px 30px;
+            transition: 0.4s ease;
         }
 
         .form-container:hover, .table-container:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+            transform: translateY(-8px);
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
+        }
+
+        h2 {
+            margin: 0 0 30px;
+            font-size: 28px;
+            color: #4caf50;
+            text-align: center;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
         }
 
         /* Form Elements */
-        h2 {
-            margin-top: 0;
-            font-size: 26px;
-            color: #4caf50; /* Fresh green accent */
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            text-align: center;
-            font-family: 'Georgia', serif;
-        }
-
         form label {
             display: block;
-            margin: 15px 0 5px;
+            margin: 18px 0 6px;
             font-weight: 600;
-            font-size: 16px;
-            color: #333;
+            font-size: 15px;
+            letter-spacing: 0.5px;
         }
 
-        form input[type="text"], form input[type="number"], form select {
+        form input[type="text"],
+        form input[type="number"],
+        form select {
             width: 100%;
-            padding: 12px;
-            margin-bottom: 20px;
-            border: 2px solid #ccc; /* Soft border */
+            padding: 12px 14px;
+            margin-bottom: 25px;
+            border: 2px solid #ccc;
             border-radius: 8px;
-            background: #f0f0f0; /* Soft grey background for inputs */
-            color: #333;
+            background: #f0f0f0;
             font-size: 16px;
-            transition: border 0.3s ease, background 0.3s ease;
+            transition: 0.3s ease;
         }
 
-        form input[type="text"]:focus, form input[type="number"]:focus, form select:focus {
-            border: 2px solid #4caf50; /* Green border on focus */
+        form input:focus, form select:focus {
+            border-color: #4caf50;
+            background: #e8f5e9;
             outline: none;
-            background: #e8f5e9; /* Light green background on focus */
         }
 
         form input[type="submit"] {
-            background: #4caf50; /* Fresh green button */
+            background: #4caf50;
             color: white;
             border: none;
-            padding: 15px 25px;
+            padding: 14px 25px;
             font-size: 18px;
-            cursor: pointer;
             border-radius: 8px;
-            width: 100%;
-            transition: background 0.3s ease, transform 0.3s ease;
+            cursor: pointer;
+            transition: all 0.3s ease;
         }
 
         form input[type="submit"]:hover {
-            background: #388e3c; /* Darker green on hover */
-            transform: scale(1.05);
+            background: #388e3c;
+            transform: translateY(-2px) scale(1.03);
         }
 
-        /* Table */
+        /* Table Styling */
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 30px;
-            background: #fafafa; /* Light background for table */
+            background: #fafafa;
+            margin-top: 20px;
         }
 
         table thead th {
-            background: #8bc34a; /* Light green header */
+            background: #8bc34a;
             color: #fff;
+            padding: 16px;
+            font-size: 17px;
             text-align: left;
-            padding: 16px 20px;
-            font-weight: 700;
-            font-size: 18px;
-            letter-spacing: 1px;
-            border-bottom: 3px solid #388e3c; /* Green bottom border */
+            border-bottom: 3px solid #388e3c;
         }
 
         table tbody td {
-            border: 1px solid #ccc; /* Soft border for table cells */
-            padding: 15px 20px;
-            font-size: 14px;
-            color: #333;
-            background: #f9f9f9; /* Soft background for table rows */
-            transition: background 0.3s ease, transform 0.3s ease;
+            padding: 14px 16px;
+            font-size: 15px;
+            border-bottom: 1px solid #ddd;
+            background: #fdfdfd;
+            transition: background 0.3s ease;
         }
 
         table tbody td:hover {
-            background: #e8f5e9; /* Light green background on hover */
-            transform: scale(1.02);
+            background: #e8f5e9;
         }
 
         table td img {
-            max-width: 120px;
+            max-width: 100px;
             border-radius: 8px;
-            transition: transform 0.3s ease;
+            transition: 0.3s;
         }
 
         table td img:hover {
@@ -329,124 +318,104 @@ try {
         }
 
         table td input[type="submit"] {
-            background: #ff5722; /* Nature-inspired red button for delete */
+            background: #ff5722;
             color: white;
+            padding: 10px 18px;
             border: none;
-            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 14px;
             cursor: pointer;
-            border-radius: 8px;
-            transition: background 0.3s ease, transform 0.3s ease;
+            transition: all 0.3s ease;
         }
 
         table td input[type="submit"]:hover {
-            background: #d32f2f; /* Darker red on hover */
+            background: #d32f2f;
             transform: scale(1.05);
         }
 
-        /* Success and Error Messages */
-        .success {
-            color: #4caf50; /* Green for success */
+        /* Messages */
+        .success, .error {
+            text-align: center;
             font-weight: 600;
             font-size: 16px;
-            text-align: center;
-            animation: bounceIn 1s;
+            animation: bounceIn 0.6s ease-out;
         }
 
-        .error {
-            color: #f44336; /* Red for error */
-            font-weight: 600;
-            font-size: 16px;
-            text-align: center;
-            animation: bounceIn 1s;
-        }
+        .success { color: #4caf50; }
+        .error { color: #f44336; }
 
         @keyframes bounceIn {
-            0% { transform: scale(0.3); opacity: 0; }
-            60% { transform: scale(1.1); opacity: 1; }
+            0% { transform: scale(0.9); opacity: 0; }
+            60% { transform: scale(1.05); opacity: 1; }
             100% { transform: scale(1); }
         }
 
-        /* Sidebar Styles */
-.sidebar {
-    position: fixed;
-    left: 0;
-    top: 0;
-    height: 100%;
-    width: 250px;
-    background: #388e3c;
-    padding-top: 80px;
-    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-}
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 250px;
+            background: #388e3c;
+            padding-top: 80px;
+            box-shadow: 2px 0 6px rgba(0, 0, 0, 0.1);
+        }
 
-.sidebar-menu {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
+        .sidebar-menu {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
 
-.sidebar-menu li {
-    padding: 0;
-    margin: 0;
-}
+        .sidebar-menu li {
+            margin: 0;
+        }
 
-.sidebar-menu a {
-    display: block;
-    padding: 15px 25px;
-    color: white;
-    text-decoration: none;
-    font-size: 16px;
-    transition: all 0.3s ease;
-}
+        .sidebar-menu a {
+            display: block;
+            padding: 15px 25px;
+            color: white;
+            font-size: 16px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
 
-.sidebar-menu a:hover {
-    background: #2e7d32;
-    padding-left: 35px;
-}
+        .sidebar-menu a:hover {
+            background: #2e7d32;
+            padding-left: 35px;
+        }
 
-.sidebar-menu a.active {
-    background: #2e7d32;
-    border-left: 4px solid #81c784;
-}
+        .sidebar-menu a.active {
+            background: #2e7d32;
+            border-left: 5px solid #81c784;
+        }
 
-/* Adjust main content to accommodate sidebar */
-.container {
-    margin-left: 250px;
-    padding: 20px;
-}
+        .sidebar-menu .logout-btn {
+            color: white;
+            padding: 15px 25px;
+            display: block;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            margin-top: 20px;
+            transition: all 0.3s ease;
+        }
 
-/* Adjust header to accommodate sidebar */
-header {
-    margin-left: 250px;
-    padding: 20px;
-    background: #4caf50;
-    color: white;
-    text-align: center;
-    position: relative;
-}
+        .sidebar-menu .logout-btn:hover {
+            background: #d32f2f;
+            padding-left: 35px;
+        }
 
+        /* Layout Adjustments */
+        .container {
+            margin-left: 250px;
+        }
 
-/* Add these to your existing sidebar styles */
-.sidebar-menu .logout-btn {
-    color: #fff;
-    padding: 15px 25px;
-    text-decoration: none;
-    display: block;
-    font-size: 16px;
-    transition: all 0.3s ease;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    margin-top: 10px;
-}
-
-.sidebar-menu .logout-btn:hover {
-    background: #d32f2f;
-    padding-left: 35px;
-}
-
-
-
-
-
+        header {
+            margin-left: 250px;
+            padding: 30px;
+        }
     </style>
+
 </head>
 <body>
 <div class="sidebar">
@@ -465,7 +434,7 @@ header {
 
     <header>
         <h1>সরবরাহকারী ড্যাশবোর্ড - স্মার্টকৃষি</h1>
-       
+
     </header>
 
     <div class="container">
