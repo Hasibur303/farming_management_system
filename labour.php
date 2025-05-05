@@ -2,21 +2,73 @@
 session_start();
 include 'database.php';
 
-// Dummy user ID for demo purposes; in production, use $_SESSION['user_id']
+// Dummy user ID for demo; replace with $_SESSION['user_id'] in production
 $user_id = 1;
 
+// Language handling
+if (!isset($_SESSION['lang'])) {
+    $_SESSION['lang'] = 'bn';
+}
+if (isset($_GET['lang']) && in_array($_GET['lang'], ['bn', 'en'])) {
+    $_SESSION['lang'] = $_GET['lang'];
+}
+$lang = $_SESSION['lang'];
+$text = [
+    'bn' => [
+        'title' => 'শ্রমিক প্রোফাইল',
+        'welcome' => 'স্বাগতম, শ্রমিক!',
+        'update_profile' => 'আপনার প্রোফাইল হালনাগাদ করুন',
+        'upload_image' => 'প্রোফাইল ছবি আপলোড করুন:',
+        'daily_salary' => 'প্রতিদিনের বেতন (টাকায়):',
+        'bio' => 'আপনার সম্পর্কে সংক্ষিপ্ত বিবরণ:',
+        'save_profile' => 'প্রোফাইল সংরক্ষণ করুন',
+        'job_list' => 'কৃষকদের চাহিদা',
+        'farmer_name' => 'কৃষকের নাম',
+        'requirement' => 'চাহিদা',
+        'location' => 'অবস্থান',
+        'no_jobs' => 'এই মুহূর্তে কোনো চাহিদা নেই।',
+        'logout' => 'লগ আউট',
+        'dashboard' => 'ড্যাশবোর্ড',
+        'profile' => 'প্রোফাইল',
+        'jobs' => 'কাজের তালিকা',
+        'messages' => 'বার্তা',
+        'notifications' => 'নোটিফিকেশন',
+        'settings' => 'সেটিংস',
+    ],
+    'en' => [
+        'title' => 'Labour Profile',
+        'welcome' => 'Welcome, Labourer!',
+        'update_profile' => 'Update Your Profile',
+        'upload_image' => 'Upload Profile Image:',
+        'daily_salary' => 'Daily Salary (in BDT):',
+        'bio' => 'Short Description About You:',
+        'save_profile' => 'Save Profile',
+        'job_list' => 'Farmer Requirements',
+        'farmer_name' => 'Farmer Name',
+        'requirement' => 'Requirement',
+        'location' => 'Location',
+        'no_jobs' => 'No job requirements at the moment.',
+        'logout' => 'Logout',
+        'dashboard' => 'Dashboard',
+        'profile' => 'Profile',
+        'jobs' => 'Job List',
+        'messages' => 'Messages',
+        'notifications' => 'Notifications',
+        'settings' => 'Settings',
+    ]
+];
+$current_text = $text[$lang];
+
+// Form Handling
 $success = '';
 $error = '';
-
-// Handle form submission
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $salary = $_POST['daily_salary'];
     $bio = $_POST['bio'];
-
-    // Handle profile image upload
-    $target_dir = "uploads/";
     $profile_image = '';
+
     if (!empty($_FILES["profile_image"]["name"])) {
+        $target_dir = "uploads/";
         $profile_image = basename($_FILES["profile_image"]["name"]);
         $target_file = $target_dir . $profile_image;
         move_uploaded_file($_FILES["profile_image"]["tmp_name"], $target_file);
@@ -33,35 +85,116 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 
-// Fetch job requirements posted by farmers
-//$jobs_sql = "SELECT name, requirement_detail, location FROM farmer_jobs ORDER BY created_at DESC";
-//$jobs_result = $conn->query($jobs_sql);
+// Job fetch
+//$jobs_result = $conn->query("SELECT name, requirement_detail, location FROM farmer_jobs ORDER BY created_at DESC");
 ?>
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="<?= $lang ?>">
 <head>
     <meta charset="UTF-8">
-    <title>শ্রমিক প্রোফাইল | SmartKirshi</title>
+    <title><?= $current_text['title'] ?> | SmartKirshi</title>
     <style>
         body {
             margin: 0;
             font-family: 'Segoe UI', sans-serif;
-            background: #f4f7f8;
-            color: #333;
+            display: flex;
+            background: #f0f4f8;
+        }
+        .sidebar {
+            width: 70px;
+            background: linear-gradient(180deg, #2E7D32, #1B5E20);
+            color: white;
+            height: 100vh;
+            padding: 20px 10px;
+            position: fixed;
+            transition: width 0.3s;
+            overflow: hidden;
+        }
+
+        .sidebar:hover {
+            width: 250px;
+        }
+
+        .sidebar h2 {
+            font-size: 24px;
+            margin-bottom: 30px;
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .sidebar:hover h2 {
+            opacity: 1;
+        }
+
+        .sidebar a {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            white-space: nowrap;
+            background-color: rgba(255,255,255,0.1);
+            transition: background 0.2s;
+        }
+
+        .sidebar a:hover {
+            background-color: rgba(255,255,255,0.3);
+        }
+
+        .sidebar a span {
+            margin-left: 10px;
+            display: none;
+            transition: opacity 0.3s;
+        }
+
+        .sidebar:hover a span {
+            display: inline;
+            opacity: 1;
+        }
+
+        .logout-sidebar {
+            color: #ffdddd;
+            background-color: #c62828;
+        }
+
+        .main {
+            margin-left: 270px;
+            width: calc(100% - 270px);
+            padding: 20px 40px;
+        }
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logout-button {
+            background-color: #d32f2f;
+            border: none;
+            padding: 10px 18px;
+            color: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .logout-button:hover {
+            background-color: #b71c1c;
+        }
+        .language-btn {
+            background-color: #388E3C;
+            margin-left: 10px;
         }
         .container {
-            max-width: 1000px;
-            margin: 40px auto;
+            margin-top: 30px;
             background: white;
-            padding: 30px 40px;
+            padding: 30px;
             border-radius: 12px;
-            box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
         }
         h2, h3 {
             color: #2E7D32;
-        }
-        .section {
-            margin-top: 40px;
         }
         .form-group {
             margin-bottom: 20px;
@@ -84,7 +217,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             color: white;
             font-weight: bold;
             cursor: pointer;
-            transition: background 0.3s ease;
         }
         input[type="submit"]:hover {
             background-color: #2e7030;
@@ -98,58 +230,67 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
         .success { color: green; font-weight: bold; }
         .error { color: red; font-weight: bold; }
-        .profile-image-preview {
-            width: 100px;
-            height: 100px;
-            object-fit: cover;
-            border-radius: 50%;
-            border: 2px solid #4CAF50;
-            margin-bottom: 10px;
-        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h2>স্বাগতম, শ্রমিক!</h2>
 
-        <!-- Profile Update Section -->
-        <div class="section">
-            <h3>আপনার প্রোফাইল হালনাগাদ করুন</h3>
-            <?php if ($success) echo "<p class='success'>{$success}</p>"; ?>
-            <?php if ($error) echo "<p class='error'>{$error}</p>"; ?>
+<div class="sidebar">
+    <h2>SmartKirshi</h2>
+    <a href="labour.php">🏠 <span><?= $current_text['dashboard'] ?></span></a>
+    <a href="labour.php">🧑‍🌾 <span><?= $current_text['profile'] ?></span></a>
+    <a href="available_jobs.php">📋 <span><?= $current_text['jobs'] ?></span></a>
+    <a href="messages.php">💬 <span><?= $current_text['messages'] ?></span></a>
+    <a href="notifications.php">🔔 <span><?= $current_text['notifications'] ?></span></a>
+    <a href="settings.php">⚙️ <span><?= $current_text['settings'] ?></span></a>
+    <a class="logout-sidebar" href="logout.php">🚪 <span><?= $current_text['logout'] ?></span></a>
+</div>
 
-            <form method="POST" enctype="multipart/form-data">
-                <div class="form-group">
-                    <label>প্রোফাইল ছবি আপলোড করুন:</label>
-                    <input type="file" name="profile_image" accept="image/*">
-                </div>
-                <div class="form-group">
-                    <label>প্রতিদিনের বেতন (টাকায়):</label>
-                    <input type="text" name="daily_salary" required>
-                </div>
-                <div class="form-group">
-                    <label>আপনার সম্পর্কে সংক্ষিপ্ত বিবরণ:</label>
-                    <textarea name="bio" rows="4" placeholder="আমি একজন অভিজ্ঞ কৃষি শ্রমিক..."></textarea>
-                </div>
-                <input type="submit" value="প্রোফাইল সংরক্ষণ করুন">
-            </form>
-        </div>
-
-        <!-- Job Requirements Section -->
-        <div class="section">
-            <h3>কৃষকদের চাহিদা</h3>
-            <?php if ($jobs_result->num_rows > 0): ?>
-                <?php while ($job = $jobs_result->fetch_assoc()): ?>
-                    <div class="job-card">
-                        <strong>কৃষকের নাম:</strong> <?= htmlspecialchars($job['name']) ?><br>
-                        <strong>চাহিদা:</strong> <?= htmlspecialchars($job['requirement_detail']) ?><br>
-                        <strong>অবস্থান:</strong> <?= htmlspecialchars($job['location']) ?>
-                    </div>
-                <?php endwhile; ?>
-            <?php else: ?>
-                <p>এই মুহূর্তে কোনো চাহিদা নেই।</p>
-            <?php endif; ?>
+<div class="main">
+    <div class="top-bar">
+        <h2><?= $current_text['title'] ?></h2>
+        <div>
+            <a href="?lang=bn"><button class="logout-button language-btn">🇧🇩 Bn</button></a>
+            <a href="?lang=en"><button class="logout-button language-btn">🇬🇧 En</button></a>
+            <a href="logout.php"><button class="logout-button">🚪 <?= $current_text['logout'] ?></button></a>
         </div>
     </div>
+
+    <div class="container">
+        <h3><?= $current_text['update_profile'] ?></h3>
+        <?php if ($success) echo "<p class='success'>{$success}</p>"; ?>
+        <?php if ($error) echo "<p class='error'>{$error}</p>"; ?>
+        <form method="POST" enctype="multipart/form-data">
+            <div class="form-group">
+                <label><?= $current_text['upload_image'] ?></label>
+                <input type="file" name="profile_image" accept="image/*">
+            </div>
+            <div class="form-group">
+                <label><?= $current_text['daily_salary'] ?></label>
+                <input type="text" name="daily_salary" required>
+            </div>
+            <div class="form-group">
+                <label><?= $current_text['bio'] ?></label>
+                <textarea name="bio" rows="4"></textarea>
+            </div>
+            <input type="submit" value="<?= $current_text['save_profile'] ?>">
+        </form>
+    </div>
+
+    <div class="container" style="margin-top: 40px;">
+        <h3><?= $current_text['job_list'] ?></h3>
+        <?php if ($jobs_result->num_rows > 0): ?>
+            <?php while ($job = $jobs_result->fetch_assoc()): ?>
+                <div class="job-card">
+                    <strong><?= $current_text['farmer_name'] ?>:</strong> <?= htmlspecialchars($job['name']) ?><br>
+                    <strong><?= $current_text['requirement'] ?>:</strong> <?= htmlspecialchars($job['requirement_detail']) ?><br>
+                    <strong><?= $current_text['location'] ?>:</strong> <?= htmlspecialchars($job['location']) ?>
+                </div>
+            <?php endwhile; ?>
+        <?php else: ?>
+            <p><?= $current_text['no_jobs'] ?></p>
+        <?php endif; ?>
+    </div>
+</div>
+
 </body>
 </html>
