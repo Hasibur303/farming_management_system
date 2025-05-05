@@ -134,7 +134,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['rent_now'])) {
                     <tr>
                         <td>
                             <?php if (!empty($row['image'])): ?>
-                                <img src="<?= htmlspecialchars($row['image']); ?>" alt="ছবি">
+                               <img src="<?= htmlspecialchars($row['image']); ?>" width="80" height="60" />
+
+
                             <?php else: ?>
                                 ছবি নেই
                             <?php endif; ?>

@@ -14,15 +14,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $description = $_POST['description'];
     $imagePath = '';
 
-    // Handle image upload
-    if (!empty($_FILES['image']['name'])) {
-        $imageName = basename($_FILES['image']['name']);
-        $targetDir = "uploads/";
-        $targetFile = $targetDir . time() . "_" . $imageName;
-        if (move_uploaded_file($_FILES['image']['tmp_name'], $targetFile)) {
-            $imagePath = $targetFile;
-        }
-    }
+
+   // Handle image upload
+   if (!empty($_FILES['image']['name'])) {
+       $imageName = basename($_FILES['image']['name']);
+       $folderName = "uploads/";
+       $targetDir = "../" . $folderName; // Physical path to move the file
+       $fileName = time() . "_" . $imageName;
+       $targetFile = $targetDir . $fileName;
+
+       if (!is_dir($targetDir)) {
+           mkdir($targetDir, 0755, true);
+       }
+
+       if (move_uploaded_file($_FILES['image']['tmp_name'], $targetFile)) {
+           $imagePath = $folderName . $fileName; // ✅ Save only 'uploads/filename.jpg' in DB
+       } else {
+           echo "Error uploading file.";
+           print_r(error_get_last());
+       }
+   }
+
+
+
 
     // Insert into DB
     $stmt = $conn->prepare("INSERT INTO equipment (supplier_id, name, type, rental_rate_per_day, quantity_available, description, image) VALUES (?, ?, ?, ?, ?, ?, ?)");
