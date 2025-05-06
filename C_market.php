@@ -8,115 +8,6 @@ try {
         header("Location: login.php");
         exit();
     }
-  /*
-    if (isset($_GET['product_id'])) {
-        $productId = $_GET['product_id'];
-      
-        // Fetch the product details from the database
-        $productStmt = $conn->prepare("SELECT fc.*, fc.farmer_id, fc.image as product_image FROM farmer_crops fc WHERE fc.product_id = ?");
-        $productStmt->bind_param("i", $productId);
-        $productStmt->execute();
-        $product = $productStmt->get_result()->fetch_assoc();
-    
-      if (isset($_GET['product_id'])) {
-            $productId = $_GET['product_id'];
-            $productStmt = $conn->prepare("SELECT fc.*, fc.farmer_id, fc.image as product_image FROM farmer_crops fc WHERE fc.product_id = ?");
-            $productStmt->bind_param("i", $productId);
-            $productStmt->execute();
-            $product = $productStmt->get_result()->fetch_assoc();
-        
-            if ($product) {
-                // Trigger modal display and populate product details
-                echo '
-                <script>
-                document.addEventListener("DOMContentLoaded", function() {
-                    console.log("Product details modal is triggered.");
-                    const modal = document.getElementById("productModal");
-                    const productDetails = document.getElementById("productDetails");
-                    
-                    if (modal && productDetails) {
-                        productDetails.innerHTML = `
-                            <h2>' . htmlspecialchars($product['name']) . '</h2>
-                            <img src="' . htmlspecialchars($product['product_image']) . '" alt="' . htmlspecialchars($product['name']) . '" style="max-width: 200px;">
-                            <p>Price: TK. ' . htmlspecialchars($product['price']) . '</p>
-                            <p>Available Quantity: ' . htmlspecialchars($product['quantity']) . ' ' . htmlspecialchars($product['quantity_type']) . '</p>
-                            <form id="addToCartForm" onsubmit="return handleAddToCart(event)">
-                                <input type="hidden" name="product_id" value="' . $product['product_id'] . '">
-                                <input type="hidden" name="farmer_id" value="' . $product['farmer_id'] . '">
-                                <div class="form-group">
-                                    <label>Quantity:</label>
-                                    <input type="number" name="quantity" min="1" value="1" required class="form-control">
-                                </div>
-                                <button type="submit" name="add_to_cart" class="btn-primary">Add to Cart</button>
-                            </form>
-                        `;
-                        
-                        modal.style.display = "block";
-                    } else {
-                        console.error("Modal elements not found");
-                    }
-                });
-        
-                // Add modal control functions
-                function closeModal() {
-                    const modal = document.getElementById("productModal");
-                    if (modal) {
-                        modal.style.display = "none";
-                    }
-                }
-        
-                // Close modal when clicking outside
-                window.onclick = function(event) {
-                    const modal = document.getElementById("productModal");
-                    if (event.target == modal) {
-                        modal.style.display = "none";
-                    }
-                }
-        
-                // Optional: Handle form submission with AJAX
-                function handleAddToCart(event) {
-                    event.preventDefault();
-                    const form = event.target;
-                    const formData = new FormData(form);
-        
-                    fetch("add_to_cart.php", {
-                        method: "POST",
-                        body: formData
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            alert("Product added to cart!");
-                            closeModal();
-                        } else {
-                            alert(data.message || "Error adding to cart");
-                        }
-                    })
-                    .catch(error => {
-                        console.error("Error:", error);
-                        alert("Error adding to cart");
-                    });
-        
-                    return false;
-                }
-                </script>';
-            } else {
-                $_SESSION['error'] = "Product not found.";
-            }
-        }
-        
-    
-    }
-        */
-
-
-
-
-
-
-
-
-
 
   // Fetch available products - this should be at the start of your try block
   $productStmt = $conn->prepare("
@@ -405,11 +296,13 @@ if ($result->num_rows > 0) {
     <link rel="stylesheet" type="text/css" href="./css/customer.css">
 
 <style>
+
 .payment-options {
     display: flex;
-    gap: 15px;
-    margin: 15px 0;
+    gap: 20px;
+    margin: 20px 0;
     flex-wrap: wrap;
+    justify-content: center;
 }
 
 .payment-option {
@@ -418,6 +311,18 @@ if ($result->num_rows > 0) {
     align-items: center;
     cursor: pointer;
     text-align: center;
+    background-color: #f5f5f5;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    padding: 15px;
+    width: 100px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    transition: all 0.3s ease-in-out;
+}
+
+.payment-option:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.1);
 }
 
 .payment-option input[type="radio"] {
@@ -429,18 +334,25 @@ if ($result->num_rows > 0) {
     height: 60px;
     object-fit: contain;
     border: 2px solid transparent;
-    border-radius: 10px;
+    border-radius: 8px;
     padding: 5px;
-    transition: 0.3s;
+    background-color: #f9f9f9;
+    transition: border-color 0.3s, background-color 0.3s;
 }
 
 .payment-option input[type="radio"]:checked + img {
-    border-color: #4CAF50;
-    background-color: #e8f5e9;
+    border-color: #2e7d32;
+    background-color: #e0f2f1;
 }
 
+.payment-option span {
+    margin-top: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #2e3d2f;
+}
 
-
+/* Modal */
 .modal {
     display: none;
     position: fixed;
@@ -453,49 +365,207 @@ if ($result->num_rows > 0) {
     overflow: auto;
     background-color: rgba(0,0,0,0.4);
 }
+
 .modal-content {
-    background-color: #fefefe;
+    background: #f5f5f5;
     margin: auto;
     padding: 30px;
-    border: 1px solid #888;
+    border: none;
     width: 400px;
-    border-radius: 10px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    position: relative;
+    animation: fadeIn 0.3s ease-in-out;
 }
+
 .modal .close {
-    color: red;
+    color: #c62828;
     float: right;
-    font-size: 28px;
+    font-size: 26px;
     font-weight: bold;
     cursor: pointer;
+    transition: 0.2s;
 }
+
+.modal .close:hover {
+    color: #a00000;
+}
+
 .payment-methods {
-    margin: 20px 0;
+    margin: 25px 0 10px;
     font-size: 18px;
+    font-weight: 600;
+    color: #2e3d2f;
+    text-align: center;
 }
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+/* Cart Sidebar */
+.cart-sidebar {
+    position: fixed;
+    right: -420px;
+    top: 0;
+    width: 400px;
+    height: 100%;
+    background-color: #f0f4c3;
+    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.3);
+    padding: 25px 20px;
+    overflow-y: auto;
+    z-index: 1000;
+    transition: right 0.4s ease-in-out;
+    font-family: 'Segoe UI', sans-serif;
+    color: #2e3d2f;
+}
+
+.cart-sidebar.open {
+    right: 0;
+}
+
+.cart-sidebar h2 {
+    font-size: 22px;
+    color: #2e7d32;
+    margin-bottom: 10px;
+}
+
+.cart-sidebar .close {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 26px;
+    color: #2e7d32;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+.cart-sidebar .close:hover {
+    color: #1b5e20;
+}
+
+.cart-item {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    background-color: #ffffff;
+    padding: 15px;
+    border-radius: 12px;
+    margin-bottom: 15px;
+    box-shadow: 0 2px 8px rgba(34, 139, 34, 0.08);
+}
+
+.cart-item h4 {
+    margin: 0;
+    font-size: 17px;
+    color: #2e7d32;
+}
+
+.cart-item p {
+    margin: 5px 0;
+    color: #4e944f;
+    font-size: 14px;
+}
+
+.quantity-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 8px 0;
+}
+
+.quantity-controls button {
+    padding: 4px 10px;
+    font-size: 16px;
+    background-color: #dcedc8;
+    color: #2e7d32;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+.quantity-controls button:hover {
+    background-color: #c5e1a5;
+}
+
+.cart-item span {
+    font-size: 16px;
+    font-weight: 500;
+    color: #2e3d2f;
+}
+
+.remove-btn {
+    background-color: transparent;
+    border: 1px solid #c62828;
+    color: #c62828;
+    padding: 5px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s;
+}
+.remove-btn:hover {
+    background-color: #ffebee;
+}
+
+.cart-total {
+    font-size: 18px;
+    font-weight: bold;
+    color: #2e7d32;
+    margin: 15px 0;
+    text-align: right;
+    border-top: 1px solid #c8e6c9;
+    padding-top: 10px;
+}
+
+.place-order-form {
+    text-align: center;
+    margin-top: 10px;
+}
+
+.btn-primary {
+    background-color: #8bc34a;
+    color: white;
+    padding: 10px 25px;
+    border: none;
+    font-size: 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+.btn-primary:hover {
+    background-color: #689f38;
+}
+
 
 </style>
 </head>
    
 <body>
 
-
 <!-- Sidebar -->
 <div class="sidebar">
+    <!-- Language Toggle -->
+    <div class="language-toggle">
+        <button id="btn-bn" class="btn btn-secondary" onclick="changeLanguage('bn')">BN</button>
+        <button id="btn-en" class="btn btn-secondary" onclick="changeLanguage('en')">EN</button>
+    </div>
+
     <ul>
-        <li><a href="customer.php" class="nav-link"><i class="fas fa-home"></i> ড্যাশবোর্ড</a></li>
-        <li><a href="C_market.php" class="nav-link"><i class="fas fa-store"></i> বাজার</a></li>
-        <li><a href="C_review.php" class="nav-link"><i class="fas fa-star"></i> পর্যালোচনা</a></li>
-        <li><a href="C_top_selling_products.php" class="nav-link"><i class="fas fa-chart-line"></i> সর্বাধিক বিক্রিত</a></li>
-        <li><a href="C_order_history.php" class="nav-link"><i class="fas fa-history"></i> অর্ডার ইতিহাস</a></li>
-        <li><a href="C_purchase_history.php" class="nav-link"><i class="fas fa-shopping-cart"></i> ক্রয়ের ইতিহাস</a></li>
-        <li><a href="logout.php" class="nav-link"><i class="fas fa-sign-out-alt"></i> লগআউট</a></li>
+        <li><a href="customer.php" class="nav-link"><i class="fas fa-home"></i> <span class="text-dashboard">ড্যাশবোর্ড</span></a></li>
+        <li><a href="C_market.php" class="nav-link"><i class="fas fa-store"></i> <span class="text-market">বাজার</span></a></li>
+        <li><a href="C_review.php" class="nav-link"><i class="fas fa-star"></i> <span class="text-review">পর্যালোচনা</span></a></li>
+        <li><a href="C_top_selling_products.php" class="nav-link"><i class="fas fa-chart-line"></i> <span class="text-top-selling">সর্বাধিক বিক্রিত</span></a></li>
+        <li><a href="C_order_history.php" class="nav-link"><i class="fas fa-history"></i> <span class="text-order-history">অর্ডার ইতিহাস</span></a></li>
+        <li><a href="C_purchase_history.php" class="nav-link"><i class="fas fa-shopping-cart"></i> <span class="text-purchase-history">ক্রয়ের ইতিহাস</span></a></li>
+        <li><a href="logout.php" class="nav-link"><i class="fas fa-sign-out-alt"></i> <span class="text-logout">লগআউট</span></a></li>
     </ul>
 </div>
+
 <header>
-        <h1>গ্রাহক ড্যাশবোর্ড - স্মার্টকৃষি </h1>
-       
-    </header>
-    
+    <h1 class="text-header">গ্রাহক ড্যাশবোর্ড - স্মার্টকৃষি</h1>
+</header>
+
 
 
 
@@ -504,6 +574,7 @@ if ($result->num_rows > 0) {
 <div class="cart-icon" onclick="toggleCart()">
     কার্ট <span class="cart-count"><?= count($_SESSION['cart'] ?? []) ?></span>
 </div>
+<!-- Search Bar -->
 <div class="search-bar">
     <form method="GET" action="C_market.php">
         <input
@@ -513,14 +584,14 @@ if ($result->num_rows > 0) {
             value="<?= htmlspecialchars($_GET['search'] ?? '') ?>"
             class="search-input"
         >
-        <button type="submit" class="search-button">অনুসন্ধান করুন</button>
+        <button type="submit" class="search-button text-search-btn">অনুসন্ধান করুন</button>
     </form>
 </div>
 
 
 <!-- Update the cart section with confirmation -->
 <div class="cart-sidebar" id="cartSidebar">
-    <h2>শপিং কার্ট</h2>
+    <h1>শপিং কার্ট</h1>
     <span class="close" onclick="toggleCart()">&times;</span>
     <div id="cartItems">
         <?php if (!empty($cartItems)): ?>
@@ -650,7 +721,7 @@ if ($result->num_rows > 0) {
 
 
 
-<h2>বাজারের পণ্য</h2>
+<h2 class="market-title text-market-title">বাজারের পণ্য</h2>
 
 
 
@@ -683,6 +754,30 @@ if ($result->num_rows > 0) {
 
 
 <script>
+
+// Store the default language setting in the session or local storage (default Bangla)
+if (!localStorage.getItem('language')) {
+    localStorage.setItem('language', 'bn'); // Default to Bangla
+}
+
+function changeLanguage(language) {
+    localStorage.setItem('language', language);
+    location.reload(); // Refresh the page to reflect the change
+}
+
+// Load the language when the page loads
+document.addEventListener('DOMContentLoaded', function() {
+    const language = localStorage.getItem('language');
+    if (language === 'en') {
+        // Change all text to English
+        document.body.classList.add('en');
+    } else {
+        // Change all text to Bangla
+        document.body.classList.remove('en');
+    }
+});
+
+
 function toggleCart() {
     document.getElementById('cartSidebar').classList.toggle('active');
 }
@@ -764,6 +859,56 @@ function handleOrderClick() {
 
 function closePaymentModal() {
     document.getElementById("paymentModal").style.display = "none";
+}
+</script>
+
+<!-- JavaScript Language Switcher -->
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const lang = localStorage.getItem("language") || "bn";
+    setLanguage(lang);
+});
+
+function changeLanguage(lang) {
+    localStorage.setItem("language", lang);
+    setLanguage(lang);
+}
+
+function setLanguage(lang) {
+    const textMap = {
+        bn: {
+            "text-dashboard": "ড্যাশবোর্ড",
+            "text-market": "বাজার",
+            "text-review": "পর্যালোচনা",
+            "text-top-selling": "সর্বাধিক বিক্রিত",
+            "text-order-history": "অর্ডার ইতিহাস",
+            "text-purchase-history": "ক্রয়ের ইতিহাস",
+            "text-logout": "লগআউট",
+            "text-header": "গ্রাহক ড্যাশবোর্ড - স্মার্টকৃষি",
+            "text-cart-label": "কার্ট",
+            "text-market-title": "বাজারের পণ্য",
+            "text-search-btn": "অনুসন্ধান করুন"
+        },
+        en: {
+            "text-dashboard": "Dashboard",
+            "text-market": "Market",
+            "text-review": "Review",
+            "text-top-selling": "Top Selling",
+            "text-order-history": "Order History",
+            "text-purchase-history": "Purchase History",
+            "text-logout": "Logout",
+            "text-header": "Customer Dashboard - SmartKirshi",
+            "text-cart-label": "Cart",
+            "text-market-title": "Market Products",
+            "text-search-btn": "Search"
+
+        }
+    };
+
+    Object.keys(textMap[lang]).forEach(cls => {
+        const el = document.querySelector(`.${cls}`);
+        if (el) el.innerText = textMap[lang][cls];
+    });
 }
 </script>
 
