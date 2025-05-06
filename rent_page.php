@@ -43,12 +43,61 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['rent_now'])) {
 <head>
     <meta charset="UTF-8">
     <title>সরঞ্জাম ভাড়া</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <style>
         body {
             font-family: 'Noto Sans Bengali', sans-serif;
             background-color: #f9f9f9;
             margin: 0;
+            padding: 0;
+            display: flex;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 250px;
+            background-color: #333;
+            color: white;
+            height: 100vh;
+            padding-top: 20px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
+        .sidebar h2 {
+            color: #fff;
+            text-align: center;
+            margin-bottom: 30px;
+            font-weight: 600;
+        }
+
+        .sidebar a {
+            display: flex;
+            align-items: center;
+            color: #fff;
+            text-decoration: none;
+            padding: 12px 20px;
+            font-size: 16px;
+            font-weight: 500;
+            transition: background-color 0.3s ease;
+        }
+
+        .sidebar a:hover {
+            background-color: #555;
+        }
+
+        .sidebar i {
+            margin-right: 10px;
+        }
+
+        /* Content area styles */
+        .content {
+            margin-left: 250px;
             padding: 20px;
+            flex-grow: 1;
         }
 
         .container {
@@ -116,48 +165,62 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['rent_now'])) {
     </style>
 </head>
 <body>
-    <div class="container">
-        <h2>ভাড়ার জন্য উপলব্ধ সরঞ্জাম</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>ছবি</th>
-                    <th>সরঞ্জামের নাম</th>
-                    <th>ধরণ</th>
-                    <th>প্রাপ্যতা</th>
-                    <th>ভাড়া (প্রতি দিন)</th>
-                    <th>ভাড়া ফর্ম</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php while ($row = $result->fetch_assoc()): ?>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <h2>ন্যাভিগেশন</h2>
+        <a href="crop_management.php"><i class="fas fa-seedling"></i> ফসল/পণ্য ব্যবস্থাপনা</a>
+        <a href="Buy.php"><i class="fas fa-shopping-cart"></i> সরবরাহকারীদের কাছ থেকে কিনুন</a>
+        <a href="rent_page.php"><i class="fas fa-shopping-cart"></i> ভাড়ার পরিষেবা</a>
+        <a href="addNewProduct.php"><i class="fas fa-plus-circle"></i> নতুন পণ্য যোগ করুন</a>
+        <a href="farmer/order_management.php"><i class="fas fa-clipboard-list"></i> অর্ডার ম্যানেজমেন্ট</a>
+        <a href="farmer/inventory_management.php"><i class="fas fa-boxes"></i> ইনভেন্টরি ম্যানেজমেন্ট</a>
+        <a href="farmer/financial_overview.php"><i class="fas fa-wallet"></i> আর্থিক সারসংক্ষেপ</a>
+        <a href="analytics_report.php"><i class="fas fa-chart-bar"></i> বিশ্লেষণ এবং প্রতিবেদন</a>
+    </div>
+
+    <!-- Content Area -->
+    <div class="content">
+        <div class="container">
+            <h2>ভাড়ার জন্য উপলব্ধ সরঞ্জাম</h2>
+            <table>
+                <thead>
                     <tr>
-                        <td>
-                            <?php if (!empty($row['image'])): ?>
-                               <img src="<?= htmlspecialchars($row['image']); ?>" width="300" height="250" />
-
-
-                            <?php else: ?>
-                                ছবি নেই
-                            <?php endif; ?>
-                        </td>
-                        <td><?= htmlspecialchars($row['name']) ?></td>
-                        <td><?= htmlspecialchars($row['type']) ?></td>
-                        <td><?= htmlspecialchars($row['quantity_available']) ?></td>
-                        <td>৳<?= htmlspecialchars($row['rental_rate_per_day']) ?></td>
-                        <td>
-                            <form method="POST" class="rent-form">
-                                <input type="hidden" name="equipment_id" value="<?= $row['equipment_id'] ?>">
-                                <input type="number" name="quantity" min="1" max="<?= $row['quantity_available'] ?>" required placeholder="সংখ্যা">
-                                <input type="date" name="start_date" required>
-                                <input type="date" name="end_date" required>
-                                <input type="submit" name="rent_now" value="ভাড়া নিন">
-                            </form>
-                        </td>
+                        <th>ছবি</th>
+                        <th>সরঞ্জামের নাম</th>
+                        <th>ধরণ</th>
+                        <th>প্রাপ্যতা</th>
+                        <th>ভাড়া (প্রতি দিন)</th>
+                        <th>ভাড়া ফর্ম</th>
                     </tr>
-                <?php endwhile; ?>
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    <?php while ($row = $result->fetch_assoc()): ?>
+                        <tr>
+                            <td>
+                                <?php if (!empty($row['image'])): ?>
+                                   <img src="<?= htmlspecialchars($row['image']); ?>" width="300" height="250" />
+                                <?php else: ?>
+                                    ছবি নেই
+                                <?php endif; ?>
+                            </td>
+                            <td><?= htmlspecialchars($row['name']) ?></td>
+                            <td><?= htmlspecialchars($row['type']) ?></td>
+                            <td><?= htmlspecialchars($row['quantity_available']) ?></td>
+                            <td>৳<?= htmlspecialchars($row['rental_rate_per_day']) ?></td>
+                            <td>
+                                <form method="POST" class="rent-form">
+                                    <input type="hidden" name="equipment_id" value="<?= $row['equipment_id'] ?>">
+                                    <input type="number" name="quantity" min="1" max="<?= $row['quantity_available'] ?>" required placeholder="সংখ্যা">
+                                    <input type="date" name="start_date" required>
+                                    <input type="date" name="end_date" required>
+                                    <input type="submit" name="rent_now" value="ভাড়া নিন">
+                                </form>
+                            </td>
+                        </tr>
+                    <?php endwhile; ?>
+                </tbody>
+            </table>
+        </div>
     </div>
 </body>
 </html>

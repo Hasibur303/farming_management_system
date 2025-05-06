@@ -1,14 +1,13 @@
 <?php
-session_start(); // Start the session
-include 'database.php'; // Include the database connection file
+session_start();
+include 'database.php';
 
-$error = ''; // Initialize error message
+$error = '';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $phone_number = $_POST['phone_number']; // Use phone number as username
+    $phone_number = $_POST['phone_number'];
     $password = $_POST['password'];
 
-    // Prepare and execute the SQL statement
     $sql = "SELECT * FROM users WHERE phone_number = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("s", $phone_number);
@@ -17,15 +16,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if ($result->num_rows > 0) {
         $user = $result->fetch_assoc();
-        // Verify the password
         if (password_verify($password, $user['password'])) {
-            // Password is correct, set session variables
             $_SESSION['user_id'] = $user['user_id'];
-            $_SESSION['username'] = $user['name']; // Assuming 'name' is the user's name in the database
+            $_SESSION['username'] = $user['name'];
             $_SESSION['role'] = $user['role'];
 
-            // Redirect based on user role
-            $role = $user['role']; // Fetch the role from the database
+            $role = $user['role'];
             if ($role === 'Admin') {
                 header('Location: admin/admin.php');
             } elseif ($role === 'Farmer') {
@@ -51,114 +47,111 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 ?>
 
-<!-- HTML Form for User Login -->
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - SmartAgri</title>
+    <title>SmartAgri Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
-    body {
-        font-family: Arial, sans-serif;
-        background: linear-gradient(to bottom right, #e3f2fd, #c8e6c9); /* Professional gradient background */
-        padding: 100px;
-        margin: 0;
-    }
-
-    .form-container {
-        max-width: 400px;
-        margin: auto;
-        background: linear-gradient(to right, #4caf50, #8bc34a); /* Initial gradient */
-        padding: 30px;
-        border-radius: 10px;
-        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-        animation: bounceAnimation 1s ease-in-out infinite, gradientAnimation 5s ease infinite; /* Apply both animations */
-    }
-
-    /* Bounce animation */
-    @keyframes bounceAnimation {
-        0% {
-            transform: translateY(0);
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
         }
-        20% {
-            transform: translateY(-10px);
-        }
-        40% {
-            transform: translateY(0);
-        }
-        60% {
-            transform: translateY(-5px);
-        }
-        80% {
-            transform: translateY(0);
-        }
-        100% {
-            transform: translateY(0);
-        }
-    }
 
+        body {
+            background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
 
-    }
+        .form-container {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+            max-width: 420px;
+            width: 100%;
+            transition: 0.3s ease-in-out;
+        }
 
-    .form-container h2 {
-        text-align: center;
-        margin-bottom: 20px;
-        color: white; /* Text color to contrast with the gradient */
-    }
+        .form-container:hover {
+            box-shadow: 0 25px 55px rgba(0,0,0,0.15);
+        }
 
-    .form-group {
-        margin-bottom: 15px;
-    }
-    .form-group label {
-        display: block;
-        margin-bottom: 5px;
-        font-weight: bold;
-        color: #33;
-    }
-    .form-group input {
-        width: 100%;
-        padding: 10px;
-        border: 1px solid #cc;
-        border-radius: 5px;
-    }
-    .form-group input[type="submit"] {
-        background-color: #8BC34A;
-        color: white;
-        border: 1px;
-        cursor: pointer;
-        transition: background-color 0.6s;
-    }
-    .form-group input[type="submit"]:hover {
-        background-color: #45a049;
-    }
-    .error {
-        color: red;
-        margin-bottom: 15px;
-        text-align: center;
-    }
-    .register-link {
-        margin-top: 15px;
-        text-align: center;
-    }
-    .register-link a {
-        color: #ffffff;
-        text-decoration: none;
-    }
-    .register-link a:hover {
-        text-decoration: underline;
-    }
-    .back-link {
-        text-align: center;
-        margin-top: 20px;
-    }
-    .back-link a {
-        color: #ffffff;
-        text-decoration: none;
-    }
-    .back-link a:hover {
-        text-decoration: underline;
-    }
+        .form-container h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #2e7d32;
+            font-weight: 600;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            color: #4caf50;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus {
+            border-color: #4caf50;
+            outline: none;
+        }
+
+        .form-group input[type="submit"] {
+            background-color: #4caf50;
+            color: white;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .form-group input[type="submit"]:hover {
+            background-color: #388e3c;
+        }
+
+        .error {
+            color: red;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .register-link,
+        .back-link {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 14px;
+        }
+
+        .register-link a,
+        .back-link a {
+            color: #388e3c;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .register-link a:hover,
+        .back-link a:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
@@ -188,7 +181,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <p>কোন অ্যাকাউন্ট নেই? <a href="register.php">এখানে নিবন্ধন করুন</a></p>
     </div>
 
-    <!-- Back to Dashboard Link -->
     <div class="back-link">
         <p><a href="dashboard.php">ড্যাশবোর্ডে ফিরে যান</a></p>
     </div>

@@ -146,6 +146,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             font-size: 14px;
             color: #fff;
         }
+
+        .back-to-login-text {
+            margin-top: 15px;
+            text-align: center;
+        }
+
+        .back-to-login-text a {
+            color: #2e7d32; /* Greenish text */
+            text-decoration: underline;
+            font-weight: bold;
+            font-size: 16px;
+            font-family: 'Segoe UI', sans-serif;
+            transition: color 0.3s ease;
+        }
+
+        .back-to-login-text a:hover {
+            color: #1b5e20; /* Slightly darker green on hover */
+        }
+
+
     </style>
 </head>
 <body>
@@ -202,6 +222,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <div class="form-group">
                 <input type="submit" value="Register">
             </div>
+            <div class="back-to-login-text">
+                <a href="login.php">লগইন পেইজে ফিরে যান</a>
+            </div>
+
+
         </form>
     </div>
 

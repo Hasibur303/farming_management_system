@@ -59,11 +59,11 @@
             box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.5);
         }
         .hero h1 {
-            font-size: 3em;
+            font-size: 1.5em;
             color: white;
             background-color: rgba(0, 0, 0, 0.5);
             padding: 20px 40px;
-            border-radius: 10px;
+            border-radius: 5px;
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
         }
         .container {
