@@ -427,214 +427,211 @@ form input[type="submit"]:hover {
     </style>
 </head>
 <body>
+    <!-- Language Toggle Button -->
+    <div style="position: absolute; top: 20px; right: 120px;">
+        <button id="langToggle" class="btn btn-sm btn-secondary">EN</button>
+    </div>
 
-
- <!-- Sidebar -->
- <div class="sidebar">
+    <!-- Sidebar -->
+    <div class="sidebar">
         <ul class="nav flex-column">
             <li class="nav-item">
                 <a class="nav-link" href="admin.php">
-                    <i class="fas fa-home"></i> অ্যাডমিন ড্যাশবোর্ড
+                    <i class="fas fa-home"></i> <span id="nav-dashboard">অ্যাডমিন ড্যাশবোর্ড</span>
                 </a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="../analytics/analytics.php">
-                    <i class="fas fa-chart-bar"></i> বিশ্লেষণ
+                    <i class="fas fa-chart-bar"></i> <span id="nav-analysis">বিশ্লেষণ</span>
                 </a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="./performance.php">
-                    <i class="fas fa-chart-bar"></i>কর্মক্ষমতা
+                    <i class="fas fa-chart-bar"></i> <span id="nav-performance">কর্মক্ষমতা</span>
                 </a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="manage_farmers.php">
-                    <i class="fas fa-users"></i> কৃষকদের পরিচালনা করুন
+                    <i class="fas fa-users"></i> <span id="nav-farmers">কৃষকদের পরিচালনা করুন</span>
                 </a>
             </li>
             <li class="nav-item">
-                            <a class="nav-link" href="manage_suppliers.php">
-                                <i class="fas fa-users"></i> সরবরাহকারীদের পরিচালনা করুন
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                                                    <a class="nav-link" href="manage_products.php">
-                                                        <i class="fas fa-users"></i> পণ্য পরিচালনা করুন
-                                                    </a>
-                                                </li>
+                <a class="nav-link" href="manage_suppliers.php">
+                    <i class="fas fa-users"></i> <span id="nav-suppliers">সরবরাহকারীদের পরিচালনা করুন</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="manage_products.php">
+                    <i class="fas fa-users"></i> <span id="nav-products">পণ্য পরিচালনা করুন</span>
+                </a>
+            </li>
             <li class="nav-item">
                 <a class="nav-link" href="manage_customers.php">
-                    <i class="fas fa-user-friends"></i> গ্রাহকদের পরিচালনা করুন
+                    <i class="fas fa-user-friends"></i> <span id="nav-customers">গ্রাহকদের পরিচালনা করুন</span>
                 </a>
             </li>
-
             <li class="nav-item">
                 <a class="nav-link" href="../logout.php">
-                    <i class="fas fa-sign-out-alt"></i> লগআউট
+                    <i class="fas fa-sign-out-alt"></i> <span id="nav-logout">লগআউট</span>
                 </a>
             </li>
         </ul>
     </div>
 
-
     <header>
-        <h1>অ্যাডমিন ড্যাশবোর্ড - স্মার্ট কৃষি</h1>
-        <a href="../logout.php" class="button">লগআউট</a>
+        <h1 id="dashboard-title">অ্যাডমিন ড্যাশবোর্ড - স্মার্ট কৃষি</h1>
+        <a href="../logout.php" class="button" id="nav-logout">লগআউট</a>
     </header>
 
+    <!-- User Role Distribution -->
+    <div class="container">
+        <h2 class="text-center" id="user-count-title">ব্যবহারকারীর সংখ্যা</h2>
+        <canvas id="userChart"></canvas>
+    </div>
 
-<!-- User Role Distribution -->
-<div class="container">
-    <h2 class="text-center">ব্যবহারকারীর সংখ্যা</h2>
-    <canvas id="userChart"></canvas>
-</div>
+    <script>
+        const roles = <?= json_encode($roles) ?>;
+        const counts = <?= json_encode($counts) ?>;
+        const total = counts.reduce((sum, value) => sum + parseInt(value), 0);
 
-<script>
-    // Get the chart data from PHP
-    const roles = <?= json_encode($roles) ?>;
-    const counts = <?= json_encode($counts) ?>;
-
-    // Calculate total count correctly
-    const total = counts.reduce((sum, value) => sum + parseInt(value), 0);
-
-    const ctx = document.getElementById('userChart').getContext('2d');
-    const userChart = new Chart(ctx, {
-        type: 'doughnut',  // Change to 'doughnut' for a 2D look
-        data: {
-            labels: roles,
-            datasets: [{
-                data: counts,
-                backgroundColor: ['#007bff', '#28a745', '#ffc107', '#dc3545', '#6c757d'],
-                borderColor: '#fff',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: {
-                    position: 'top'
-                },
-                datalabels: {
-                    color: '#fff',
-                    anchor: 'center',
-                    align: 'center',
-                    formatter: (value) => {
-                        let percentage = ((parseInt(value) / total) * 100).toFixed(2);
-                        return percentage + "%";
-                    },
-                    font: {
-                        weight: 'bold',
-                        size: 14
+        const ctx = document.getElementById('userChart').getContext('2d');
+        const userChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: roles,
+                datasets: [{
+                    data: counts,
+                    backgroundColor: ['#007bff', '#28a745', '#ffc107', '#dc3545', '#6c757d'],
+                    borderColor: '#fff',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { position: 'top' },
+                    datalabels: {
+                        color: '#fff',
+                        anchor: 'center',
+                        align: 'center',
+                        formatter: (value) => ((parseInt(value) / total) * 100).toFixed(2) + "%",
+                        font: { weight: 'bold', size: 14 }
                     }
                 }
-            }
-        },
-        plugins: [ChartDataLabels]
-    });
-</script>
-
-
-<h2 class="text-left">.</h2>
-<h2 class="text-left">.</h2>
-<h2>.</h2>
-
-<!-- Order Completion Rate -->
-<div style="max-width: 80%; margin: 0 auto; padding: 20px;">
-    <h2 class="text-center">অর্ডার সম্পূর্ণ হওয়ার হার</h2>
-    <canvas id="orderCompletionChart"></canvas>
-</div>
-
-<script>
-    const dates = <?= json_encode($dates) ?>;
-    const completed = <?= json_encode($completed) ?>;
-    const pending = <?= json_encode($pending) ?>;
-    const processing = <?= json_encode($processing) ?>;
-    const shipped = <?= json_encode($shipped) ?>;
-    const delivered = <?= json_encode($delivered) ?>;
-    const cancelled = <?= json_encode($cancelled) ?>;
-
-    const ctx2 = document.getElementById('orderCompletionChart').getContext('2d');
-    const orderCompletionChart = new Chart(ctx2, {
-        type: 'bar', // Stacked bar chart
-        data: {
-            labels: dates, // X-axis: Dates
-            datasets: [
-                {
-                    label: 'সম্পন্ন',
-                    data: completed, // Data for completed orders
-                    backgroundColor: '#C5E1A5', // Green for completed
-                },
-                {
-                    label: 'প্রতীক্ষমাণ',
-                    data: pending, // Data for pending orders
-                    backgroundColor: '#ffc107', // Yellow for pending
-                },
-                {
-                    label: 'প্রক্রিয়াকরণ',
-                    data: processing, // Data for processing orders
-                    backgroundColor: '#17a2b8', // Blue for processing
-                },
-                {
-                    label: 'পাঠানো হয়েছে',
-                    data: shipped, // Data for shipped orders
-                    backgroundColor: '#0D47A1', // Light Blue for shipped
-                },
-                {
-                    label: 'বিতরণ করা হয়েছে',
-                    data: delivered, // Data for delivered orders
-                    backgroundColor: '#28a745', // Dark Green for delivered
-                },
-                {
-                    label: 'বাতিল করা হয়েছে',
-                    data: cancelled, // Data for canceled orders
-                    backgroundColor: '#C62828', // Red for canceled
-                }
-            ]
-        },
-        options: {
-            responsive: true,
-            scales: {
-                x: {
-                    stacked: true, // Stacked bars on the X-axis
-                },
-                y: {
-                    stacked: true, // Stacked bars on the Y-axis
-                    beginAtZero: true
-                }
             },
-            plugins: {
-                legend: {
-                    position: 'top',
+            plugins: [ChartDataLabels]
+        });
+    </script>
+
+    <!-- Order Completion Rate -->
+    <div style="max-width: 80%; margin: 0 auto; padding: 20px;">
+        <h2 class="text-center" id="order-rate-title">অর্ডার সম্পূর্ণ হওয়ার হার</h2>
+        <canvas id="orderCompletionChart"></canvas>
+    </div>
+
+    <script>
+        const dates = <?= json_encode($dates) ?>;
+        const completed = <?= json_encode($completed) ?>;
+        const pending = <?= json_encode($pending) ?>;
+        const processing = <?= json_encode($processing) ?>;
+        const shipped = <?= json_encode($shipped) ?>;
+        const delivered = <?= json_encode($delivered) ?>;
+        const cancelled = <?= json_encode($cancelled) ?>;
+
+        const ctx2 = document.getElementById('orderCompletionChart').getContext('2d');
+        const orderCompletionChart = new Chart(ctx2, {
+            type: 'bar',
+            data: {
+                labels: dates,
+                datasets: [
+                    { label: 'সম্পন্ন', data: completed, backgroundColor: '#C5E1A5' },
+                    { label: 'প্রতীক্ষমাণ', data: pending, backgroundColor: '#ffc107' },
+                    { label: 'প্রক্রিয়াকরণ', data: processing, backgroundColor: '#17a2b8' },
+                    { label: 'পাঠানো হয়েছে', data: shipped, backgroundColor: '#0D47A1' },
+                    { label: 'বিতরণ করা হয়েছে', data: delivered, backgroundColor: '#28a745' },
+                    { label: 'বাতিল করা হয়েছে', data: cancelled, backgroundColor: '#C62828' }
+                ]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    x: { stacked: true },
+                    y: { stacked: true, beginAtZero: true }
                 },
-                tooltip: {
-                    callbacks: {
-                        label: function(tooltipItem) {
-                            return tooltipItem.dataset.label + ': ' + tooltipItem.raw;
+                plugins: {
+                    legend: { position: 'top' },
+                    tooltip: {
+                        callbacks: {
+                            label: (tooltipItem) => tooltipItem.dataset.label + ': ' + tooltipItem.raw
                         }
                     }
                 }
             }
-        }
-    });
-</script>
+        });
+    </script>
 
-
-
-
-
-
+    <!-- Success/Error Messages -->
     <div class="container">
-        <!-- Display Success/Error Messages -->
         <?php if (isset($_GET['success'])): ?>
             <p class="success"><?= htmlspecialchars($_GET['success']); ?></p>
         <?php elseif (isset($_GET['error'])): ?>
             <p class="error"><?= htmlspecialchars($_GET['error']); ?></p>
         <?php endif; ?>
+    </div>
 
+    <!-- Language Switch Script -->
+    <script>
+        const translations = {
+            en: {
+                dashboard: "Admin Dashboard",
+                analysis: "Analytics",
+                performance: "Performance",
+                manageFarmers: "Manage Farmers",
+                manageSuppliers: "Manage Suppliers",
+                manageProducts: "Manage Products",
+                manageCustomers: "Manage Customers",
+                logout: "Logout",
+                userCount: "User Count",
+                orderRate: "Order Completion Rate"
+            },
+            bn: {
+                dashboard: "অ্যাডমিন ড্যাশবোর্ড",
+                analysis: "বিশ্লেষণ",
+                performance: "কর্মক্ষমতা",
+                manageFarmers: "কৃষকদের পরিচালনা করুন",
+                manageSuppliers: "সরবরাহকারীদের পরিচালনা করুন",
+                manageProducts: "পণ্য পরিচালনা করুন",
+                manageCustomers: "গ্রাহকদের পরিচালনা করুন",
+                logout: "লগআউট",
+                userCount: "ব্যবহারকারীর সংখ্যা",
+                orderRate: "অর্ডার সম্পূর্ণ হওয়ার হার"
+            }
+        };
 
+        let currentLang = 'bn';
 
+        document.getElementById('langToggle').addEventListener('click', () => {
+            currentLang = currentLang === 'bn' ? 'en' : 'bn';
+            document.getElementById('langToggle').textContent = currentLang === 'bn' ? 'EN' : 'BN';
+            updateText();
+        });
 
+        function updateText() {
+            document.getElementById('dashboard-title').textContent = translations[currentLang].dashboard + " - স্মার্ট কৃষি";
+            document.getElementById('user-count-title').textContent = translations[currentLang].userCount;
+            document.getElementById('order-rate-title').textContent = translations[currentLang].orderRate;
 
+            document.getElementById('nav-dashboard').textContent = translations[currentLang].dashboard;
+            document.getElementById('nav-analysis').textContent = translations[currentLang].analysis;
+            document.getElementById('nav-performance').textContent = translations[currentLang].performance;
+            document.getElementById('nav-farmers').textContent = translations[currentLang].manageFarmers;
+            document.getElementById('nav-suppliers').textContent = translations[currentLang].manageSuppliers;
+            document.getElementById('nav-products').textContent = translations[currentLang].manageProducts;
+            document.getElementById('nav-customers').textContent = translations[currentLang].manageCustomers;
+            document.querySelectorAll('#nav-logout').forEach(el => el.textContent = translations[currentLang].logout);
+        }
+    </script>
 </body>
+
+
 </html>
