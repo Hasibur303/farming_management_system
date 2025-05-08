@@ -501,6 +501,11 @@ header h1 {
             <i class="fas fa-shopping-cart icon"></i>
             <span class="text">সরবরাহকারীদের কাছ থেকে কিনুন</span>
         </a>
+        <a href="labour_jobs.php">
+            <i class="fas fa-briefcase icon"></i>
+            <span class="text">শ্রমিকের চাকরির পোস্ট</span>
+        </a>
+
         <a href="rent_page.php">
             <i class="fas fa-shopping-cart icon"></i>
             <span class="text">ভাড়ার পরিষেবা</span>

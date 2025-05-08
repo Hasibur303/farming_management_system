@@ -1,6 +1,8 @@
 <?php
 session_start();
 include 'database.php';
+// Fetch all job posts
+$jobs = $conn->query("SELECT * FROM labour_jobpost ORDER BY post_date DESC");
 
 // Dummy user ID for demo; replace with $_SESSION['user_id'] in production
 $user_id = 1;
@@ -15,7 +17,7 @@ if (isset($_GET['lang']) && in_array($_GET['lang'], ['bn', 'en'])) {
 $lang = $_SESSION['lang'];
 $text = [
     'bn' => [
-        'title' => 'শ্রমিকের ড্যাশবোর্ড',
+        'title' => 'কাজের তালিকা',
         'welcome' => 'স্বাগতম, শ্রমিক!',
         'update_profile' => 'আপনার প্রোফাইল হালনাগাদ করুন',
         'upload_image' => 'প্রোফাইল ছবি আপলোড করুন:',
@@ -36,7 +38,7 @@ $text = [
         'settings' => 'সেটিংস',
     ],
     'en' => [
-        'title' => 'Labour Dashboard',
+        'title' => 'Job List',
         'welcome' => 'Welcome, Labourer!',
         'update_profile' => 'Update Your Profile',
         'upload_image' => 'Upload Profile Image:',
@@ -59,34 +61,7 @@ $text = [
 ];
 $current_text = $text[$lang];
 
-// Form Handling
-$success = '';
-$error = '';
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $salary = $_POST['daily_salary'];
-    $bio = $_POST['bio'];
-    $profile_image = '';
 
-    if (!empty($_FILES["profile_image"]["name"])) {
-        $target_dir = "uploads/";
-        $profile_image = basename($_FILES["profile_image"]["name"]);
-        $target_file = $target_dir . $profile_image;
-        move_uploaded_file($_FILES["profile_image"]["tmp_name"], $target_file);
-    }
-
-    $sql = "UPDATE users SET daily_salary = ?, bio = ?, profile_image = ? WHERE id = ?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("sssi", $salary, $bio, $profile_image, $user_id);
-
-    if ($stmt->execute()) {
-        $success = "Profile updated successfully!";
-    } else {
-        $error = "Error updating profile: " . $stmt->error;
-    }
-}
-
-// Job fetch
-//$jobs_result = $conn->query("SELECT name, requirement_detail, location FROM farmer_jobs ORDER BY created_at DESC");
 ?>
 <!DOCTYPE html>
 <html lang="<?= $lang ?>">
@@ -221,15 +196,52 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         input[type="submit"]:hover {
             background-color: #2e7030;
         }
-        .job-card {
-            background: #f1f1f1;
-            padding: 20px;
-            margin-bottom: 15px;
-            border-left: 5px solid #4CAF50;
-            border-radius: 8px;
-        }
-        .success { color: green; font-weight: bold; }
-        .error { color: red; font-weight: bold; }
+                /* Job Post Styling */
+                .job-container {
+                    background-color: white;
+                    border-radius: 12px;
+                    padding: 20px;
+                    margin-bottom: 25px;
+                    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+                    max-width: 700px;
+                    margin-left: auto;
+                    margin-right: auto;
+                }
+
+                .job-container img {
+                    max-width: 100%;
+                    border-radius: 10px;
+                    margin-bottom: 15px;
+                }
+
+                .job-meta {
+                    font-size: 16px;
+                    color: #555;
+                    margin-bottom: 10px;
+                }
+
+                .job-caption {
+                    font-size: 18px;
+                    margin-bottom: 15px;
+                    color: #222;
+                }
+
+                .apply-button {
+                    display: inline-block;
+                    padding: 10px 22px;
+                    font-size: 16px;
+                    background-color: #2E7D32;
+                    color: white;
+                    border: none;
+                    border-radius: 8px;
+                    cursor: pointer;
+                    transition: background 0.3s;
+                    text-decoration: none;
+                }
+
+                .apply-button:hover {
+                    background-color: #1B5E20;
+                }
     </style>
 </head>
 <body>
@@ -257,8 +269,37 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 
 
+<h3 style="text-align:center; font-size:24px; margin-bottom:25px;">
+        <?= $current_text['job_list'] ?>
+    </h3>
+
+    <?php if ($jobs->num_rows > 0): ?>
+        <?php while ($row = $jobs->fetch_assoc()): ?>
+            <div class="job-container">
+                <div class="job-meta">
+                    👨‍🌾 <?= htmlspecialchars($row['farmer_name']) ?> | 🕒 <?= $row['post_date'] ?>
+                </div>
+                <?php if (!empty($row['photo'])): ?>
+                    <img src="<?= htmlspecialchars($row['photo']) ?>" alt="Job Image">
+                <?php endif; ?>
+                <div class="job-caption">
+                    <?= nl2br(htmlspecialchars($row['caption'])) ?>
+                </div>
+                <a href="apply_job.php?job_id=<?= $row['id'] ?>" class="apply-button">আবেদন করুন</a>
+            </div>
+        <?php endwhile; ?>
+    <?php else: ?>
+        <p style="text-align:center; font-size:18px; color:gray;">
+            <?= $current_text['no_jobs'] ?>
+        </p>
+    <?php endif; ?>
 
 </div>
+
+
+
+</div>
+
 
 </body>
 </html>
