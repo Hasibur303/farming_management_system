@@ -3,8 +3,13 @@ session_start();
 include 'database.php';
 
 
-// Dummy user ID for demo; replace with $_SESSION['user_id'] in production
-$user_id = 1;
+
+if (!isset($_SESSION['user_id'])) {
+    header("Location: login.php");
+    exit();
+}
+
+$user_id = $_SESSION['user_id'];
 
 
 
