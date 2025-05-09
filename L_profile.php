@@ -284,7 +284,7 @@ $data = $result->fetch_assoc();
     <a href="L_job.php">📋 <span><?= $current_text['jobs'] ?></span></a>
     <a href="messages.php">💬 <span><?= $current_text['messages'] ?></span></a>
     <a href="notifications.php">🔔 <span><?= $current_text['notifications'] ?></span></a>
-    <a href="settings.php">⚙️ <span><?= $current_text['settings'] ?></span></a>
+    <a href="settings.php">⚙ <span><?= $current_text['settings'] ?></span></a>
     <a class="logout-sidebar" href="logout.php">🚪 <span><?= $current_text['logout'] ?></span></a>
 </div>
 

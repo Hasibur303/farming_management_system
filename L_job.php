@@ -7,6 +7,11 @@ $jobs = $conn->query("SELECT * FROM labour_jobpost ORDER BY post_date DESC");
 // Dummy user ID for demo; replace with $_SESSION['user_id'] in production
 $user_id = 1;
 
+
+
+
+
+
 // Language handling
 if (!isset($_SESSION['lang'])) {
     $_SESSION['lang'] = 'bn';
@@ -227,21 +232,19 @@ $current_text = $text[$lang];
                 }
 
                 .apply-button {
-                    display: inline-block;
-                    padding: 10px 22px;
-                    font-size: 16px;
-                    background-color: #2E7D32;
+                    background-color: #28a745;
                     color: white;
-                    border: none;
-                    border-radius: 8px;
-                    cursor: pointer;
-                    transition: background 0.3s;
+                    padding: 10px 16px;
                     text-decoration: none;
+                    border-radius: 8px;
+                    display: inline-block;
+                    margin-top: 10px;
+                    font-size: 18px;
+                }
+                .apply-button:hover {
+                    background-color: #218838;
                 }
 
-                .apply-button:hover {
-                    background-color: #1B5E20;
-                }
     </style>
 </head>
 <body>
@@ -285,7 +288,7 @@ $current_text = $text[$lang];
                 <div class="job-caption">
                     <?= nl2br(htmlspecialchars($row['caption'])) ?>
                 </div>
-                <a href="apply_job.php?job_id=<?= $row['id'] ?>" class="apply-button">আবেদন করুন</a>
+                <a href="L_apply_job_list.php?job_id=<?= $row['id'] ?>" class="apply-button">আবেদন করুন</a>
             </div>
         <?php endwhile; ?>
     <?php else: ?>
@@ -293,13 +296,7 @@ $current_text = $text[$lang];
             <?= $current_text['no_jobs'] ?>
         </p>
     <?php endif; ?>
-
+    </div>
 </div>
-
-
-
-</div>
-
-
 </body>
 </html>
