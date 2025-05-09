@@ -2,12 +2,13 @@
 session_start();
 include('database.php');
 
-// Dummy farmer session values
+// Dummy farmer session values (replace with actual session later)
 $farmer_id = 1;
 $farmer_name = "জন কিষাণী";
 
 $message = '';
 
+// Handle new job post submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $caption = $_POST['caption'];
     $photo = '';
@@ -27,10 +28,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// Fetch posts
+// Fetch job posts
 $posts = $conn->query("SELECT * FROM labour_jobpost ORDER BY post_date DESC");
 
+// Fetch pending application count for notifications
+$notif_stmt = $conn->prepare("
+    SELECT COUNT(*) as pending_count
+    FROM job_applications ja
+    JOIN labour_jobpost jp ON ja.job_id = jp.id
+    WHERE jp.farmer_ID = ? AND ja.status = 'Pending'
+");
+$notif_stmt->bind_param("i", $farmer_id);
+$notif_stmt->execute();
+$notif_result = $notif_stmt->get_result()->fetch_assoc();
+$pending_count = $notif_result['pending_count'];
 ?>
+
 <!DOCTYPE html>
 <html lang="bn">
 <head>
@@ -138,6 +151,20 @@ $posts = $conn->query("SELECT * FROM labour_jobpost ORDER BY post_date DESC");
             color: green;
             margin-bottom: 10px;
         }
+
+        .notification {
+            background-color: #FFEB3B;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .notification a {
+            color: #2E7D32;
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
@@ -152,11 +179,18 @@ $posts = $conn->query("SELECT * FROM labour_jobpost ORDER BY post_date DESC");
     <a href="farmer/inventory_management.php"><i class="fas fa-boxes"></i> ইনভেন্টরি ম্যানেজমেন্ট</a>
     <a href="farmer/financial_overview.php"><i class="fas fa-wallet"></i> আর্থিক সারসংক্ষেপ</a>
     <a href="analytics_report.php"><i class="fas fa-chart-bar"></i> বিশ্লেষণ এবং প্রতিবেদন</a>
-    <a href="labour_job.php"><i class="fas fa-briefcase"></i> শ্রমিকের চাকরির পোস্ট</a>
+    <a href="labour_jobs.php"><i class="fas fa-briefcase"></i> শ্রমিকের চাকরির পোস্ট</a>
 </div>
 
 <div class="main">
     <h2>শ্রমিকের চাকরির পোস্ট</h2>
+
+    <?php if ($pending_count > 0): ?>
+    <div class="notification">
+        🔔 আপনার কাছে <strong><?= $pending_count ?></strong>টি নতুন শ্রমিক আবেদন রয়েছে।
+        <a href="farmer_applications.php">এখানে দেখুন</a>
+    </div>
+    <?php endif; ?>
 
     <div class="post-form">
         <?php if ($message) echo "<div class='message'>$message</div>"; ?>
