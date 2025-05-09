@@ -3,8 +3,18 @@ session_start();
 include('database.php');
 
 // Dummy farmer session values (replace with actual session later)
-$farmer_id = 1;
-$farmer_name = "জন কিষাণী";
+$farmer_id = $_SESSION['user_id'];
+
+
+$stmt = $conn->prepare("SELECT name FROM users WHERE user_id = ?");
+$stmt->bind_param("i", $farmer_id);
+$stmt->execute();
+$stmt->bind_result($farmer_name);
+$stmt->fetch();
+$stmt->close();
+
+
+
 
 $message = '';
 
@@ -18,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         move_uploaded_file($_FILES['photo']['tmp_name'], $photo);
     }
 
-    $stmt = $conn->prepare("INSERT INTO labour_jobpost (farmer_ID, farmer_name, photo, caption) VALUES (?, ?, ?, ?)");
+    $stmt = $conn->prepare("INSERT INTO labour_jobpost (farmer_id, farmer_name, photo, caption) VALUES (?, ?, ?, ?)");
     $stmt->bind_param("isss", $farmer_id, $farmer_name, $photo, $caption);
 
     if ($stmt->execute()) {
