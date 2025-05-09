@@ -2,8 +2,11 @@
 session_start();
 include 'database.php';
 
+
 // Dummy user ID for demo; replace with $_SESSION['user_id'] in production
 $user_id = 1;
+
+
 
 // Language handling
 if (!isset($_SESSION['lang'])) {
@@ -15,7 +18,7 @@ if (isset($_GET['lang']) && in_array($_GET['lang'], ['bn', 'en'])) {
 $lang = $_SESSION['lang'];
 $text = [
     'bn' => [
-        'title' => 'শ্রমিকের ড্যাশবোর্ড',
+        'title' => 'আবেদনকৃত চাকরির তালিকা',
         'welcome' => 'স্বাগতম, শ্রমিক!',
         'update_profile' => 'আপনার প্রোফাইল হালনাগাদ করুন',
         'upload_image' => 'প্রোফাইল ছবি আপলোড করুন:',
@@ -31,13 +34,12 @@ $text = [
         'dashboard' => 'ড্যাশবোর্ড',
         'profile' => 'প্রোফাইল',
         'jobs' => 'কাজের তালিকা',
-        'appliedjobs' => 'আবেদনকৃত চাকরির তালিকা',
         'messages' => 'বার্তা',
         'notifications' => 'নোটিফিকেশন',
         'settings' => 'সেটিংস',
     ],
     'en' => [
-        'title' => 'Labour Dashboard',
+        'title' => 'Applied Job List',
         'welcome' => 'Welcome, Labourer!',
         'update_profile' => 'Update Your Profile',
         'upload_image' => 'Upload Profile Image:',
@@ -46,7 +48,6 @@ $text = [
         'save_profile' => 'Save Profile',
         'job_list' => 'Farmer Requirements',
         'farmer_name' => 'Farmer Name',
-        'appliedjobs' => 'Applied Job List',
         'requirement' => 'Requirement',
         'location' => 'Location',
         'no_jobs' => 'No job requirements at the moment.',
@@ -61,34 +62,19 @@ $text = [
 ];
 $current_text = $text[$lang];
 
-// Form Handling
-$success = '';
-$error = '';
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $salary = $_POST['daily_salary'];
-    $bio = $_POST['bio'];
-    $profile_image = '';
+$labour_id = $_SESSION['user_id'] ?? 1;
 
-    if (!empty($_FILES["profile_image"]["name"])) {
-        $target_dir = "uploads/";
-        $profile_image = basename($_FILES["profile_image"]["name"]);
-        $target_file = $target_dir . $profile_image;
-        move_uploaded_file($_FILES["profile_image"]["tmp_name"], $target_file);
-    }
+$sql = "SELECT a.*, j.caption, j.farmer_name, j.post_date
+        FROM job_applications a
+        JOIN labour_jobpost j ON a.job_id = j.id
+        WHERE a.labour_id = ?
+        ORDER BY a.apply_date DESC";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("i", $labour_id);
+$stmt->execute();
+$result = $stmt->get_result();
 
-    $sql = "UPDATE users SET daily_salary = ?, bio = ?, profile_image = ? WHERE id = ?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("sssi", $salary, $bio, $profile_image, $user_id);
 
-    if ($stmt->execute()) {
-        $success = "Profile updated successfully!";
-    } else {
-        $error = "Error updating profile: " . $stmt->error;
-    }
-}
-
-// Job fetch
-//$jobs_result = $conn->query("SELECT name, requirement_detail, location FROM farmer_jobs ORDER BY created_at DESC");
 ?>
 <!DOCTYPE html>
 <html lang="<?= $lang ?>">
@@ -223,15 +209,50 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         input[type="submit"]:hover {
             background-color: #2e7030;
         }
-        .job-card {
-            background: #f1f1f1;
-            padding: 20px;
-            margin-bottom: 15px;
-            border-left: 5px solid #4CAF50;
-            border-radius: 8px;
-        }
-        .success { color: green; font-weight: bold; }
-        .error { color: red; font-weight: bold; }
+                /* Job Post Styling */
+                .job-container {
+                    background-color: white;
+                    border-radius: 12px;
+                    padding: 20px;
+                    margin-bottom: 25px;
+                    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+                    max-width: 700px;
+                    margin-left: auto;
+                    margin-right: auto;
+                }
+
+                .job-container img {
+                    max-width: 100%;
+                    border-radius: 10px;
+                    margin-bottom: 15px;
+                }
+
+                .job-meta {
+                    font-size: 16px;
+                    color: #555;
+                    margin-bottom: 10px;
+                }
+
+                .job-caption {
+                    font-size: 18px;
+                    margin-bottom: 15px;
+                    color: #222;
+                }
+
+                .apply-button {
+                    background-color: #28a745;
+                    color: white;
+                    padding: 10px 16px;
+                    text-decoration: none;
+                    border-radius: 8px;
+                    display: inline-block;
+                    margin-top: 10px;
+                    font-size: 18px;
+                }
+                .apply-button:hover {
+                    background-color: #218838;
+                }
+
     </style>
 </head>
 <body>
@@ -242,7 +263,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <a href="L_profile.php">🧑‍🌾 <span><?= $current_text['profile'] ?></span></a>
     <a href="L_job.php">📋 <span><?= $current_text['jobs'] ?></span></a>
     <a href="messages.php">💬 <span><?= $current_text['messages'] ?></span></a>
-    <a href="L_apply_job_list.php">📋 <span><?= $current_text['appliedjobs'] ?></span></a>
     <a href="notifications.php">🔔 <span><?= $current_text['notifications'] ?></span></a>
     <a href="settings.php">⚙️ <span><?= $current_text['settings'] ?></span></a>
     <a class="logout-sidebar" href="logout.php">🚪 <span><?= $current_text['logout'] ?></span></a>
@@ -260,8 +280,30 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 
 
+<h3 style="text-align:center; font-size:24px; margin-bottom:25px;">
+        <?= $current_text['job_list'] ?>
+    </h3>
 
-</div>
+
+
+<h2>আপনার আবেদনকৃত চাকরি</h2>
+<table border="1" cellpadding="10">
+    <tr>
+        <th>Farmer</th>
+        <th>Caption</th>
+        <th>Post Date</th>
+        <th>Status</th>
+    </tr>
+    <?php while($row = $result->fetch_assoc()): ?>
+        <tr>
+            <td><?= htmlspecialchars($row['farmer_name']) ?></td>
+            <td><?= htmlspecialchars($row['caption']) ?></td>
+            <td><?= $row['post_date'] ?></td>
+            <td><?= $row['status'] ?></td>
+        </tr>
+    <?php endwhile; ?>
+</table>
+
 
 </body>
 </html>

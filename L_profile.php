@@ -3,7 +3,7 @@ session_start();
 include 'database.php';
 
 // Dummy user ID; replace with $_SESSION['user_id'] for real login
-$user_id = 1;
+$user_id = $_SESSION['user_id'];
 
 // Language setup
 if (!isset($_SESSION['lang'])) $_SESSION['lang'] = 'bn';
@@ -69,15 +69,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         move_uploaded_file($_FILES["photo"]["tmp_name"], $target_file);
     }
 
-    $check = $conn->query("SELECT id FROM labour WHERE id = $user_id");
+    $check = $conn->query("SELECT user_id FROM labour WHERE user_id = $user_id");
     if ($check->num_rows > 0) {
         // Update
-        $sql = "UPDATE labour SET name=?, photo=?, age=?, salary_per_day=?, description=?, job_experience=?, location=? WHERE id=?";
+        $sql = "UPDATE labour SET name=?, photo=?, age=?, salary_per_day=?, description=?, job_experience=?, location=? WHERE user_id=?";
         $stmt = $conn->prepare($sql);
         $stmt->bind_param("sssdsssi", $name, $photo, $age, $salary, $desc, $experience, $location, $user_id);
     } else {
         // Insert
-        $sql = "INSERT INTO labour (id, name, photo, age, salary_per_day, description, job_experience, location) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        $sql = "INSERT INTO labour (user_id, name, photo, age, salary_per_day, description, job_experience, location) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         $stmt = $conn->prepare($sql);
         $stmt->bind_param("issdssss", $user_id, $name, $photo, $age, $salary, $desc, $experience, $location);
     }
@@ -90,7 +90,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 
 // Fetch existing data
-$result = $conn->query("SELECT * FROM labour WHERE id = $user_id");
+$result = $conn->query("SELECT * FROM labour WHERE user_id = $user_id");
 $data = $result->fetch_assoc();
 ?>
 
@@ -284,7 +284,7 @@ $data = $result->fetch_assoc();
     <a href="L_job.php">📋 <span><?= $current_text['jobs'] ?></span></a>
     <a href="messages.php">💬 <span><?= $current_text['messages'] ?></span></a>
     <a href="notifications.php">🔔 <span><?= $current_text['notifications'] ?></span></a>
-    <a href="settings.php">⚙️ <span><?= $current_text['settings'] ?></span></a>
+    <a href="settings.php">⚙ <span><?= $current_text['settings'] ?></span></a>
     <a class="logout-sidebar" href="logout.php">🚪 <span><?= $current_text['logout'] ?></span></a>
 </div>
 
