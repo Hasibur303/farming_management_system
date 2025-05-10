@@ -2,7 +2,7 @@
 session_start();
 include 'database.php';
 
-// Dummy user ID; replace with $_SESSION['user_id'] for real login
+
 $user_id = $_SESSION['user_id'];
 
 // Language setup
@@ -26,6 +26,7 @@ $text = [
         'messages' => 'বার্তা',
         'notifications' => 'নোটিফিকেশন',
         'settings' => 'সেটিংস',
+        'district' => 'জেলা',
         'logout' => 'লগ আউট',
     ],
     'en' => [
@@ -44,7 +45,9 @@ $text = [
         'messages' => 'Messages',
         'notifications' => 'Notifications',
         'settings' => 'Settings',
+        'district' => 'District',
         'logout' => 'Logout',
+
     ]
 ];
 $current_text = $text[$lang];
@@ -55,6 +58,7 @@ $error = '';
 // Handle form submission
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $name = $_POST['name'];
+    $district = $_POST['district'] ?? '';
     $age = $_POST['age'];
     $salary = $_POST['salary_per_day'];
     $desc = $_POST['description'];
@@ -72,14 +76,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $check = $conn->query("SELECT user_id FROM labour WHERE user_id = $user_id");
     if ($check->num_rows > 0) {
         // Update
-        $sql = "UPDATE labour SET name=?, photo=?, age=?, salary_per_day=?, description=?, job_experience=?, location=? WHERE user_id=?";
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("sssdsssi", $name, $photo, $age, $salary, $desc, $experience, $location, $user_id);
+        if (!empty($photo)) {
+            $sql = "UPDATE labour SET name=?, photo=?, age=?, salary_per_day=?, description=?, job_experience=?, location=?, district=? WHERE user_id=?";
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param("sssdssssi", $name, $photo, $age, $salary, $desc, $experience, $location, $district, $user_id);
+        } else {
+            // Don't update photo if not uploaded
+            $sql = "UPDATE labour SET name=?, age=?, salary_per_day=?, description=?, job_experience=?, location=?, district=? WHERE user_id=?";
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param("ssdssssi", $name, $age, $salary, $desc, $experience, $location, $district, $user_id);
+        }
     } else {
         // Insert
-        $sql = "INSERT INTO labour (user_id, name, photo, age, salary_per_day, description, job_experience, location) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        $sql = "INSERT INTO labour (user_id, name, photo, age, salary_per_day, description, job_experience, location, district) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("issdssss", $user_id, $name, $photo, $age, $salary, $desc, $experience, $location);
+        $stmt->bind_param("issdsssss", $user_id, $name, $photo, $age, $salary, $desc, $experience, $location, $district);
     }
 
     if ($stmt->execute()) {
@@ -314,6 +325,8 @@ $data = $result->fetch_assoc();
         <p><strong><?= $current_text['desc'] ?>:</strong> <?= htmlspecialchars($data['description']) ?></p>
         <p><strong><?= $current_text['experience'] ?>:</strong> <?= htmlspecialchars($data['job_experience']) ?></p>
         <p><strong><?= $current_text['location'] ?>:</strong> <?= htmlspecialchars($data['location']) ?></p>
+        <p><strong><?= $current_text['district'] ?>:</strong> <?= htmlspecialchars($data['district'] ?? '') ?></p>
+
     </div>
     <?php endif; ?>
 
@@ -333,6 +346,27 @@ $data = $result->fetch_assoc();
                 <?php if (!empty($data['photo'])): ?>
                     <p>Current: <img src="uploads/<?= $data['photo'] ?>" height="80"></p>
                 <?php endif; ?>
+            </div>
+            <div class="form-group">
+                <label><?= $current_text['district'] ?? 'District' ?>:</label>
+                <select name="district" required>
+                    <?php
+                    $districts = [
+                        "বাগেরহাট", "বান্দরবান", "বরগুনা", "বরিশাল", "ভোলা", "বগুড়া", "ব্রাহ্মণবাড়িয়া", "চাঁদপুর", "চাঁপাইনবাবগঞ্জ",
+                        "চট্টগ্রাম", "চুয়াডাঙ্গা", "কুমিল্লা", "কক্সবাজার", "ঢাকা", "দিনাজপুর", "ফরিদপুর", "ফেনী", "গাইবান্ধা",
+                        "গাজীপুর", "গোপালগঞ্জ", "হবিগঞ্জ", "জামালপুর", "যশোর", "ঝালকাঠি", "ঝিনাইদহ", "জয়পুরহাট", "খাগড়াছড়ি",
+                        "খুলনা", "কিশোরগঞ্জ", "কুড়িগ্রাম", "কুষ্টিয়া", "লক্ষ্মীপুর", "লালমনিরহাট", "মাদারীপুর", "মাগুরা", "মানিকগঞ্জ",
+                        "মেহেরপুর", "মৌলভীবাজার", "মুন্সিগঞ্জ", "ময়মনসিংহ", "নওগাঁ", "নড়াইল", "নারায়ণগঞ্জ", "নরসিংদী",
+                        "নাটোর", "নেত্রকোণা", "নীলফামারী", "নোয়াখালী", "পাবনা", "পঞ্চগড়", "পটুয়াখালী", "পিরোজপুর", "রাজবাড়ী",
+                        "রাজশাহী", "রাঙ্গামাটি", "রংপুর", "সাতক্ষীরা", "শরীয়তপুর", "শেরপুর", "সিরাজগঞ্জ", "সুনামগঞ্জ", "সিলেট",
+                        "টাঙ্গাইল", "ঠাকুরগাঁও"
+                    ];
+                    foreach ($districts as $d) {
+                        $selected = ($data['district'] ?? '') == $d ? 'selected' : '';
+                        echo "<option value=\"$d\" $selected>$d</option>";
+                    }
+                    ?>
+                </select>
             </div>
 
             <div class="form-group">

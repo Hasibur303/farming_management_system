@@ -2,9 +2,8 @@
 session_start();
 include 'database.php';
 
-// Dummy user ID for demo; replace with $_SESSION['user_id'] in production
+// Check login
 if (!isset($_SESSION['user_id'])) {
-    // Redirect or handle unauthorized access
     header("Location: login.php");
     exit();
 }
@@ -18,6 +17,8 @@ if (isset($_GET['lang']) && in_array($_GET['lang'], ['bn', 'en'])) {
     $_SESSION['lang'] = $_GET['lang'];
 }
 $lang = $_SESSION['lang'];
+
+// Language texts
 $text = [
     'bn' => [
         'title' => 'শ্রমিকের ড্যাশবোর্ড',
@@ -44,7 +45,6 @@ $text = [
         'jobsyouapplied'=> 'আবেদনকৃত চাকরি',
         'acceptedjobs'=> 'গৃহীত চাকরি',
         'processingjobs'=> 'চাকরি প্রক্রিয়াধীন',
-
     ],
     'en' => [
         'title' => 'Labour Dashboard',
@@ -56,7 +56,6 @@ $text = [
         'save_profile' => 'Save Profile',
         'job_list' => 'Farmer Requirements',
         'farmer_name' => 'Farmer Name',
-        'appliedjobs' => 'Applied Job List',
         'requirement' => 'Requirement',
         'location' => 'Location',
         'no_jobs' => 'No job requirements at the moment.',
@@ -64,6 +63,7 @@ $text = [
         'dashboard' => 'Dashboard',
         'profile' => 'Profile',
         'jobs' => 'Job List',
+        'appliedjobs' => 'Applied Job List',
         'messages' => 'Messages',
         'notifications' => 'Notifications',
         'settings' => 'Settings',
@@ -75,12 +75,50 @@ $text = [
 ];
 $current_text = $text[$lang];
 
-// Job metrics queries
-$totalJobs = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) AS total FROM labour_jobpost"))['total'];
-$appliedJobs = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) AS total FROM job_applications WHERE labour_id = $labour_id"))['total'];
-$acceptedJobs = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) AS total FROM job_applications WHERE labour_id = $labour_id AND status = 'Accepted'"))['total'];
-$processingJobs = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) AS total FROM job_applications WHERE labour_id = $labour_id AND status = 'Pending'"))['total'];
+// Function to safely fetch counts
+function getCount($conn, $query) {
+    $result = mysqli_query($conn, $query);
+    if ($result && mysqli_num_rows($result) > 0) {
+        $row = mysqli_fetch_assoc($result);
+        return isset($row['total']) ? (int)$row['total'] : 0;
+    }
+    return 0;
+}
+
+// Job metrics
+$totalJobs = getCount($conn, "SELECT COUNT(*) AS total FROM labour_jobpost");
+$appliedJobs = getCount($conn, "SELECT COUNT(*) AS total FROM job_applications WHERE labour_id = " . intval($labour_id));
+$acceptedJobs = getCount($conn, "SELECT COUNT(*) AS total FROM job_applications WHERE labour_id = " . intval($labour_id) . " AND status = 'Accepted'");
+$processingJobs = getCount($conn, "SELECT COUNT(*) AS total FROM job_applications WHERE labour_id = " . intval($labour_id) . " AND status = 'Pending'");
+
+
+// Fetch district and last login of this labour
+$labourInfoQuery = mysqli_query($conn, "SELECT district, last_login FROM labour WHERE user_id = $labour_id");
+
+if ($labourInfoQuery && mysqli_num_rows($labourInfoQuery) > 0) {
+    $labourInfo = mysqli_fetch_assoc($labourInfoQuery);
+    $labourDistrict = $labourInfo['district'];
+    $lastLogin = $labourInfo['last_login'];
+} else {
+    // Handle missing data gracefully
+    $labourDistrict = '';
+    $lastLogin = '2000-01-01 00:00:00'; // fallback date
+}
+
+// Get new job posts in same district after last login
+$notificationsQuery = mysqli_query($conn, "
+    SELECT * FROM labour_jobpost
+    WHERE district = '$labourDistrict'
+    AND post_date > '$lastLogin'
+    ORDER BY post_date DESC
+");
+
+$newJobs = [];
+while ($row = mysqli_fetch_assoc($notificationsQuery)) {
+    $newJobs[] = $row;
+}
 ?>
+
 
 <!DOCTYPE html>
 <html lang="<?= $lang ?>">
@@ -283,6 +321,27 @@ $processingJobs = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) AS tot
     </div>
 
 </div>
+
+
+<?php if (!empty($newJobs)): ?>
+    <div class="notification-box" style="background: #1f1f1f; color: #fff; padding: 15px; border-radius: 10px; margin-bottom: 20px;">
+        <h3 style="color: #00ff99;">🔔 New Job Notifications</h3>
+        <ul>
+            <?php foreach ($newJobs as $job): ?>
+                <li style="margin-bottom: 10px;">
+                    <strong>Caption:</strong> <?= htmlspecialchars($job['caption']) ?><br>
+                    <strong>Location:</strong> <?= htmlspecialchars($job['district']) ?><br>
+                    <strong>Posted on:</strong> <?= date('d M Y h:i A', strtotime($job['post_date'])) ?>
+                </li>
+                <hr style="border-color: #333;">
+            <?php endforeach; ?>
+        </ul>
+    </div>
+<?php else: ?>
+    <p style="color: #aaa;">No new job notifications.</p>
+<?php endif; ?>
+
+
 
 </body>
 </html>
