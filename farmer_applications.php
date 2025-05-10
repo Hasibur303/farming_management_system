@@ -3,7 +3,12 @@ session_start();
 include('database.php');
 
 // Dummy farmer ID for demonstration
-$farmer_id = 1;
+if (!isset($_SESSION['user_id'])) {
+    // Redirect or handle unauthorized access
+    header("Location: login.php");
+    exit();
+}
+$farmer_id = $_SESSION['user_id'];
 
 // Handle Accept/Reject POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['application_id'], $_POST['status'])) {
