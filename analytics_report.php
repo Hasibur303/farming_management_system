@@ -79,17 +79,26 @@ function getDetailedSalesAnalysis($farmer_id) {
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Analytics & Reports - Farmer Dashboard</title>
-    <link rel="stylesheet" href="./css/analytics_report.css">
+       <meta charset="UTF-8">
+       <meta name="viewport" content="width=device-width, initial-scale=1.0">
+       <title>Farmer Dashboard - SmartAgri</title>
+       <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+       <style>
+    <meta charset="UTF-8">
+       <meta name="viewport" content="width=device-width, initial-scale=1.0">
+       <title>Farmer Dashboard - SmartAgri</title>
+       <!-- Google Fonts -->
+       <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+       <!-- Bootstrap -->
+       <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+       <!-- Font Awesome -->
+       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
 <style>
 .chart-container {
     position: relative;
@@ -99,11 +108,14 @@ function getDetailedSalesAnalysis($farmer_id) {
     background: #e0f2f1; /* Light greenish background */
     border: 2px solid #a5d6a7;
     border-radius: 10px;
+    text-align : center;
 }
 
 .analytics-container {
+    margin: 0 auto;               /* Center horizontally */
+    text-align: center;           /* Center text inside */
+    max-width: 1500px;             /* Optional: limit width for better layout */
     padding: 20px;
-    background-color: #f9fbe7; /* Light yellow-green */
 }
 
 .analytics-card {
@@ -114,6 +126,7 @@ function getDetailedSalesAnalysis($farmer_id) {
     margin-bottom: 25px;
     padding: 25px;
     transition: transform 0.2s ease;
+
 }
 
 .analytics-card:hover {
@@ -123,12 +136,14 @@ function getDetailedSalesAnalysis($farmer_id) {
 .analytics-header {
     border-bottom: 2px solid #c8e6c9;
     margin-bottom: 20px;
+    text-align : center;
     padding-bottom: 15px;
 }
 
 .analytics-header h3 {
     color: #33691e; /* Deep green */
     font-size: 1.8rem;
+    text-align : center;
     font-weight: 700;
     margin: 0;
 }
@@ -145,7 +160,7 @@ function getDetailedSalesAnalysis($farmer_id) {
     border-left: 4px solid #cddc39;
     border-radius: 10px;
     padding: 20px;
-    text-align: center;
+
     box-shadow: 0 2px 10px rgba(0,0,0,0.05);
 }
 
@@ -192,7 +207,7 @@ function getDetailedSalesAnalysis($farmer_id) {
     color: #1b5e20;
     font-weight: 600;
     padding: 15px;
-    text-align: left;
+    text-align: center;
     border-bottom: 2px solid #7cb342;
 }
 
@@ -284,6 +299,104 @@ function getDetailedSalesAnalysis($farmer_id) {
     transform: scale(1.05);
 }
 
+
+/* Sidebar Styles */
+        .sidebar {
+            width: 60px; /* Initially narrow */
+            background-color: #1f2937;
+            color: white;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            padding: 20px 10px;
+            transition: width 0.3s ease; /* Smooth expansion */
+            overflow: hidden; /* Hide content when collapsed */
+            z-index: 999; /* Ensure it stays above content */
+        }
+
+        .sidebar:hover {
+            width: 250px; /* Full width on hover */
+        }
+
+        .sidebar h2 {
+            font-size: 1.5rem;
+            margin-bottom: 30px;
+            font-weight: 600;
+            transition: opacity 0.3s ease;
+        }
+
+        /* Links inside sidebar */
+        .sidebar a {
+            color: #b0bec5;
+            text-decoration: none;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            font-weight: 500;
+            transition: background 0.3s, padding-left 0.3s ease;
+        }
+
+        .sidebar a:hover {
+            background-color: #4b5563;
+            color: white;
+            padding-left: 20px; /* Add space on hover for extra elegance */
+        }
+
+        .sidebar a .icon {
+            width: 30px;
+            text-align: center;
+            margin-right: 10px;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar a:hover .icon {
+            transform: translateX(5px); /* Slide effect for icons */
+        }
+
+        .sidebar a .text {
+            display: none; /* Hide text initially */
+            font-size: 1rem;
+            transition: opacity 0.3s ease;
+        }
+
+        .sidebar:hover a .text {
+            display: block; /* Show text on hover */
+            opacity: 1;
+            transition: opacity 0.3s ease;
+        }
+
+        /* Icons and Text Visibility */
+        .sidebar a .text {
+            opacity: 0;
+        }
+
+        .sidebar:hover a .text {
+            opacity: 1;
+        }
+
+        .sidebar a {
+            justify-content: center;
+        }
+
+        /* Premium Hover Effects */
+        .sidebar a:hover {
+            background-color: #3b4a59;
+            color: #ffffff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transform: translateX(5px); /* Slight movement to the right */
+        }
+
+        .sidebar a .icon {
+            transition: transform 0.3s ease, color 0.3s ease;
+        }
+
+        .sidebar a:hover .icon {
+            color: #4CAF50; /* Change icon color on hover */
+            transform: translateX(5px); /* Add icon animation */
+        }
 </style>
 
 
@@ -294,11 +407,57 @@ function getDetailedSalesAnalysis($farmer_id) {
     <div class="analytics-container">
         <!-- Page Header -->
         <div class="analytics-header d-flex justify-content-between align-items-center mb-4">
-            <h2>বিশ্লেষণ এবং প্রতিবেদন</h2>
+            <h3>বিশ্লেষণ এবং প্রতিবেদন</h3>
             <button class="print-button" onclick="window.print()">
                 <i class="fas fa-print me-2"></i> প্রতিবেদন মুদ্রণ করুন
             </button>
         </div>
+
+         <div class="sidebar">
+                <h2>ন্যাভিগেশন</h2>
+                <a href="farmer.php">
+                            <i class="fas fa-wallet icon"></i>
+                            <span class="text">ড্যাশবোর্ড</span>
+                        </a>
+                <a href="crop_management.php">
+                    <i class="fas fa-seedling icon"></i>
+                    <span class="text">ফসল/পণ্য ব্যবস্থাপনা</span>
+                </a>
+                <a href="Buy.php">
+                    <i class="fas fa-shopping-cart icon"></i>
+                    <span class="text">সরবরাহকারীদের কাছ থেকে কিনুন</span>
+                </a>
+                <a href="labour_jobs.php">
+                    <i class="fas fa-briefcase icon"></i>
+                    <span class="text">শ্রমিকের চাকরির পোস্ট</span>
+                </a>
+
+                <a href="rent_page.php">
+                    <i class="fas fa-shopping-cart icon"></i>
+                    <span class="text">ভাড়ার পরিষেবা</span>
+                </a>
+                <a href="addNewProduct.php">
+                    <i class="fas fa-plus-circle icon"></i>
+                    <span class="text">নতুন পণ্য যোগ করুন</span>
+                </a>
+                <a href="farmer/order_management.php">
+                    <i class="fas fa-clipboard-list icon"></i>
+                    <span class="text">অর্ডার ম্যানেজমেন্ট</span>
+                </a>
+                <a href="farmer/inventory_management.php">
+                    <i class="fas fa-boxes icon"></i>
+                    <span class="text">ইনভেন্টরি ম্যানেজমেন্ট</span>
+                </a>
+                <a href="farmer/financial_overview.php">
+                    <i class="fas fa-wallet icon"></i>
+                    <span class="text">আর্থিক সারসংক্ষেপ</span>
+                </a>
+                <a href="analytics_report.php">
+                    <i class="fas fa-chart-bar icon"></i>
+                    <span class="text">বিশ্লেষণ এবং প্রতিবেদন</span>
+                </a>
+            </div>
+<div class="dashboard-feed">
 
         <!-- Stats Overview -->
         <div class="stats-grid">
@@ -397,6 +556,6 @@ function getDetailedSalesAnalysis($farmer_id) {
         <i class="fas fa-home"></i> ড্যাশবোর্ডে যান
     </a>
 
-
+</div>
 </body>
 </html>

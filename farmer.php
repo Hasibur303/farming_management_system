@@ -493,6 +493,10 @@ header h1 {
 
     <div class="sidebar">
         <h2>ন্যাভিগেশন</h2>
+        <a href="farmer.php">
+                    <i class="fas fa-wallet icon"></i>
+                    <span class="text">ড্যাশবোর্ড</span>
+                </a>
         <a href="crop_management.php">
             <i class="fas fa-seedling icon"></i>
             <span class="text">ফসল/পণ্য ব্যবস্থাপনা</span>

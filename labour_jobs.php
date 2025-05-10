@@ -178,19 +178,50 @@ $pending_count = $notif_result['pending_count'];
     </style>
 </head>
 <body>
-
 <div class="sidebar">
-    <h2>ন্যাভিগেশন</h2>
-    <a href="crop_management.php"><i class="fas fa-seedling"></i> ফসল/পণ্য ব্যবস্থাপনা</a>
-    <a href="Buy.php"><i class="fas fa-shopping-cart"></i> সরবরাহকারীদের কাছ থেকে কিনুন</a>
-    <a href="rent_page.php"><i class="fas fa-shopping-cart"></i> ভাড়ার পরিষেবা</a>
-    <a href="addNewProduct.php"><i class="fas fa-plus-circle"></i> নতুন পণ্য যোগ করুন</a>
-    <a href="farmer/order_management.php"><i class="fas fa-clipboard-list"></i> অর্ডার ম্যানেজমেন্ট</a>
-    <a href="farmer/inventory_management.php"><i class="fas fa-boxes"></i> ইনভেন্টরি ম্যানেজমেন্ট</a>
-    <a href="farmer/financial_overview.php"><i class="fas fa-wallet"></i> আর্থিক সারসংক্ষেপ</a>
-    <a href="analytics_report.php"><i class="fas fa-chart-bar"></i> বিশ্লেষণ এবং প্রতিবেদন</a>
-    <a href="labour_jobs.php"><i class="fas fa-briefcase"></i> শ্রমিকের চাকরির পোস্ট</a>
-</div>
+        <h2>ন্যাভিগেশন</h2>
+        <a href="farmer.php">
+                    <i class="fas fa-wallet icon"></i>
+                    <span class="text">ড্যাশবোর্ড</span>
+                </a>
+        <a href="crop_management.php">
+            <i class="fas fa-seedling icon"></i>
+            <span class="text">ফসল/পণ্য ব্যবস্থাপনা</span>
+        </a>
+        <a href="Buy.php">
+            <i class="fas fa-shopping-cart icon"></i>
+            <span class="text">সরবরাহকারীদের কাছ থেকে কিনুন</span>
+        </a>
+        <a href="labour_jobs.php">
+            <i class="fas fa-briefcase icon"></i>
+            <span class="text">শ্রমিকের চাকরির পোস্ট</span>
+        </a>
+
+        <a href="rent_page.php">
+            <i class="fas fa-shopping-cart icon"></i>
+            <span class="text">ভাড়ার পরিষেবা</span>
+        </a>
+        <a href="addNewProduct.php">
+            <i class="fas fa-plus-circle icon"></i>
+            <span class="text">নতুন পণ্য যোগ করুন</span>
+        </a>
+        <a href="farmer/order_management.php">
+            <i class="fas fa-clipboard-list icon"></i>
+            <span class="text">অর্ডার ম্যানেজমেন্ট</span>
+        </a>
+        <a href="farmer/inventory_management.php">
+            <i class="fas fa-boxes icon"></i>
+            <span class="text">ইনভেন্টরি ম্যানেজমেন্ট</span>
+        </a>
+        <a href="farmer/financial_overview.php">
+            <i class="fas fa-wallet icon"></i>
+            <span class="text">আর্থিক সারসংক্ষেপ</span>
+        </a>
+        <a href="analytics_report.php">
+            <i class="fas fa-chart-bar icon"></i>
+            <span class="text">বিশ্লেষণ এবং প্রতিবেদন</span>
+        </a>
+    </div>
 
 <div class="main">
     <h2>শ্রমিকের চাকরির পোস্ট</h2>

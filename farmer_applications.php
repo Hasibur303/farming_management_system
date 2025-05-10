@@ -40,7 +40,47 @@ $job_posts = $conn->query("SELECT * FROM labour_jobpost WHERE farmer_ID = $farme
 <head>
     <meta charset="UTF-8">
     <title>আবেদনসমূহ পরিচালনা</title>
+    <link rel="stylesheet" type="text/css" href="css/buy.css">
     <style>
+    /* Sidebar Styles */
+            .sidebar {
+                width: 250px;
+                background-color: #333;
+                color: white;
+                height: 100vh;
+                padding-top: 20px;
+                position: fixed;
+                top: 0;
+                left: 0;
+                box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+                z-index: 1000;
+            }
+
+            .sidebar h2 {
+                color: #fff;
+                text-align: center;
+                margin-bottom: 30px;
+                font-weight: 600;
+            }
+
+            .sidebar a {
+                display: flex;
+                align-items: center;
+                color: #fff;
+                text-decoration: none;
+                padding: 12px 20px;
+                font-size: 16px;
+                font-weight: 500;
+                transition: background-color 0.3s ease;
+            }
+
+            .sidebar a:hover {
+                background-color: #555;
+            }
+
+            .sidebar i {
+                margin-right: 10px;
+            }
         body {
             font-family: 'Noto Sans Bengali', sans-serif;
             background-color: #f4f4f4;
