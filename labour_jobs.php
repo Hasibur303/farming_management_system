@@ -21,20 +21,25 @@ $message = '';
 // Handle new job post submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $caption = $_POST['caption'];
+    $district = $_POST['district'];
     $photo = '';
 
-    if (!empty($_FILES['photo']['name'])) {
-        $photo = 'uploads/' . basename($_FILES['photo']['name']);
-        move_uploaded_file($_FILES['photo']['tmp_name'], $photo);
-    }
-
-    $stmt = $conn->prepare("INSERT INTO labour_jobpost (farmer_id, farmer_name, photo, caption) VALUES (?, ?, ?, ?)");
-    $stmt->bind_param("isss", $farmer_id, $farmer_name, $photo, $caption);
-
-    if ($stmt->execute()) {
-        $message = "✅ পোস্ট সফলভাবে প্রকাশিত হয়েছে!";
+    if (empty($district)) {
+        $message = "❗ জেলা নির্বাচন করা আবশ্যক।";
     } else {
-        $message = "❌ সমস্যা হয়েছে: " . $stmt->error;
+        if (!empty($_FILES['photo']['name'])) {
+            $photo = 'uploads/' . basename($_FILES['photo']['name']);
+            move_uploaded_file($_FILES['photo']['tmp_name'], $photo);
+        }
+
+        $stmt = $conn->prepare("INSERT INTO labour_jobpost (farmer_id, farmer_name, photo, caption, district) VALUES (?, ?, ?, ?, ?)");
+        $stmt->bind_param("issss", $farmer_id, $farmer_name, $photo, $caption, $district);
+
+        if ($stmt->execute()) {
+            $message = "✅ পোস্ট সফলভাবে প্রকাশিত হয়েছে!";
+        } else {
+            $message = "❌ সমস্যা হয়েছে: " . $stmt->error;
+        }
     }
 }
 
@@ -238,6 +243,17 @@ $pending_count = $notif_result['pending_count'];
         <form method="POST" enctype="multipart/form-data">
             <label for="caption">ক্যাপশন (বর্ণনা)*:</label>
             <textarea name="caption" id="caption" required rows="3"></textarea>
+            <label for="district">জেলা নির্বাচন করুন*:</label>
+            <select name="district" id="district" required>
+                <option value="">-- জেলা নির্বাচন করুন --</option>
+                <?php
+                $districts = ["ঢাকা", "চট্টগ্রাম", "রাজশাহী", "খুলনা", "বরিশাল", "সিলেট", "রংপুর", "ময়মনসিংহ", "কুমিল্লা", "নোয়াখালী", "ফেনী", "গাজীপুর", "নারায়ণগঞ্জ", "টাঙ্গাইল", "কুষ্টিয়া", "সাতক্ষীরা", "পাবনা", "মাগুরা", "ঝিনাইদহ", "বাগেরহাট", "ভোলা", "ঝালকাঠি", "পটুয়াখালী", "পিরোজপুর", "মাদারীপুর", "শরীয়তপুর", "রাজবাড়ী", "নরসিংদী", "মানিকগঞ্জ", "ফরিদপুর", "চাঁদপুর", "লক্ষ্মীপুর", "মুন্সীগঞ্জ", "সুনামগঞ্জ", "মৌলভীবাজার", "হবিগঞ্জ", "নেত্রকোণা", "জামালপুর", "শেরপুর", "কিশোরগঞ্জ", "নওগাঁ", "নাটোর", "জয়পুরহাট", "চাঁপাইনবাবগঞ্জ", "সিরাজগঞ্জ", "বগুড়া", "লালমনিরহাট", "নীলফামারী", "গাইবান্ধা", "কুড়িগ্রাম", "ঠাকুরগাঁও", "পঞ্চগড়", "দিনাজপুর", "মেহেরপুর", "চুয়াডাঙ্গা", "নড়াইল", "সাতক্ষীরা", "বরগুনা", "কক্সবাজার", "বান্দরবান", "রাঙ্গামাটি", "খাগড়াছড়ি"];
+                foreach ($districts as $district) {
+                    echo "<option value=\"$district\">$district</option>";
+                }
+                ?>
+            </select>
+
 
             <label for="photo">ছবি (ঐচ্ছিক):</label>
             <input type="file" name="photo" accept="image/*">
@@ -248,13 +264,14 @@ $pending_count = $notif_result['pending_count'];
 
     <?php while ($row = $posts->fetch_assoc()): ?>
         <div class="post">
-            <p><strong><?= htmlspecialchars($row['farmer_name']) ?></strong> 🕒 <?= $row['post_date'] ?></p>
+            <p><strong><?= htmlspecialchars($row['farmer_name']) ?></strong> 🕒 <?= $row['post_date'] ?> | District: <?= htmlspecialchars($row['district']) ?></p>
             <?php if (!empty($row['photo'])): ?>
                 <img src="<?= htmlspecialchars($row['photo']) ?>" alt="Post Image">
             <?php endif; ?>
             <p><?= nl2br(htmlspecialchars($row['caption'])) ?></p>
         </div>
     <?php endwhile; ?>
+
 </div>
 
 </body>
