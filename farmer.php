@@ -467,7 +467,7 @@ header h1 {
             console.log('SelectCrop called:', productId, cropName); // Debug line
             const productIdElement = document.getElementById('product_id');
             const selectedCropElement = document.getElementById('selected-crop');
-            
+
             if (productIdElement && selectedCropElement) {
                 productIdElement.value = productId;
                 selectedCropElement.textContent = cropName;
@@ -505,10 +505,19 @@ header h1 {
             <i class="fas fa-shopping-cart icon"></i>
             <span class="text">সরবরাহকারীদের কাছ থেকে কিনুন</span>
         </a>
+        <a href="F_labour_list.php">
+                            <i class="fas fa-list icon"></i>
+                            <span class="text"> শ্রমিক তালিকা </span>
+                        </a>
         <a href="labour_jobs.php">
             <i class="fas fa-briefcase icon"></i>
             <span class="text">শ্রমিকের চাকরির পোস্ট</span>
         </a>
+
+        <a href="farmer_applications.php">
+                    <i class="fas fa-briefcase icon"></i>
+                    <span class="text">শ্রমিকের আবেদন</span>
+                </a>
 
         <a href="rent_page.php">
             <i class="fas fa-shopping-cart icon"></i>
