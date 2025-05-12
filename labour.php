@@ -38,7 +38,7 @@ $text = [
         'profile' => 'প্রোফাইল',
         'jobs' => 'কাজের তালিকা',
         'appliedjobs' => 'আবেদনকৃত চাকরির তালিকা',
-        'messages' => 'বার্তা',
+        'contractrequest' => 'চুক্তির অনুরোধ',
         'notifications' => 'নোটিফিকেশন',
         'settings' => 'সেটিংস',
         'totaljobpost'=> 'মোট চাকরির পদ',
@@ -64,7 +64,7 @@ $text = [
         'profile' => 'Profile',
         'jobs' => 'Job List',
         'appliedjobs' => 'Applied Job List',
-        'messages' => 'Messages',
+        'contractrequest' => 'Contract Request',
         'notifications' => 'Notifications',
         'settings' => 'Settings',
         'totaljobpost'=> 'Total Job Post',
@@ -272,7 +272,7 @@ while ($row = mysqli_fetch_assoc($notificationsQuery)) {
     <a href="labour.php">🏠 <span><?= $current_text['dashboard'] ?></span></a>
     <a href="L_profile.php">🧑‍🌾 <span><?= $current_text['profile'] ?></span></a>
     <a href="L_job.php">📋 <span><?= $current_text['jobs'] ?></span></a>
-    <a href="messages.php">💬 <span><?= $current_text['messages'] ?></span></a>
+    <a href="L_contract_message.php">💬 <span><?= $current_text['contractrequest'] ?></span></a>
     <a href="L_apply_job_list.php">📋 <span><?= $current_text['appliedjobs'] ?></span></a>
     <a href="notifications.php">🔔 <span><?= $current_text['notifications'] ?></span></a>
     <a href="settings.php">⚙️ <span><?= $current_text['settings'] ?></span></a>

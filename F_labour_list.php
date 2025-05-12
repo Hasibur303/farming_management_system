@@ -1,6 +1,33 @@
 <?php
 session_start();
 include 'database.php';
+
+if (isset($_POST['submit_contract'])) {
+    $labour_id = $_POST['labour_id'];
+    $district = $_POST['district'];
+    $start_date = $_POST['start_date'];
+    $description = $_POST['description'];
+    $amount = $_POST['amount'];
+    $address = $_POST['address'];
+    $photoName = '';
+
+    if (isset($_FILES['photo']) && $_FILES['photo']['error'] == 0) {
+        $photoName = time() . '_' . basename($_FILES['photo']['name']);
+        move_uploaded_file($_FILES['photo']['tmp_name'], "uploads/" . $photoName);
+    }
+
+    $user_id = $_SESSION['user_id'];
+    $username = $_SESSION['username'];
+
+    $stmt = $conn->prepare("INSERT INTO contract (user_id, name, labour_id, start_date, description, amount, photo, address, district) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    $stmt->bind_param("isissdsss", $user_id, $username, $labour_id, $start_date, $description, $amount, $photoName, $address, $district);
+
+    if ($stmt->execute()) {
+        echo "<script>alert('চুক্তি সফলভাবে পাঠানো হয়েছে।');window.location.href='F_labour_list.php';</script>";
+    } else {
+        echo "ত্রুটি হয়েছে: " . $stmt->error;
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -456,6 +483,60 @@ $districts = [
                                 <span class="badge <?= ($status === "সক্রিয় শ্রমিক") ? 'bg-success' : 'bg-secondary' ?>">
                                     <?= $status ?>
                                 </span>
+
+
+                                <!-- Contract Proposal Button -->
+                                <button class="btn btn-primary mt-2" data-bs-toggle="modal" data-bs-target="#contractModal<?= $labour['id'] ?>">
+                                    চুক্তির প্রস্তাব
+                                </button>
+
+                                <!-- Contract Modal -->
+                                <div class="modal fade" id="contractModal<?= $labour['id'] ?>" tabindex="-1">
+                                  <div class="modal-dialog">
+                                    <form action="" method="POST" enctype="multipart/form-data" class="modal-content">
+                                      <div class="modal-header">
+                                        <h5 class="modal-title">চুক্তির প্রস্তাব দিন</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                      </div>
+                                      <div class="modal-body">
+                                        <input type="hidden" name="labour_id" value="<?= $labour['user_id'] ?>">
+                                        <div class="mb-2">
+                                          <label class="form-label">জেলা</label>
+                                          <select name="district" class="form-select" required>
+                                            <?php foreach ($districts as $dist): ?>
+                                              <option value="<?= $dist ?>"><?= $dist ?></option>
+                                            <?php endforeach; ?>
+                                          </select>
+                                        </div>
+                                        <div class="mb-2">
+                                          <label class="form-label">শুরুর তারিখ</label>
+                                          <input type="date" name="start_date" class="form-control" required>
+                                        </div>
+                                        <div class="mb-2">
+                                          <label class="form-label">বর্ণনা</label>
+                                          <textarea name="description" class="form-control" required></textarea>
+                                        </div>
+                                        <div class="mb-2">
+                                          <label class="form-label">টাকার পরিমাণ (৳)</label>
+                                          <input type="number" name="amount" class="form-control" required>
+                                        </div>
+                                        <div class="mb-2">
+                                          <label class="form-label">ছবি (ঐচ্ছিক)</label>
+                                          <input type="file" name="photo" class="form-control" accept="image/*">
+                                        </div>
+                                        <div class="mb-2">
+                                          <label class="form-label">ঠিকানা</label>
+                                          <textarea name="address" class="form-control" required></textarea>
+                                        </div>
+                                      </div>
+                                      <div class="modal-footer">
+                                        <button type="submit" name="submit_contract" class="btn btn-success">পাঠান</button>
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">বাতিল</button>
+                                      </div>
+                                    </form>
+                                  </div>
+                                </div>
+
                             </div>
                         </div>
                     </div>
@@ -470,7 +551,7 @@ $districts = [
 </div>
 
 
-
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>
