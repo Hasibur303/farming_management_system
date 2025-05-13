@@ -20,6 +20,8 @@ include 'database.php';
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
     <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
@@ -497,6 +499,12 @@ header h1 {
                     <i class="fas fa-wallet icon"></i>
                     <span class="text">ড্যাশবোর্ড</span>
                 </a>
+
+
+        <a href="F_Smart_Crop_Doctor.php">
+                           	<i class="fas fa-stethoscope"></i>
+                            <span class="text">  স্মার্ট ফসল ডাক্তার</span>
+                        </a>
         <a href="crop_management.php">
             <i class="fas fa-seedling icon"></i>
             <span class="text">ফসল/পণ্য ব্যবস্থাপনা</span>
