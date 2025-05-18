@@ -1,6 +1,21 @@
 <?php
 session_start();
 include 'database.php';
+
+
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['crop_image'])) {
+    $targetDir = "uploads/";
+    $targetFile = $targetDir . basename($_FILES["crop_image"]["name"]);
+
+    if (move_uploaded_file($_FILES["crop_image"]["tmp_name"], $targetFile)) {
+        echo "<p style='color:green;'>Image uploaded successfully!</p>";
+        // Here you'll send the image to the Python API and get the diagnosis
+    } else {
+        echo "<p style='color:red;'>Sorry, there was an error uploading your file.</p>";
+    }
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -36,10 +51,111 @@ include 'database.php';
     }
 
     body {
-        background-color: #f7f8fa;
+       background: url('http://localhost/farming_management_system/AiDoctor.jpg') no-repeat center center fixed;
+        background-size: cover;
         color: #333;
-        padding-top: 70px; /* Add padding to prevent content from overlapping with the fixed header */
+        padding-top: 100px;
+
+        font-family: Arial, sans-serif;
+        position: relative;
     }
+
+    body::before {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+        background: rgba(255, 255, 255, 0.05); /* Light overlay to soften background for readability */
+        z-index: -1;
+    }
+
+.container {
+    position: relative;
+    max-width: 500px;
+    margin: auto;
+
+    background-size: cover;
+    padding: 30px;
+    box-shadow: 0 4px 25px rgba(0, 255, 255, 0.2);
+    overflow: hidden;
+    z-index: 1;
+
+    backdrop-filter: blur(6px);
+    border: 5px solid rgba(0, 255, 255, 0.5);
+    background-blend-mode: overlay;
+}
+
+.container::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0, 255, 255, 0.2); /* soft blue tech glow */
+    backdrop-filter: blur(4px);
+    z-index: -1;
+}
+
+
+
+@keyframes techGlow {
+    0%, 100% {
+        box-shadow: 0 0 10px #0ff, 0 0 20px #0ff;
+    }
+    50% {
+        box-shadow: 0 0 15px #0ff, 0 0 25px #0ff;
+    }
+}
+
+.container {
+    animation: techGlow 3s infinite ease-in-out;
+}
+
+
+
+
+
+    h2 {
+        text-align: center;
+        color: #ffffff;
+        margin-bottom: 20px;
+    }
+
+    input[type="file"] {
+        display: block;
+        margin: 20px auto;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+
+    #preview {
+        max-width: 100%;
+        margin: 20px auto;
+        display: none;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    button {
+        display: block;
+        background-color: #3182ce;
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        margin: 20px auto;
+        cursor: pointer;
+        border-radius: 6px;
+        font-size: 16px;
+        transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+        background-color: #2b6cb0;
+    }
+
 
 /* Header Styles */
 header {
@@ -350,7 +466,22 @@ header h1 {
         </a>
     </div>
 
+    <div class="container">
+            <h2>Smart Crop Doctor</h2>
+            <form action="" method="POST" enctype="multipart/form-data">
+                <input type="file" name="crop_image" id="crop_image" accept="image/*" required onchange="previewImage(event)">
+                <img id="preview" src="#" alt="Image Preview">
+                <button type="submit">Diagnose</button>
+            </form>
+        </div>
 
+        <script>
+            function previewImage(event) {
+                const image = document.getElementById('preview');
+                image.src = URL.createObjectURL(event.target.files[0]);
+                image.style.display = 'block';
+            }
+        </script>
 
 
 </body>
