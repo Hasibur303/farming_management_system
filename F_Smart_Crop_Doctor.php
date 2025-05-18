@@ -1,6 +1,21 @@
 <?php
 session_start();
 include 'database.php';
+
+
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['crop_image'])) {
+    $targetDir = "uploads/";
+    $targetFile = $targetDir . basename($_FILES["crop_image"]["name"]);
+
+    if (move_uploaded_file($_FILES["crop_image"]["tmp_name"], $targetFile)) {
+        echo "<p style='color:green;'>Image uploaded successfully!</p>";
+        // Here you'll send the image to the Python API and get the diagnosis
+    } else {
+        echo "<p style='color:red;'>Sorry, there was an error uploading your file.</p>";
+    }
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -40,6 +55,45 @@ include 'database.php';
         color: #333;
         padding-top: 70px; /* Add padding to prevent content from overlapping with the fixed header */
     }
+
+    .container {
+                max-width: 500px;
+                margin: auto;
+                background-color: #ffffff;
+                border-radius: 10px;
+                padding: 30px;
+                box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            }
+            h2 {
+                text-align: center;
+                color: #2d3748;
+            }
+            input[type="file"] {
+                display: block;
+                margin: 20px auto;
+                padding: 10px;
+            }
+            #preview {
+                max-width: 100%;
+                margin: 20px auto;
+                display: none;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+            }
+            button {
+                display: block;
+                background-color: #3182ce;
+                color: white;
+                border: none;
+                padding: 10px 20px;
+                margin: 20px auto;
+                cursor: pointer;
+                border-radius: 5px;
+                font-size: 16px;
+            }
+            button:hover {
+                background-color: #2b6cb0;
+            }
 
 /* Header Styles */
 header {
@@ -350,7 +404,22 @@ header h1 {
         </a>
     </div>
 
+    <div class="container">
+            <h2>Smart Crop Doctor</h2>
+            <form action="" method="POST" enctype="multipart/form-data">
+                <input type="file" name="crop_image" id="crop_image" accept="image/*" required onchange="previewImage(event)">
+                <img id="preview" src="#" alt="Image Preview">
+                <button type="submit">Diagnose</button>
+            </form>
+        </div>
 
+        <script>
+            function previewImage(event) {
+                const image = document.getElementById('preview');
+                image.src = URL.createObjectURL(event.target.files[0]);
+                image.style.display = 'block';
+            }
+        </script>
 
 
 </body>
