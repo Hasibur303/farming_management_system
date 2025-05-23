@@ -1,19 +1,7 @@
 <?php
 // Database credentials
-$host = "localhost";
-$user = "your_db_username";       // তোমার ডাটাবেজ ইউজারনেম
-$password = "your_db_password";   // তোমার ডাটাবেজ পাসওয়ার্ড
-$dbname = "your_database_name";   // তোমার ডাটাবেজ নাম
-
+include 'database.php';
 // Enable error reporting for debugging (production-এ এডিট করো)
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-
-// Set JSON header
-header('Content-Type: application/json; charset=utf-8');
-
-// Connect to the database
-$conn = new mysqli($host, $user, $password, $dbname);
 
 // Check connection
 if ($conn->connect_error) {

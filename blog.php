@@ -6,120 +6,150 @@
     <title>কৃষি ব্লগ - Agricultural Management System</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap');
+
+        :root {
+            --primary: #4caf50;
+            --primary-dark: #2e7d32;
+            --secondary: #8bc34a;
+            --accent: #aed581;
+            --light-bg: #e3f2fd;
+            --text-dark: #333;
+            --text-light: #fff;
+            --shadow: rgba(0, 0, 0, 0.1);
+            --radius: 12px;
+            --transition: all 0.3s ease;
+        }
+
         body {
             font-family: 'Roboto', sans-serif;
             margin: 0;
             padding: 0;
-            background: linear-gradient(to bottom right, #e3f2fd, #bbdefb);
-            color: #333;
+            background: linear-gradient(to bottom right, var(--light-bg), #c8e6c9);
+            color: var(--text-dark);
             overflow-x: hidden;
         }
 
-        header {
-            background: linear-gradient(to right, #4caf50, #8bc34a);
-            color: white;
-            text-align: center;
-            padding: 30px 20px;
-            border-bottom: 5px solid #2e7d32;
-        }
-        header h1 {
-            font-size: 2.5rem;
-            margin: 0;
-            font-weight: 700;
-            text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.3);
-        }
+        /* Header */
+       header {
+           background: linear-gradient(90deg, #43cea2, #185a9d);
+           color: var(--text-light);
+           display: flex;
+           justify-content: space-between;
+           align-items: center;
+           padding: 10px 30px;
+           border-bottom: 4px solid var(--primary-dark);
+           flex-wrap: wrap;
+       }
 
-        nav {
-            background: linear-gradient(to right, #2e7d32, #388e3c);
-            padding: 15px 0;
-            display: flex;
-            justify-content: center;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        nav a {
-            color: white;
-            text-decoration: none;
-            margin: 0 15px;
-            font-weight: 500;
-            font-size: 1.1rem;
-            padding: 8px 15px;
-            border-radius: 25px;
-            transition: background-color 0.3s ease, color 0.3s ease;
-        }
-        nav a:hover {
-            background: white;
-            color: #4caf50;
-        }
+       header h1 {
+           font-size: 1.5rem;
+           font-weight: 600;
+           margin: 0;
+           text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+       }
 
+       nav {
+           display: flex;
+           gap: 10px;
+       }
+
+       nav a {
+           color: var(--text-light);
+           text-decoration: none;
+           font-size: 0.9rem;
+           font-weight: 500;
+           padding: 6px 14px;
+           border-radius: 20px;
+           transition: var(--transition);
+           background: rgba(255, 255, 255, 0.1);
+       }
+
+       nav a:hover {
+           background-color: white;
+           color: var(--primary-dark);
+       }
+
+
+        /* Hero Section */
         .hero {
             text-align: center;
-            padding: 80px 20px;
-            background: linear-gradient(to bottom right, #81c784, #aed581);
-            color: white;
-            box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.2);
-        }
-        .hero h2 {
-            font-size: 2.8rem;
-            margin: 0 0 10px 0;
-            font-weight: 700;
-        }
-        .hero p {
-            font-size: 1.3rem;
-            margin-top: 15px;
-            font-weight: 300;
+            padding: 20px 5px;
+            background: linear-gradient(to bottom right, #81c784, var(--accent));
+            color: var(--text-light);
+            box-shadow: inset 0 0 60px rgba(0, 0, 0, 0.2);
         }
 
+        .hero h2 {
+            font-size: 1.5rem;
+            margin-bottom: 7px;
+            font-weight: 500;
+        }
+
+        .hero p {
+            font-size: 1rem;
+            font-weight: 200;
+            max-width: 500px;
+            margin: auto;
+        }
+
+        /* Main Content */
         .container {
             max-width: 1200px;
             margin: 40px auto;
             padding: 20px;
         }
+
         .container h2 {
-            font-size: 2rem;
-            color: #2e7d32;
+            font-size: 2.2rem;
+            color: var(--primary-dark);
             margin-bottom: 20px;
             text-align: center;
             font-weight: 700;
         }
+
         .container p {
             font-size: 1.2rem;
-            color: #555;
+            color: #444;
             margin-bottom: 30px;
             text-align: center;
         }
 
+        /* Buttons */
         .filter-btn {
-            background-color: #4caf50;
+            background-color: var(--primary);
             color: white;
             border: none;
-            padding: 10px 20px;
-            margin: 5px;
+            padding: 10px 24px;
+            margin: 6px;
             font-size: 1rem;
-            border-radius: 25px;
+            border-radius: 30px;
             cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        .filter-btn:hover, .filter-btn.active {
-            background-color: #2e7d32;
+            transition: var(--transition);
         }
 
+        .filter-btn:hover,
+        .filter-btn.active {
+            background-color: var(--primary-dark);
+        }
+
+        /* Video Cards */
         .video-container {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
+            gap: 24px;
         }
 
         .video-card {
-            border-radius: 12px;
+            border-radius: var(--radius);
             overflow: hidden;
             background: #fff;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+            transition: var(--transition);
         }
 
         .video-card:hover {
             transform: translateY(-10px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
         }
 
         .video-card iframe {
@@ -129,31 +159,33 @@
         }
 
         .video-info {
-            padding: 10px;
+            padding: 15px;
             background-color: white;
         }
 
         .video-info h4 {
-            margin: 5px 0;
+            margin: 8px 0;
             font-size: 1.1rem;
+            font-weight: 600;
         }
 
         .video-info p {
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             color: #666;
         }
 
+        /* Footer */
         footer {
-            background: linear-gradient(to right, #4caf50, #8bc34a);
+            background: linear-gradient(to right, var(--primary), var(--secondary));
             color: white;
             text-align: center;
-            padding: 15px 0;
+            padding: 20px 0;
             font-size: 1rem;
-            margin-top: 40px;
+            margin-top: 60px;
         }
 
         footer a {
-            color: #aed581;
+            color: #dcedc8;
             text-decoration: none;
             font-weight: bold;
         }
@@ -161,17 +193,21 @@
         footer a:hover {
             text-decoration: underline;
         }
+
     </style>
 </head>
 <body>
     <header>
-        <h1>কৃষি ব্যবস্থাপনা ব্যবস্থা</h1>
+        <h1>স্মার্টকৃষি</h1>
+        <nav>
+            <a href="dashboard.php">হোম</a>
+            <a href="contact.php">আমাদের সম্পর্কে</a>
+            <a href="login.php">লগইন</a>
+            <a href="register.php">সাইন আপ</a>
+        </nav>
     </header>
-    <nav>
-        <a href="dashboard.php">হোম</a>
-        <a href="login.php">লগইন</a>
-        <a href="contact.php">যোগাযোগ</a>
-    </nav>
+
+
 
     <div class="hero">
         <h2>আধুনিক কৃষিকাজের জন্য উদ্ভাবনী সমাধান</h2>
