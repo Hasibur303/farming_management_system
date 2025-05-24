@@ -45,6 +45,7 @@ $text = [
         'jobsyouapplied'=> 'আবেদনকৃত চাকরি',
         'acceptedjobs'=> 'গৃহীত চাকরি',
         'processingjobs'=> 'চাকরি প্রক্রিয়াধীন',
+        'buyfromsupplier'=> 'সরবরাহকারীর কাছ থেকে কিনুন',
     ],
     'en' => [
         'title' => 'Labour Dashboard',
@@ -71,6 +72,7 @@ $text = [
         'jobsyouapplied'=> 'Jobs You Applied',
         'acceptedjobs'=> 'Accepted Jobs',
         'processingjobs'=> 'Processing Jobs',
+        'buyfromsupplier'=> 'Buy From Supplier',
     ]
 ];
 $current_text = $text[$lang];
@@ -472,6 +474,7 @@ while ($row = mysqli_fetch_assoc($notificationsQuery)) {
     <a href="labour.php">🏠 <span><?= $current_text['dashboard'] ?></span></a>
     <a href="L_profile.php">🧑‍🌾 <span><?= $current_text['profile'] ?></span></a>
     <a href="L_job.php">📋 <span><?= $current_text['jobs'] ?></span></a>
+    <a href="L_supplier_product.php">📋 <span><?= $current_text['buyfromsupplier'] ?></span></a>
     <a href="L_contract_message.php">💬 <span><?= $current_text['contractrequest'] ?></span></a>
     <a href="L_apply_job_list.php">📋 <span><?= $current_text['appliedjobs'] ?></span></a>
     <a href="notifications.php">🔔 <span><?= $current_text['notifications'] ?></span></a>
