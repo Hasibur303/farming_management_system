@@ -323,6 +323,35 @@ body {
             cursor: pointer;
         }
 
+
+        .payment-icons {
+            display: flex;
+            gap: 15px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+
+        .payment-icons label {
+            cursor: pointer;
+            border: 2px solid transparent;
+            border-radius: 10px;
+            transition: 0.3s;
+        }
+
+        .payment-img {
+            width: 80px;
+            height: auto;
+            border-radius: 10px;
+            opacity: 0.7;
+            transition: 0.3s;
+        }
+
+        .payment-icons input[type="radio"]:checked + .payment-img {
+            border: 2px solid #28a745;
+            opacity: 1;
+        }
+
+
        </style>
 </head>
 <body>
@@ -372,30 +401,77 @@ body {
         </div>
     </div>
 
-    <!-- Cart Modal -->
-    <div class="cart-modal" id="cartModal">
-        <h3><?= $current_text['cart'] ?></h3>
-        <?php foreach ($cart_items as $item) { ?>
-            <div class="cart-item">
-                <span><?= $item['supply_name'] ?> × <?= $item['quantity'] ?></span>
-                <form method="post" style="display:inline;">
-                    <input type="hidden" name="remove" value="<?= $item['supply_id'] ?>">
-                    <button class="remove-btn"><?= $current_text['remove'] ?></button>
-                </form>
-            </div>
-        <?php } ?>
+  <!-- Cart Modal -->
+  <div class="cart-modal" id="cartModal">
+      <h3><?= $current_text['cart'] ?></h3>
 
-        <?php if (!empty($cart_items)) { ?>
-            <select>
-                <option><?= $current_text['pay'] ?>: Cash on Delivery</option>
-                <option><?= $current_text['pay'] ?>: bKash</option>
-                <option><?= $current_text['pay'] ?>: Nagad</option>
-            </select>
-            <button class="confirm-btn"><?= $current_text['confirm'] ?></button>
-        <?php } else { ?>
-            <p>No items in cart.</p>
-        <?php } ?>
-    </div>
+      <?php if (!empty($cart_items)) { ?>
+          <?php foreach ($cart_items as $item) { ?>
+              <div class="cart-item">
+                  <span><?= $item['supply_name'] ?> × <?= $item['quantity'] ?></span>
+                  <form method="post" style="display:inline;">
+                      <input type="hidden" name="remove" value="<?= $item['supply_id'] ?>">
+                      <button class="remove-btn"><?= $current_text['remove'] ?></button>
+                  </form>
+              </div>
+          <?php } ?>
+
+          <!-- Full Form for Payment -->
+          <form id="paymentForm" method="post">
+              <div class="payment-options">
+                  <h4><?= $current_text['pay'] ?>:</h4>
+                  <div class="payment-icons">
+                      <label>
+                          <input type="radio" name="payment_method" value="bkash" required hidden>
+                          <img src="bkash.jpeg" alt="bKash" class="payment-img">
+                      </label>
+                      <label>
+                          <input type="radio" name="payment_method" value="nagad" hidden>
+                          <img src="nagad.jpeg" alt="Nagad" class="payment-img">
+                      </label>
+                      <label>
+                          <input type="radio" name="payment_method" value="rocket" hidden>
+                          <img src="rocket.jpg" alt="Rocket" class="payment-img">
+                      </label>
+                      <label>
+                          <input type="radio" name="payment_method" value="cod" hidden>
+                          <img src="cod.jpg" alt="Cash on Delivery" class="payment-img">
+                      </label>
+                  </div>
+              </div>
+
+              <button type="submit" class="confirm-btn"><?= $current_text['confirm'] ?></button>
+          </form>
+
+          <script>
+              document.getElementById('paymentForm').addEventListener('submit', function(e) {
+                  e.preventDefault();
+
+                  const selected = document.querySelector('input[name="payment_method"]:checked');
+                  if (!selected) {
+                      alert("Please select a payment method.");
+                      return;
+                  }
+
+                  const method = selected.value;
+                  if (method === 'bkash') {
+                      window.location.href = 'bkash.php';
+                  } else if (method === 'nagad') {
+                      window.location.href = 'nagad.php';
+                  } else if (method === 'rocket') {
+                      window.location.href = 'rocket.php';
+                  } else if (method === 'cod') {
+                      window.location.href = 'L_supplier_product.php';
+                  }
+              });
+          </script>
+
+      <?php } else { ?>
+          <p>No items in cart.</p>
+      <?php } ?>
+  </div>
+
+
 
     <script>
         function toggleCart() {

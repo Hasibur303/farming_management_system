@@ -105,8 +105,5 @@ $current = $text[$lang];
         </div>
         <button type="submit"><?= $current['submit'] ?></button>
     </form>
-    <div class="back">
-        <a href="C_market.php">← <?= ($lang === 'bn') ? 'পিছনে যান' : 'Go Back' ?></a>
-    </div>
 </body>
 </html>
