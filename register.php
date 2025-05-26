@@ -214,7 +214,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <option value="supplier">সরবরাহকারী</option>
                     <option value="customer">গ্রাহক</option>
                     <option value="labour">শ্রমিক</option>
-                    <option value="agri_specialist">কৃষি বিশেষজ্ঞ</option>
+                    <option value="agrologist">কৃষি বিশেষজ্ঞ</option>
                 </select>
             </div>
 

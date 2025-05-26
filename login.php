@@ -34,7 +34,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 header('Location: supplier.php');
             } elseif ($role === 'Labour') {
                 header('Location: labour.php');
-            } else {
+            }
+             elseif ($role === 'Agrologist') {
+                header('Location: agrologist.php');
+             }
+                         else {
                 echo "Invalid role selected.";
             }
             exit();
