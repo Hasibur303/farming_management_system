@@ -1,6 +1,28 @@
 <?php
 session_start();
 include 'database.php';
+
+if (!isset($_SESSION['user_id'])) {
+    header("Location: login.php");
+    exit();
+}
+
+$user_id = $_SESSION['user_id']; // assuming this is farmer id
+
+// Handle request form submission
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['request_text'])) {
+    $farmer_name = $_SESSION['username']; // assuming username stored in session
+    $request_text = mysqli_real_escape_string($conn, $_POST['request_text']);
+    $query = "INSERT INTO farmer_requests (farmer_name, request_text)
+              VALUES ('$farmer_name', '$request_text')";
+    mysqli_query($conn, $query);
+    header("Location: farmer.php");
+    exit();
+}
+
+// Fetch previous requests
+$result = mysqli_query($conn, "SELECT * FROM farmer_requests WHERE farmer_name = '{$_SESSION['username']}' ORDER BY request_date DESC");
+
 ?>
 
 <!DOCTYPE html>
@@ -553,7 +575,44 @@ header h1 {
         </a>
     </div>
 
+<!-- Agrologist Request Section -->
+<div class="container mt-5 mb-5 p-4 bg-light rounded shadow">
+    <h4 class="mb-3 text-success">🔍 অনুরোধ পাঠান Agrologist-কে</h4>
+    <form method="POST">
+        <div class="mb-3">
+            <textarea name="request_text" class="form-control" rows="4" placeholder="আপনার সমস্যাটি লিখুন..." required></textarea>
+        </div>
+        <button type="submit" class="btn btn-success">✅ অনুরোধ পাঠান</button>
+    </form>
+</div>
 
+<!-- Previous Requests -->
+<div class="container mb-5 p-4 bg-white rounded shadow">
+    <h5 class="mb-3">📋 আপনার পূর্বের অনুরোধসমূহ</h5>
+    <div class="table-responsive">
+        <table class="table table-bordered align-middle text-center">
+            <thead class="table-success">
+                <tr>
+                    <th>তারিখ</th>
+                    <th>আপনার অনুরোধ</th>
+                    <th>অবস্থা</th>
+                    <th>Agrologist-এর উত্তর</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php while ($row = mysqli_fetch_assoc($result)) { ?>
+                    <tr>
+                        <td><?= date("d M Y, h:i A", strtotime($row['request_date'])) ?></td>
+                        <td><?= htmlspecialchars($row['request_text']) ?></td>
+                        <td><span class="badge bg-<?= $row['status'] === 'Pending' ? 'warning' : 'success' ?>">
+                            <?= $row['status'] ?></span></td>
+                        <td><?= $row['agrologist_response'] ? htmlspecialchars($row['agrologist_response']) : '⏳ অপেক্ষায়' ?></td>
+                    </tr>
+                <?php } ?>
+            </tbody>
+        </table>
+    </div>
+</div>
 
 <div class="dashboard-feed">
     <!-- Statistics Summary -->
