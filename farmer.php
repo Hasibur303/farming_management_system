@@ -153,9 +153,13 @@ header h1 {
             left: 0;
             padding: 20px 10px;
             transition: width 0.3s ease; /* Smooth expansion */
-            overflow: hidden; /* Hide content when collapsed */
+            overflow-y: auto;  /* 👈 Enables vertical scrolling */
+            overflow-x: hidden; /* 👈 Prevents horizontal scrollbars */
             z-index: 999; /* Ensure it stays above content */
+            scrollbar-width: thin; /* Optional: thinner scrollbar for Firefox */
+            scrollbar-color: #888 transparent; /* Optional: scrollbar color */
         }
+
 
         .sidebar:hover {
             width: 250px; /* Full width on hover */
