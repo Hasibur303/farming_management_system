@@ -516,7 +516,7 @@ header h1 {
                            	<i class="fas fa-stethoscope"></i>
                             <span class="text">  স্মার্ট ফসল ডাক্তার</span>
                         </a>
-                        <a href="F_Agrologist_Request.php">
+                        <a href="Agrologist_List.php">
                                             <i class="fas fa-tree icon"></i>
                                             <span class="text">কৃষি বিশেষজ্ঞদের সেবা</span>
                                         </a>

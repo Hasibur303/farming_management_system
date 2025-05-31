@@ -7,11 +7,58 @@ if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
     exit();
 }
-// Sample agrologist ID
-$agrologist_id = $_SESSION['user_id'];
+$agrologist_id=$_SESSION['user_id'];
+// Fetch profile
+$query = "SELECT * FROM agrologists WHERE user_id = ?";
+$stmt = $conn->prepare($query);
+$stmt->bind_param("i", $agrologist_id);
+$stmt->execute();
+$result = $stmt->get_result();
+$agrologist = $result->fetch_assoc();
+
+// Handle form submit
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $full_name = $_POST['full_name'];
+    $sector = $_POST['sector'];
+    $district = $_POST['district'];
+    $qualification = $_POST['qualification'];
+    $experience = $_POST['experience'];
+    $specialization = $_POST['specialization'];
+
+    // Upload photo if exists
+    $photo_name = $agrologist['photo'] ?? '';
+    if ($_FILES['photo']['name']) {
+        $photo_name = uniqid() . '_' . basename($_FILES["photo"]["name"]);
+        $target = "uploads/" . $photo_name;
+        move_uploaded_file($_FILES["photo"]["tmp_name"], $target);
+    }
+
+    if ($agrologist) {
+        // Update
+        $sql = "UPDATE agrologists SET full_name=?, sector=?, district=?, qualification=?, experience_years=?, specialization=?, photo=? WHERE user_id=?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("sssssssi",$full_name, $sector, $district, $qualification, $experience, $specialization, $photo_name, $agrologist_id);
+    } else {
+        // Insert
+        $sql = "INSERT INTO agrologists (user_id, full_name, sector, district, qualification, experience_years, specialization, photo) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("isssssss", $agrologist_id, $full_name, $sector, $district, $qualification, $experience, $specialization, $photo_name);
+    }
+
+    if ($stmt->execute()) {
+        header("Location: A_profile.php?success=1");
+        exit();
+    } else {
+        echo "Error: " . $stmt->error;
+    }
+}
+
+
 
 
 ?>
+
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -194,6 +241,71 @@ $agrologist_id = $_SESSION['user_id'];
             }
         }
 
+        /* Profile Form Card */
+        .profile-form {
+            background: linear-gradient(to right, #1f2b37, #263445);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 0 10px rgba(0, 213, 255, 0.1);
+            max-width: 800px;
+            margin: 30px auto;
+            color: #ffffff;
+        }
+
+        /* Labels and Inputs */
+        .profile-form .form-label {
+            font-weight: 500;
+            color: #b2ebf2;
+        }
+
+        .profile-form .form-control,
+        .profile-form textarea {
+            background-color: #1c2c38;
+            border: 1px solid #3d5a73;
+            color: #fff;
+            border-radius: 6px;
+        }
+
+        .profile-form .form-control:focus {
+            border-color: #00bcd4;
+            box-shadow: 0 0 0 0.2rem rgba(0, 188, 212, 0.25);
+            background-color: #223546;
+            color: #ffffff;
+        }
+
+        /* Button */
+        .profile-form button.btn-primary {
+            background-color: #00bcd4;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+
+        .profile-form button.btn-primary:hover {
+            background-color: #0097a7;
+        }
+
+        /* Alert Message */
+        .alert-success {
+            background-color: #2e7d32;
+            color: white;
+            border-radius: 8px;
+            padding: 10px 20px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        /* Uploaded Image Preview */
+        .profile-form img {
+            border-radius: 10px;
+            border: 2px solid #00acc1;
+            margin-top: 10px;
+        }
+
+
+
     </style>
     <!-- Font Awesome for icons -->
       <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
@@ -217,8 +329,62 @@ $agrologist_id = $_SESSION['user_id'];
     </div>
 
 
+<div class="profile-form">
+    <form method="POST" enctype="multipart/form-data">
+        <!-- form fields (same as before) -->
+    </form>
+</div>
+<form method="POST" enctype="multipart/form-data" class="mt-4">
+    <div class="mb-3">
+        <label class="form-label">Full Name</label>
+        <input type="text" name="full_name" class="form-control" required value="<?= $agrologist['full_name'] ?? '' ?>">
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Sector</label>
+        <input type="text" name="sector" class="form-control" required value="<?= $agrologist['sector'] ?? '' ?>">
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">District</label>
+        <input type="text" name="district" class="form-control" required value="<?= $agrologist['district'] ?? '' ?>">
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Qualification</label>
+        <textarea name="qualification" class="form-control" required><?= $agrologist['qualification'] ?? '' ?></textarea>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Experience</label>
+        <textarea name="experience" class="form-control" required><?= $agrologist['experience'] ?? '' ?></textarea>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Specialization</label>
+        <input type="text" name="specialization" class="form-control" required value="<?= $agrologist['specialization'] ?? '' ?>">
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Profile Photo</label>
+        <input type="file" name="photo" class="form-control">
+        <?php if (!empty($agrologist['photo'])): ?>
+            <img src="uploads/<?= $agrologist['photo'] ?>" alt="Profile Photo" width="100" class="mt-2">
+        <?php endif; ?>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save Profile</button>
+</form>
+
+
+
 
     <hr class="text-light mt-4">
+<?php if (isset($_GET['success'])): ?>
+    <div class="alert alert-success">Profile saved successfully!</div>
+<?php endif; ?>
+
+
 
 </body>
 </html>

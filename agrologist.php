@@ -11,22 +11,37 @@ if (!isset($_SESSION['user_id'])) {
 $agrologist_id = $_SESSION['user_id'];
 
 // Fetch farmer requests
-$requests = mysqli_query($conn, "SELECT * FROM farmer_requests ORDER BY request_date DESC");
+$requests = mysqli_query($conn, "
+    SELECT b.*, u.name AS farmer_name
+    FROM bookings b
+    JOIN users u ON b.farmer_id = u.user_id
+    WHERE b.agrologist_id = $agrologist_id
+    ORDER BY b.request_date DESC
+");
 
 // Count metrics
 $total = mysqli_num_rows($requests);
-$responded = mysqli_num_rows(mysqli_query($conn, "SELECT * FROM farmer_requests WHERE status='Responded'"));
-$pending = mysqli_num_rows(mysqli_query($conn, "SELECT * FROM farmer_requests WHERE status='Pending'"));
+$responded = mysqli_num_rows(mysqli_query($conn, "SELECT * FROM bookings WHERE agrologist_id=$agrologist_id AND status='Responded'"));
+$pending = mysqli_num_rows(mysqli_query($conn, "SELECT * FROM bookings WHERE agrologist_id=$agrologist_id AND status='Pending'"));
 
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['reply'])) {
-    $request_id = $_POST['request_id'];
-    $response = mysqli_real_escape_string($conn, $_POST['response']);
+     $request_id = $_POST['request_id'];
+        $response = mysqli_real_escape_string($conn, $_POST['response']);
+        $appointment_date = mysqli_real_escape_string($conn, $_POST['appointment_date']);
+        $appointment_mode = mysqli_real_escape_string($conn, $_POST['appointment_mode']);
 
-    mysqli_query($conn, "UPDATE farmer_requests SET agrologist_response='$response', status='Responded' WHERE id=$request_id");
-    header("Location: agrologist.php");
-    exit;
-}
+        mysqli_query($conn, "UPDATE bookings
+            SET
+                message = CONCAT(message, '\n\nAgrologist Reply: ', '$response'),
+                status = 'Responded',
+                appointment_date = '$appointment_date',
+                appointment_mode = '$appointment_mode'
+            WHERE id = $request_id");
+
+        header("Location: agrologist.php");
+        exit;
+    }
 ?>
 
 <!DOCTYPE html>
@@ -253,13 +268,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['reply'])) {
     <?php while ($row = mysqli_fetch_assoc($requests)): ?>
         <div class="request-box">
             <p><strong>Farmer Name:</strong> <?php echo $row['farmer_name']; ?></p>
-            <p><strong>Request:</strong> <?php echo $row['request_text']; ?></p>
+            <p><strong>Message:</strong> <?php echo nl2br($row['message']); ?></p>
             <p><strong>Date:</strong> <?php echo $row['request_date']; ?></p>
             <p><strong>Status:</strong> <?php echo $row['status']; ?></p>
             <?php if ($row['status'] === 'Pending'): ?>
                 <button class="btn btn-reply btn-sm" data-bs-toggle="modal" data-bs-target="#replyModal<?php echo $row['id']; ?>">Reply</button>
-            <?php else: ?>
-                <p><strong>Response:</strong> <?php echo $row['agrologist_response']; ?></p>
             <?php endif; ?>
         </div>
 
@@ -274,11 +287,26 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['reply'])) {
                     <form method="post">
                         <div class="modal-body">
                             <input type="hidden" name="request_id" value="<?php echo $row['id']; ?>">
+
                             <div class="mb-3">
                                 <label for="response" class="form-label">Your Response:</label>
                                 <textarea name="response" class="form-control" rows="4" required></textarea>
                             </div>
+
+                            <div class="mb-3">
+                                <label for="appointment_date" class="form-label">Appointment Date & Time:</label>
+                                <input type="datetime-local" name="appointment_date" class="form-control" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="appointment_mode" class="form-label">Mode of Appointment:</label>
+                                <select name="appointment_mode" class="form-control" required>
+                                    <option value="Online">Online</option>
+                                    <option value="Offline">Offline</option>
+                                </select>
+                            </div>
                         </div>
+
                         <div class="modal-footer">
                             <button type="submit" name="reply" class="btn btn-primary">Send</button>
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -287,8 +315,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['reply'])) {
                 </div>
             </div>
         </div>
+
     <?php endwhile; ?>
+
 </div>
+
+
+
+
+
+
+
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
