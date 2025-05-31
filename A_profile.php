@@ -35,12 +35,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if ($agrologist) {
         // Update
-        $sql = "UPDATE agrologists SET full_name=?, sector=?, district=?, qualification=?, experience_years=?, specialization=?, photo=? WHERE user_id=?";
+        $sql = "UPDATE agrologists SET full_name=?, sector=?, district=?, qualification=?, experience=?, specialization=?, photo=? WHERE user_id=?";
         $stmt = $conn->prepare($sql);
         $stmt->bind_param("sssssssi",$full_name, $sector, $district, $qualification, $experience, $specialization, $photo_name, $agrologist_id);
     } else {
         // Insert
-        $sql = "INSERT INTO agrologists (user_id, full_name, sector, district, qualification, experience_years, specialization, photo) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        $sql = "INSERT INTO agrologists (user_id, full_name, sector, district, qualification, experience, specialization, photo) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         $stmt = $conn->prepare($sql);
         $stmt->bind_param("isssssss", $agrologist_id, $full_name, $sector, $district, $qualification, $experience, $specialization, $photo_name);
     }
@@ -329,54 +329,94 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     </div>
 
 
-<div class="profile-form">
+<div class="profile-form p-4 bg-light rounded shadow-sm">
     <form method="POST" enctype="multipart/form-data">
-        <!-- form fields (same as before) -->
+        <!-- Full Name -->
+        <div class="mb-3">
+            <label class="form-label">পুরো নাম</label>
+            <input type="text" name="full_name" class="form-control" required value="<?= $agrologist['full_name'] ?? '' ?>">
+        </div>
+
+        <!-- Sector -->
+        <div class="mb-3">
+            <label class="form-label">খাত (Sector)</label>
+            <input type="text" name="sector" class="form-control" required value="<?= $agrologist['sector'] ?? '' ?>">
+        </div>
+
+        <!-- District Dropdown -->
+        <div class="mb-3">
+            <label class="form-label">জেলা</label>
+            <select name="district" class="form-select" required>
+                <option value="">-- জেলা নির্বাচন করুন --</option>
+                <?php
+                $districts = [
+                    "বরগুনা", "বরিশাল", "ভোলা", "ঝালকাঠি", "পটুয়াখালী", "পিরোজপুর",
+                    "বান্দরবান", "ব্রাহ্মণবাড়িয়া", "চাঁদপুর", "চট্টগ্রাম", "কুমিল্লা", "কক্সবাজার", "ফেনী", "খাগড়াছড়ি", "লক্ষ্মীপুর", "নোয়াখালী", "রাঙ্গামাটি",
+                    "ঢাকা", "ফরিদপুর", "গাজীপুর", "গোপালগঞ্জ", "কিশোরগঞ্জ", "মাদারীপুর", "মানিকগঞ্জ", "মুন্সীগঞ্জ", "নারায়ণগঞ্জ", "নরসিংদী", "রাজবাড়ী", "শরীয়তপুর", "টাঙ্গাইল",
+                    "বাগেরহাট", "চুয়াডাঙ্গা", "যশোর", "ঝিনাইদহ", "খুলনা", "কুষ্টিয়া", "মাগুরা", "মেহেরপুর", "নড়াইল", "সাতক্ষীরা",
+                    "জামালপুর", "ময়মনসিংহ", "নেত্রকোনা", "শেরপুর",
+                    "বগুড়া", "জয়পুরহাট", "নওগাঁ", "নাটোর", "চাঁপাইনবাবগঞ্জ", "পাবনা", "রাজশাহী", "সিরাজগঞ্জ",
+                    "দিনাজপুর", "গাইবান্ধা", "কুড়িগ্রাম", "লালমনিরহাট", "নীলফামারী", "পঞ্চগড়", "রংপুর", "ঠাকুরগাঁও",
+                    "হবিগঞ্জ", "মৌলভীবাজার", "সুনামগঞ্জ", "সিলেট"
+                ];
+                foreach ($districts as $d) {
+                    $selected = ($agrologist['district'] ?? '') === $d ? 'selected' : '';
+                    echo "<option value=\"$d\" $selected>$d</option>";
+                }
+                ?>
+            </select>
+        </div>
+
+        <!-- Qualification -->
+        <div class="mb-3">
+            <label class="form-label">যোগ্যতা</label>
+            <textarea name="qualification" class="form-control" rows="3" required><?= $agrologist['qualification'] ?? '' ?></textarea>
+        </div>
+
+        <!-- Experience -->
+        <div class="mb-3">
+            <label class="form-label">অভিজ্ঞতা</label>
+            <textarea name="experience" class="form-control" rows="3" required><?= $agrologist['experience'] ?? '' ?></textarea>
+        </div>
+
+        <!-- Specialization -->
+        <?php
+        $selectedSpecializations = isset($agrologist['specialization']) ? explode(',', $agrologist['specialization']) : [];
+        ?>
+
+        <div class="mb-3">
+            <label class="form-label">বিশেষজ্ঞ ক্ষেত্র</label>
+            <select name="specialization[]" class="form-select" multiple required>
+                <option value="ইন্টিগ্রেটেড ক্রপ ম্যানেজমেন্ট (ICM)" <?= in_array('ইন্টিগ্রেটেড ক্রপ ম্যানেজমেন্ট (ICM)', $selectedSpecializations) ? 'selected' : '' ?>>ইন্টিগ্রেটেড ক্রপ ম্যানেজমেন্ট (ICM)</option>
+                <option value="টেকসই সেচ পদ্ধতি" <?= in_array('টেকসই সেচ পদ্ধতি', $selectedSpecializations) ? 'selected' : '' ?>>টেকসই সেচ পদ্ধতি</option>
+                <option value="পশু স্বাস্থ্য ও টিকা" <?= in_array('পশু স্বাস্থ্য ও টিকা', $selectedSpecializations) ? 'selected' : '' ?>>পশু স্বাস্থ্য ও টিকা</option>
+                <option value="পোলট্রি ম্যানেজমেন্ট" <?= in_array('পোলট্রি ম্যানেজমেন্ট', $selectedSpecializations) ? 'selected' : '' ?>>পোলট্রি ম্যানেজমেন্ট</option>
+                <option value="মাছ চাষ প্রযুক্তি" <?= in_array('মাছ চাষ প্রযুক্তি', $selectedSpecializations) ? 'selected' : '' ?>>মাছ চাষ প্রযুক্তি</option>
+                <option value="ফসল রোগ ও পোকামাকড় ব্যবস্থাপনা" <?= in_array('ফসল রোগ ও পোকামাকড় ব্যবস্থাপনা', $selectedSpecializations) ? 'selected' : '' ?>>ফসল রোগ ও পোকামাকড় ব্যবস্থাপনা</option>
+                <option value="জলবায়ু সহনশীল কৃষি" <?= in_array('জলবায়ু সহনশীল কৃষি', $selectedSpecializations) ? 'selected' : '' ?>>জলবায়ু সহনশীল কৃষি</option>
+                <option value="জৈব সার ও কম্পোস্টিং" <?= in_array('জৈব সার ও কম্পোস্টিং', $selectedSpecializations) ? 'selected' : '' ?>>জৈব সার ও কম্পোস্টিং</option>
+                <option value="ডেইরি খামার ব্যবস্থাপনা" <?= in_array('ডেইরি খামার ব্যবস্থাপনা', $selectedSpecializations) ? 'selected' : '' ?>>ডেইরি খামার ব্যবস্থাপনা</option>
+                <option value="বীজ উৎপাদন ও সংরক্ষণ" <?= in_array('বীজ উৎপাদন ও সংরক্ষণ', $selectedSpecializations) ? 'selected' : '' ?>>বীজ উৎপাদন ও সংরক্ষণ</option>
+            </select>
+            <small class="form-text text-muted">একাধিক অপশন নির্বাচন করতে Ctrl (Windows) অথবা ⌘ (Mac) চেপে রাখুন।</small>
+        </div>
+
+
+        <!-- Photo -->
+        <div class="mb-3">
+            <label class="form-label">প্রোফাইল ছবি</label><br>
+            <?php if (!empty($agrologist['photo'])): ?>
+                        <img src="uploads/<?= $agrologist['photo'] ?>" alt="Profile Photo" width="100" class="mt-2">
+                    <?php endif; ?>
+            <input type="file" name="photo" class="form-control">
+        </div>
+
+        <!-- Submit -->
+        <div class="text-end">
+            <button type="submit" class="btn btn-success">প্রোফাইল আপডেট করুন</button>
+        </div>
     </form>
 </div>
-<form method="POST" enctype="multipart/form-data" class="mt-4">
-    <div class="mb-3">
-        <label class="form-label">Full Name</label>
-        <input type="text" name="full_name" class="form-control" required value="<?= $agrologist['full_name'] ?? '' ?>">
-    </div>
-
-    <div class="mb-3">
-        <label class="form-label">Sector</label>
-        <input type="text" name="sector" class="form-control" required value="<?= $agrologist['sector'] ?? '' ?>">
-    </div>
-
-    <div class="mb-3">
-        <label class="form-label">District</label>
-        <input type="text" name="district" class="form-control" required value="<?= $agrologist['district'] ?? '' ?>">
-    </div>
-
-    <div class="mb-3">
-        <label class="form-label">Qualification</label>
-        <textarea name="qualification" class="form-control" required><?= $agrologist['qualification'] ?? '' ?></textarea>
-    </div>
-
-    <div class="mb-3">
-        <label class="form-label">Experience</label>
-        <textarea name="experience" class="form-control" required><?= $agrologist['experience'] ?? '' ?></textarea>
-    </div>
-
-    <div class="mb-3">
-        <label class="form-label">Specialization</label>
-        <input type="text" name="specialization" class="form-control" required value="<?= $agrologist['specialization'] ?? '' ?>">
-    </div>
-
-    <div class="mb-3">
-        <label class="form-label">Profile Photo</label>
-        <input type="file" name="photo" class="form-control">
-        <?php if (!empty($agrologist['photo'])): ?>
-            <img src="uploads/<?= $agrologist['photo'] ?>" alt="Profile Photo" width="100" class="mt-2">
-        <?php endif; ?>
-    </div>
-
-    <button type="submit" class="btn btn-primary">Save Profile</button>
-</form>
-
-
 
 
     <hr class="text-light mt-4">
