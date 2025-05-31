@@ -83,44 +83,44 @@ $farmer_id = $_SESSION['user_id'];
     
 <div class="sidebar">
         <h2>ন্যাভিগেশন</h2>
-        <a href="farmer.php">
+        <a href="../farmer.php">
                     <i class="fas fa-wallet icon"></i>
                     <span class="text">ড্যাশবোর্ড</span>
                 </a>
-        <a href="crop_management.php">
+        <a href="../crop_management.php">
             <i class="fas fa-seedling icon"></i>
             <span class="text">ফসল/পণ্য ব্যবস্থাপনা</span>
         </a>
-        <a href="Buy.php">
+        <a href="../Buy.php">
             <i class="fas fa-shopping-cart icon"></i>
             <span class="text">সরবরাহকারীদের কাছ থেকে কিনুন</span>
         </a>
-        <a href="labour_jobs.php">
+        <a href="../labour_jobs.php">
             <i class="fas fa-briefcase icon"></i>
             <span class="text">শ্রমিকের চাকরির পোস্ট</span>
         </a>
 
-        <a href="rent_page.php">
+        <a href="../rent_page.php">
             <i class="fas fa-shopping-cart icon"></i>
             <span class="text">ভাড়ার পরিষেবা</span>
         </a>
-        <a href="addNewProduct.php">
+        <a href="../addNewProduct.php">
             <i class="fas fa-plus-circle icon"></i>
             <span class="text">নতুন পণ্য যোগ করুন</span>
         </a>
-        <a href="farmer/order_management.php">
+        <a href="order_management.php">
             <i class="fas fa-clipboard-list icon"></i>
             <span class="text">অর্ডার ম্যানেজমেন্ট</span>
         </a>
-        <a href="farmer/inventory_management.php">
+        <a href="inventory_management.php">
             <i class="fas fa-boxes icon"></i>
             <span class="text">ইনভেন্টরি ম্যানেজমেন্ট</span>
         </a>
-        <a href="farmer/financial_overview.php">
+        <a href="financial_overview.php">
             <i class="fas fa-wallet icon"></i>
             <span class="text">আর্থিক সারসংক্ষেপ</span>
         </a>
-        <a href="analytics_report.php">
+        <a href="../analytics_report.php">
             <i class="fas fa-chart-bar icon"></i>
             <span class="text">বিশ্লেষণ এবং প্রতিবেদন</span>
         </a>

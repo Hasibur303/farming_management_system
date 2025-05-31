@@ -52,9 +52,9 @@ $user_id = $_SESSION['user_id']; // assuming this is farmer id
 
 /* Header Styles */
 header {
-    background-color: #4CAF50;
+    background: linear-gradient(to right, #2E7D32, #66BB6A); /* Elegant green gradient */
     color: white;
-    padding: 1.2rem 2rem;
+    padding: 1rem 3rem; /* Standard padding */
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -63,24 +63,24 @@ header {
     left: 0;
     right: 0;
     z-index: 1000;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
-    border-bottom: 2px solid #388E3C; /* Elegant border at the bottom */
-    transition: background-color 0.3s ease; /* Smooth transition */
-    padding-left: 5rem; /* Ensure space for the user info on the right */
-    padding-right: 5rem; /* Ensure space for the user info on the right */
-    text-align: center; /* Center the title */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-bottom: 1px solid #2E7D32;
+    transition: background 0.3s ease;
+    text-align: center;
 }
 
 /* Header Title */
 header h1 {
-    font-size: 2rem; /* Larger font size for prominence */
-    font-weight: 700;
-    letter-spacing: 1px; /* Letter spacing for a more refined look */
+    font-size: 1.75rem; /* Standard professional size */
+    font-weight: 600;
+    letter-spacing: 0.5px; /* Slight letter spacing for formality */
     margin: 0;
     color: #ffffff;
-    font-family: 'Roboto', sans-serif; /* Modern font */
-    flex-grow: 1; /* This will ensure the title takes the remaining space */
+    font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif; /* Clean, formal fonts */
+    flex-grow: 1;
+    text-align: center;
 }
+
 
 /* User Info Container */
 .user-info {

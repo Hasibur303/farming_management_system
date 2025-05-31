@@ -121,14 +121,18 @@ if (!$order) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Update Order Status</title>
+    <title>অর্ডার স্ট্যাটাস আপডেট করুন</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
     <div class="container py-4">
-        <h1 class="mb-4">Update Order Status</h1>
+        <h1 class="mb-4">অর্ডার স্ট্যাটাস আপডেট করুন</h1>
         <div class="card">
             <div class="card-body">
+            <a href="order_management.php" class="btn btn-outline-dark mb-3">
+                ← অর্ডার ম্যানেজমেন্ট-এ ফিরে যান
+            </a>
+
                 <h5 class="card-title">Order #<?php echo $order['order_id']; ?></h5>
                 <form method="POST">
                     <input type="hidden" name="order_id" value="<?php echo $order['order_id']; ?>">

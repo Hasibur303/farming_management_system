@@ -122,47 +122,106 @@ $financial_result = $financial_query->get_result();
         }
 
         /* Sidebar Styles */
-        .sidebar {
-            position: fixed;
-            left: 0;
-            top: 0;
-            height: 100%;
-            width: 250px;
-            background: #388e3c;
-            padding-top: 80px;
-            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-            z-index: 1000;
-        }
+                .sidebar {
+                    width: 60px; /* Initially narrow */
+                    background-color: #1f2937;
+                    color: white;
+                    height: 100vh;
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    padding: 20px 10px;
+                    transition: width 0.3s ease; /* Smooth expansion */
+                    overflow-y: auto;  /* 👈 Enables vertical scrolling */
+                    overflow-x: hidden; /* 👈 Prevents horizontal scrollbars */
+                    z-index: 999; /* Ensure it stays above content */
+                    scrollbar-width: thin; /* Optional: thinner scrollbar for Firefox */
+                    scrollbar-color: #888 transparent; /* Optional: scrollbar color */
+                }
 
-        .sidebar-menu {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
 
-        .sidebar-menu li {
-            padding: 0;
-            margin: 0;
-        }
+                .sidebar:hover {
+                    width: 250px; /* Full width on hover */
+                }
 
-        .sidebar-menu a {
-            display: block;
-            padding: 15px 25px;
-            color: white;
-            text-decoration: none;
-            font-size: 16px;
-            transition: all 0.3s ease;
-        }
+        .sidebar h2 {
+                    font-size: 1.5rem;
+                    margin-bottom: 30px;
+                    font-weight: 600;
+                    transition: opacity 0.3s ease;
+                }
 
-        .sidebar-menu a:hover {
-            background: #2e7d32;
-            padding-left: 35px;
-        }
+                /* Links inside sidebar */
+                .sidebar a {
+                    color: #b0bec5;
+                    text-decoration: none;
+                    padding: 12px 20px;
+                    display: flex;
+                    align-items: center;
+                    border-radius: 5px;
+                    margin-bottom: 10px;
+                    font-weight: 500;
+                    transition: background 0.3s, padding-left 0.3s ease;
+                }
 
-        .sidebar-menu a.active {
-            background: #2e7d32;
-            border-left: 4px solid #81c784;
-        }
+                .sidebar a:hover {
+                    background-color: #4b5563;
+                    color: white;
+                    padding-left: 20px; /* Add space on hover for extra elegance */
+                }
+
+                .sidebar a .icon {
+                    width: 30px;
+                    text-align: center;
+                    margin-right: 55px;
+                    transition: transform 0.3s ease;
+                }
+
+                .sidebar a:hover .icon {
+                    transform: translateX(5px); /* Slide effect for icons */
+                }
+
+                .sidebar a .text {
+                    display: none; /* Hide text initially */
+                    font-size: 1rem;
+                    transition: opacity 0.3s ease;
+                }
+
+                .sidebar:hover a .text {
+                    display: block; /* Show text on hover */
+                    opacity: 1;
+                    transition: opacity 0.3s ease;
+                }
+
+                /* Icons and Text Visibility */
+                .sidebar a .text {
+                    opacity: 0;
+                }
+
+                .sidebar:hover a .text {
+                    opacity: 1;
+                }
+
+                .sidebar a {
+                    justify-content: center;
+                }
+
+                /* Premium Hover Effects */
+                .sidebar a:hover {
+                    background-color: #3b4a59;
+                    color: #ffffff;
+                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                    transform: translateX(5px); /* Slight movement to the right */
+                }
+
+                .sidebar a .icon {
+                    transition: transform 0.3s ease, color 0.3s ease;
+                }
+
+                .sidebar a:hover .icon {
+                    color: #4CAF50; /* Change icon color on hover */
+                    transform: translateX(5px); /* Add icon animation */
+                }
 
         /* Main Content Area */
         .main-content {
@@ -325,11 +384,48 @@ $financial_result = $financial_query->get_result();
     <!-- Sidebar -->
     <div class="sidebar">
         <ul class="sidebar-menu">
-            <li><a href="../farmer.php"><i class="fas fa-home"></i> ড্যাশবোর্ড</a></li>
-            <li><a href="financial_overview.php" class="active"><i class="fas fa-chart-line"></i> আর্থিক সারসংক্ষেপ</a></li>
-            <li><a href="../crop_management.php"><i class="fas fa-seedling"></i> ফসল ব্যবস্থাপনা</a></li>
-            <li><a href="order_management.php"><i class="fas fa-shopping-cart"></i> অর্ডার</a></li>
-            <li><a href="../logout.php" class="text-danger"><i class="fas fa-sign-out-alt"></i> লগআউট</a></li>
+            <a href="../farmer.php">
+                                <i class="fas fa-wallet icon"></i>
+                                <span class="text">ড্যাশবোর্ড</span>
+                            </a>
+                    <a href="../crop_management.php">
+                        <i class="fas fa-seedling icon"></i>
+                        <span class="text">ফসল/পণ্য ব্যবস্থাপনা</span>
+                    </a>
+                    <a href="../Buy.php">
+                        <i class="fas fa-shopping-cart icon"></i>
+                        <span class="text">সরবরাহকারীদের কাছ থেকে কিনুন</span>
+                    </a>
+                    <a href="../labour_jobs.php">
+                        <i class="fas fa-briefcase icon"></i>
+                        <span class="text">শ্রমিকের চাকরির পোস্ট</span>
+                    </a>
+
+                    <a href="../rent_page.php">
+                        <i class="fas fa-shopping-cart icon"></i>
+                        <span class="text">ভাড়ার পরিষেবা</span>
+                    </a>
+                    <a href="../addNewProduct.php">
+                        <i class="fas fa-plus-circle icon"></i>
+                        <span class="text">নতুন পণ্য যোগ করুন</span>
+                    </a>
+                    <a href="order_management.php">
+                        <i class="fas fa-clipboard-list icon"></i>
+                        <span class="text">অর্ডার ম্যানেজমেন্ট</span>
+                    </a>
+                    <a href="inventory_management.php">
+                        <i class="fas fa-boxes icon"></i>
+                        <span class="text">ইনভেন্টরি ম্যানেজমেন্ট</span>
+                    </a>
+                    <a href="financial_overview.php">
+                        <i class="fas fa-wallet icon"></i>
+                        <span class="text">আর্থিক সারসংক্ষেপ</span>
+                    </a>
+                    <a href="analytics_report.php">
+                        <i class="fas fa-chart-bar icon"></i>
+                        <span class="text">বিশ্লেষণ এবং প্রতিবেদন</span>
+                    </a>
+            <li><a href="../login.php" class="text-danger"><i class="fas fa-sign-out-alt"></i> লগআউট</a></li>
         </ul>
     </div>
 
