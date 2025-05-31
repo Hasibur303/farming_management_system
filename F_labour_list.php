@@ -262,87 +262,108 @@ header h1 {
         .dashboard-feed {
             margin-left: 270px;
             padding: 2rem;
+            background-color: #f5f7fa;
         }
 
+        /* Statistics Cards Grid */
         .stats-cards {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 24px;
         }
 
+        /* Stat Card Style - Premium Glass Effect */
         .stat-card {
-            background: white;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.07);
             text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
         }
 
         .stat-card h3 {
-            font-size: 1.2rem;
-            margin-bottom: 10px;
-            color: #333;
+            font-size: 1.25rem;
+            margin-bottom: 12px;
+            color: #2c3e50;
+            font-weight: 600;
         }
 
         .stat-value {
-            font-size: 1.8rem;
-            font-weight: 700;
+            font-size: 2.2rem;
+            font-weight: 800;
             color: #0d6efd;
+            letter-spacing: 1px;
         }
 
-        ./* General Card Styles */
-.feed-section {
-    background: linear-gradient(145deg, #ffffff, #f3f3f3);
-    padding: 20px;
-    border-radius: 15px;
-    margin-bottom: 30px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s, box-shadow 0.3s;
-}
+        /* Feed Section - Premium Look */
+        .feed-section {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            border-radius: 18px;
+            padding: 24px;
+            margin-bottom: 32px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
 
-.feed-section:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-}
+        .feed-section:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
+        }
 
-.feed-section h2 {
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: #333;
-    border-bottom: 2px solid #4CAF50;
-    padding-bottom: 10px;
-    margin-bottom: 20px;
-}
+        .feed-section h2 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #222;
+            border-bottom: 2px solid #4CAF50;
+            padding-bottom: 12px;
+            margin-bottom: 20px;
+        }
 
+        /* Button - Premium Design */
+        .button-primary {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: #fff;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease-in-out;
+        }
 
+        .button-primary:hover {
+            background: linear-gradient(135deg, #45a049, #3e9241);
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+            transform: translateY(-2px);
+        }
 
-/* Buttons (if applicable) */
-.button-primary {
-    background-color: #4CAF50;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: background 0.3s;
-}
+        /* Responsive Enhancements */
+        @media (max-width: 768px) {
+            .dashboard-feed {
+                margin-left: 0;
+                padding: 1.2rem;
+            }
 
-.button-primary:hover {
-    background-color: #45a049;
-}
+            .feed-section {
+                padding: 18px;
+            }
 
-/* Responsive Enhancements */
-@media (max-width: 768px) {
-    .feed-section {
-        padding: 15px;
-    }
-
-    .orders-list .order-item {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-}
+            .orders-list .order-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
 
 </style>
 
