@@ -8,6 +8,22 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 $user_id = $_SESSION['user_id']; // assuming this is farmer id
+// Fetch articles
+$sql = "SELECT * FROM agro_articles ORDER BY created_at DESC";
+$result = $conn->query($sql);
+
+
+$sql = "
+    SELECT
+        agro_articles.*,
+        agrologists.full_name,
+        agrologists.photo
+    FROM agro_articles
+    JOIN agrologists ON agro_articles.agrologist_id = agrologists.user_id
+    ORDER BY agro_articles.created_at DESC
+";
+
+$result = $conn->query($sql);
 ?>
 
 <!DOCTYPE html>
@@ -15,7 +31,7 @@ $user_id = $_SESSION['user_id']; // assuming this is farmer id
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Farmer Dashboard - SmartAgri</title>
+    <title>Farmers Articleboard - SmartKrishi</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
@@ -471,28 +487,58 @@ header h1 {
     font-size: 16px;
     font-style: italic;
 }
-    </style>
 
-    <!-- Add this script in the head -->
-    <script>
-        // Define selectCrop in the window object to make it globally available
-        window.selectCrop = function(productId, cropName) {
-            console.log('SelectCrop called:', productId, cropName); // Debug line
-            const productIdElement = document.getElementById('product_id');
-            const selectedCropElement = document.getElementById('selected-crop');
 
-            if (productIdElement && selectedCropElement) {
-                productIdElement.value = productId;
-                selectedCropElement.textContent = cropName;
-            }
+body {
+            font-family: 'SolaimanLipi', sans-serif;
+            background-color: #f9f9f9;
+        }
+        .article-card {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            overflow: hidden;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
         }
 
-        // Error handling
-        window.onerror = function(msg, url, lineNo, columnNo, error) {
-            console.log('Error: ' + msg + '\nURL: ' + url + '\nLine: ' + lineNo + '\nColumn: ' + columnNo + '\nError: ' + error);
-            return false;
-        };
-    </script>
+        .article-img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .article-content {
+            padding: 15px 20px;
+            flex-grow: 1;
+        }
+
+        .article-title {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: #28a745;
+        }
+
+        .article-meta {
+            font-size: 0.85rem;
+            color: #777;
+        }
+
+        .agrologist-info {
+            background-color: #f6f6f6;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .agrologist-photo {
+            width: 40px;
+            height: 40px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 2px solid #28a745;
+        }
+
+    </style>
 </head>
 <body>
 <header>
@@ -573,274 +619,43 @@ header h1 {
         </a>
     </div>
 
-<div class="dashboard-feed">
-    <!-- Statistics Summary -->
-    
-    <div class="stats-cards">
-        <div class="stat-card">
-            <h3>আজকের বিক্রয়</h3>
-            <?php
-            $today = date('Y-m-d');
-            $stmt = $conn->prepare("
-                SELECT COALESCE(SUM(total_amount), 0) as total
-                FROM orders 
-                WHERE farmer_id = ? 
-                AND DATE(order_date) = ?
-                AND status = 'Delivered'
-            ");
-            $stmt->bind_param("is", $_SESSION['user_id'], $today);
-            $stmt->execute();
-            $result = $stmt->get_result()->fetch_assoc();
-            ?>
-            <p class="stat-value">TK. <?= number_format($result['total'], 2) ?></p>
-        </div>
 
+    <div class="container mt-4">
+        <h2 class="mb-4 text-center text-success">কৃষি-বিশেষজ্ঞদের প্রবন্ধ</h2>
 
- <!-- Monthly Sales Card -->
- <div class="stat-card">
-            <h3>এই মাসের বিক্রয়</h3>
-            <?php
-            $firstDayOfMonth = date('Y-m-01');
-            $lastDayOfMonth = date('Y-m-t');
-            $stmt = $conn->prepare("
-                SELECT COALESCE(SUM(total_amount), 0) as total
-                FROM orders 
-                WHERE farmer_id = ? 
-                AND DATE(order_date) BETWEEN ? AND ?
-                AND status = 'Delivered'
-            ");
-            $stmt->bind_param("iss", $_SESSION['user_id'], $firstDayOfMonth, $lastDayOfMonth);
-            $stmt->execute();
-            $result = $stmt->get_result()->fetch_assoc();
-            ?>
-            <p class="stat-value">TK. <?= number_format($result['total'], 2) ?></p>
-        </div>
+        <div class="row">
+            <?php if ($result->num_rows > 0): ?>
+                <?php while($row = $result->fetch_assoc()): ?>
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <div class="article-card">
+                            <!-- Agrologist Info -->
+                            <div class="agrologist-info d-flex align-items-center p-2">
+                                <img src="<?php echo htmlspecialchars($row['photo']); ?>" class="agrologist-photo me-2" alt="Agrologist Photo">
+                                <strong><?php echo htmlspecialchars($row['full_name']); ?></strong>
+                            </div>
 
-        <div class="stat-card">
-            <h3>সক্রিয় তালিকা</h3>
-            <?php
-            $stmt = $conn->prepare("
-                SELECT COUNT(*) as count 
-                FROM farmer_crops 
-                WHERE farmer_id = ? AND quantity > 0
-            ");
-            $stmt->bind_param("i", $_SESSION['user_id']);
-            $stmt->execute();
-            $result = $stmt->get_result()->fetch_assoc();
-            ?>
-            <p class="stat-value"><?= $result['count'] ?></p>
-        </div>
-   <!-- Pending Orders Card -->
-   <div class="stat-card">
-            <h3>মুলতুবি অর্ডার</h3>
-            <?php
-            $stmt = $conn->prepare("
-                SELECT COUNT(*) as count
-                FROM orders 
-                WHERE farmer_id = ? 
-                AND status = 'Pending'
-            ");
-            $stmt->bind_param("i", $_SESSION['user_id']);
-            $stmt->execute();
-            $result = $stmt->get_result()->fetch_assoc();
-            ?>
-            <p class="stat-value"><?= $result['count'] ?></p>
-        </div>
-   
-    </div>
- <!-- Recent Orders Section -->
- <div class="recent-orders feed-section">
-        <h2>সাম্প্রতিক অর্ডারগুলি</h2>
-        <?php
-        $stmt = $conn->prepare("
-            SELECT order_id, total_amount, status, order_date
-                   
-            FROM orders 
-            WHERE farmer_id = ?
-            ORDER BY order_date DESC
-            LIMIT 5
-        ");
-        $stmt->bind_param("i", $_SESSION['user_id']);
-        $stmt->execute();
-        $recent_orders = $stmt->get_result();
-        ?>
-        <div class="orders-list">
-            <?php while ($order = $recent_orders->fetch_assoc()): ?>
-                <div class="order-item">
-                    <div class="order-info">
-                        <h4>Order #<?= htmlspecialchars($order['order_id']) ?></h4>
-                        <p>Amount: TK. <?= number_format($order['total_amount'], 2) ?></p>
-                        <p>Status: <span class="status-<?= strtolower($order['status']) ?>">
-                            <?= htmlspecialchars($order['status']) ?>
-                        </span></p>
-                        
-                        <p class="order-date">Ordered: <?= date('M d, Y H:i', strtotime($order['order_date'])) ?></p>
+                            <!-- Article Image -->
+                            <?php if (!empty($row['image'])): ?>
+                                <img src="<?php echo htmlspecialchars($row['image']); ?>" class="article-img" alt="Article Image">
+                            <?php endif; ?>
+
+                            <!-- Content -->
+                            <div class="article-content">
+                                <div class="article-title"><?php echo htmlspecialchars($row['title']); ?></div>
+                                <div class="article-meta mb-2">প্রকাশিত: <?php echo date('d M, Y', strtotime($row['created_at'])); ?></div>
+                                <p><?php echo nl2br(htmlspecialchars($row['content'])); ?></p>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            <?php endwhile; ?>
+                <?php endwhile; ?>
+            <?php else: ?>
+                <p class="text-center">কোনো প্রবন্ধ পাওয়া যায়নি।</p>
+            <?php endif; ?>
         </div>
     </div>
 
 
-    <!-- Low Stock Alerts -->
-    <div class="low-stock-alerts feed-section">
-        <h2>কম স্টক সতর্কতা</h2>
-        <?php
-        $stmt = $conn->prepare("
-            SELECT name, quantity, quantity_type
-            FROM farmer_crops
-            WHERE farmer_id = ? AND quantity <= 5
-            ORDER BY quantity ASC
-        ");
-        $stmt->bind_param("i", $_SESSION['user_id']);
-        $stmt->execute();
-        $low_stock = $stmt->get_result();
-        ?>
-        <div class="alerts-list">
-            <?php while ($item = $low_stock->fetch_assoc()): ?>
-                <div class="alert-item">
-                    <span class="alert-icon">⚠️</span>
-                    <p><?= htmlspecialchars($item['name']) ?> - Only <?= htmlspecialchars($item['quantity']) ?> 
-                       <?= htmlspecialchars($item['quantity_type']) ?> left</p>
-                </div>
-            <?php endwhile; ?>
-        </div>
-    </div>
 
-    <!-- Price Trends -->
-    <div class="price-trends feed-section">
-        <h2>বাজার মূল্যের প্রবণতা</h2>
-        <div class="trends-list">
-            <?php
-            $stmt = $conn->prepare("
-                SELECT fc1.name, 
-                       AVG(fc2.price) as avg_price,
-                       MAX(fc2.price) as max_price,
-                       MIN(fc2.price) as min_price
-                FROM farmer_crops fc1
-                JOIN farmer_crops fc2 ON fc1.name = fc2.name
-                WHERE fc1.farmer_id = ?
-                GROUP BY fc1.name
-            ");
-            $stmt->bind_param("i", $_SESSION['user_id']);
-            $stmt->execute();
-            $trends = $stmt->get_result();
-            ?>
-            <?php while ($trend = $trends->fetch_assoc()): ?>
-                <div class="trend-item">
-                    <h4><?= htmlspecialchars($trend['name']) ?></h4>
-                    <p>Average Price: TK. <?= number_format($trend['avg_price'], 2) ?></p>
-                    <p>Range: TK. <?= number_format($trend['min_price'], 2) ?> - 
-                       TK. <?= number_format($trend['max_price'], 2) ?></p>
-                </div>
-            <?php endwhile; ?>
-        </div>
-    </div>
-</div>
-
-
-
-<!-- Weather Widget -->
-<div id="weather-widget" class="weather-box">
-<h3>🌤️ আবহাওয়ার আপডেট</h3>
-    <div id="weather-city"> Loading weather...</div>
-    <div id="weather-temp"></div>
-    <div id="weather-desc"></div>
-    <p>আর্দ্রতা: <span id="humidity">--%</span></p>
-          <p>বায়ুর গতি: <span id="wind">-- কিমি/ঘণ্টা</span></p>
-    <p>পরবর্তী ২ ঘণ্টার সম্ভাব্য অবস্থা: <span id="next-forecast">লোড হচ্ছে...</span></p>
-</div>
-
-<!-- Weather Script in Bangla -->
-<script>
-const apiKey = "07e734ebc19510e488064f54a0f45dd8"; // OpenWeatherMap API key
-
-// English to Bangla weather mapping
-const banglaDescriptions = {
-    "clear sky": "পরিষ্কার আকাশ",
-    "few clouds": "হালকা মেঘ",
-    "scattered clouds": "বিক্ষিপ্ত মেঘ",
-    "broken clouds": "ভাঙা মেঘ",
-    "overcast clouds": "ঘন মেঘ",
-    "shower rain": "বৃষ্টির ঝরনা",
-    "light rain": "হালকা বৃষ্টি",
-    "moderate rain": "মাঝারি বৃষ্টি",
-    "heavy intensity rain": "ভারী বৃষ্টি",
-    "rain": "বৃষ্টি",
-    "thunderstorm": "বজ্রসহ ঝড়",
-    "snow": "তুষারপাত",
-    "mist": "কুয়াশা"
-};
-
-function translate(desc) {
-    return banglaDescriptions[desc.toLowerCase()] || desc;
-}
-
-// Fetch current weather
-function fetchWeather(lat, lon) {
-    fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`)
-        .then(res => res.json())
-        .then(data => {
-            updateWeather(data);
-            fetchForecast(data.name); // Call forecast with city name
-        })
-        .catch(() => fetchWeatherByCity("Dhaka,BD"));
-}
-
-function fetchWeatherByCity(city) {
-    fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`)
-        .then(res => res.json())
-        .then(data => {
-            updateWeather(data);
-            fetchForecast(city); // Call forecast with city name
-        })
-        .catch(() => {
-            document.getElementById('weather-city').textContent = "আবহাওয়া তথ্য পাওয়া যায়নি";
-        });
-}
-
-function updateWeather(data) {
-    document.getElementById('weather-city').textContent = `${data.name} এর আবহাওয়া`;
-    document.getElementById('weather-temp').textContent = `${data.main.temp}°C`;
-    const englishDesc = data.weather[0].description;
-    document.getElementById('weather-desc').textContent = `অবস্থা: ${translate(englishDesc)}`;
-    document.getElementById('humidity').textContent = `${data.main.humidity}%`;
-    document.getElementById('wind').textContent = `${data.wind.speed} কিমি/ঘণ্টা`;
-}
-
-// Fetch forecast for next 2 hours
-function fetchForecast(city) {
-    fetch(`https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}&units=metric`)
-        .then(res => res.json())
-        .then(data => {
-            if (data.list && data.list.length >= 2) {
-                const desc1 = data.list[0].weather[0].description;
-                const desc2 = data.list[1].weather[0].description;
-                const banglaDesc1 = translate(desc1);
-                const banglaDesc2 = translate(desc2);
-                document.getElementById("next-forecast").textContent = `${banglaDesc1} → ${banglaDesc2}`;
-
-                // OPTIONAL: Only include this if you added <span id="rain"> in HTML
-                // document.getElementById("rain").textContent = `${Math.round(data.list[0].pop * 100)}%`;
-            } else {
-                document.getElementById("next-forecast").textContent = "তথ্য নেই";
-            }
-        })
-        .catch(() => {
-            document.getElementById("next-forecast").textContent = "পূর্বাভাস লোড হয়নি";
-        });
-}
-
-
-if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(
-        pos => fetchWeather(pos.coords.latitude, pos.coords.longitude),
-        () => fetchWeatherByCity("Dhaka,BD")
-    );
-} else {
-    fetchWeatherByCity("Dhaka,BD");
-}
-</script>
 </body>
 
 </html>
