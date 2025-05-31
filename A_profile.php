@@ -112,9 +112,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             padding: 150px 0;
         }
 
-        .sidebar ul li {
+        .sidebar ul li a{
+        color: #fff;
             padding: 15px 20px;
             white-space: nowrap;
+            text-decoration: none;
             overflow: hidden;
             text-overflow: ellipsis;
             display: flex;
@@ -123,7 +125,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             cursor: pointer;
         }
 
-        .sidebar ul li:hover {
+        .sidebar ul li a:hover {
+        color: #fff;
+        text-decoration: none;
             background-color: rgba(255, 255, 255, 0.1);
         }
 
@@ -317,6 +321,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <ul>
         <li><a href="agrologist.php"><i class="fas fa-dashboard"></i><span class="d-none d-md-inline"> Dashboard</span></a></li>
         <li><a href="A_profile.php"><i class="fas fa-user-md"></i><span class="d-none d-md-inline"> Profile</span></a></li>
+        <li><a href="A_agro_article.php"><i class="fas fa-pen"></i><span class="d-none d-md-inline">Articals</span></a></li>
         <li><a href="#"><i class="fas fa-seedling"></i><span class="d-none d-md-inline"> Farmer Requests</span></a></li>
         <li><a href="#"><i class="fas fa-sign-out-alt"></i><span class="d-none d-md-inline"> Logout</span></a></li>
     </ul>
