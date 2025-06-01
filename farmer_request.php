@@ -21,22 +21,37 @@ $requests = mysqli_query($conn, "
 
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['reply'])) {
-     $request_id = $_POST['request_id'];
-        $response = mysqli_real_escape_string($conn, $_POST['response']);
+    $request_id = $_POST['request_id'];
+    $response = mysqli_real_escape_string($conn, $_POST['response']);
+    $decision = $_POST['decision'];
+
+    if ($decision === 'accepted') {
         $appointment_date = mysqli_real_escape_string($conn, $_POST['appointment_date']);
         $appointment_mode = mysqli_real_escape_string($conn, $_POST['appointment_mode']);
+        $location = ($appointment_mode === 'offline') ? mysqli_real_escape_string($conn, $_POST['location']) : '';
 
-        mysqli_query($conn, "UPDATE bookings
-            SET
-                message = CONCAT(message, '\n\nAgrologist Reply: ', '$response'),
-                status = 'Responded',
-                appointment_date = '$appointment_date',
-                appointment_mode = '$appointment_mode'
-            WHERE id = $request_id");
+        $query = "UPDATE bookings
+                  SET
+                      message = CONCAT(message, '\n\nAgrologist Reply: ', '$response'),
+                      status = 'Accepted',
+                      appointment_date = '$appointment_date',
+                      appointment_mode = '$appointment_mode',
+                      location = '$location'
+                  WHERE id = $request_id";
 
-        header("Location: agrologist.php");
-        exit;
+    } elseif ($decision === 'declined') {
+        $query = "UPDATE bookings
+                  SET
+                      message = CONCAT(message, '\n\nAgrologist Reply: ', '$response'),
+                      status = 'Declined'
+                  WHERE id = $request_id";
     }
+
+    mysqli_query($conn, $query);
+    header("Location: agrologist.php");
+    exit;
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -252,36 +267,63 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['reply'])) {
             <p><strong>Farmer Name:</strong> <?php echo $row['farmer_name']; ?></p>
             <p><strong>Message:</strong> <?php echo nl2br($row['message']); ?></p>
             <p><strong>Date:</strong> <?php echo $row['request_date']; ?></p>
+            <p><strong>Appointment Type:</strong> <?php echo $row['appointment_mode']; ?></p>
+
             <p><strong>Status:</strong> <?php echo $row['status']; ?></p>
-            <?php if ($row['status'] === 'Pending'): ?>
+            <?php if ($row['status'] === 'pending'): ?>
                 <button class="btn btn-reply btn-sm" data-bs-toggle="modal" data-bs-target="#replyModal<?php echo $row['id']; ?>">Reply</button>
             <?php endif; ?>
         </div>
 
-        <!-- Reply Modal -->
-        <div class="modal fade" id="replyModal<?php echo $row['id']; ?>" tabindex="-1">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content bg-dark text-light">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Reply to Farmer</h5>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                    </div>
-                    <form method="post">
-                        <div class="modal-body">
-                            <input type="hidden" name="request_id" value="<?php echo $row['id']; ?>">
-                            <div class="mb-3">
-                                <label for="response" class="form-label">Your Response:</label>
-                                <textarea name="response" class="form-control" rows="4" required></textarea>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="submit" name="reply" class="btn btn-primary">Send</button>
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
+      <!-- Reply Modal -->
+      <div class="modal fade" id="replyModal<?php echo $row['id']; ?>" tabindex="-1">
+          <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content bg-dark text-light">
+                  <div class="modal-header">
+                      <h5 class="modal-title">Respond to Farmer Request</h5>
+                      <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                  </div>
+                  <form method="post">
+                      <div class="modal-body">
+                          <input type="hidden" name="request_id" value="<?php echo $row['id']; ?>">
+
+                          <div class="mb-3">
+                              <label class="form-label">Decision:</label>
+                              <select name="decision" class="form-select" required onchange="handleDecisionChange(this, <?php echo $row['id']; ?>)">
+                                  <option value="">-- Select --</option>
+                                  <option value="accepted">Accept</option>
+                                  <option value="declined">Decline</option>
+                              </select>
+                          </div>
+
+                          <div id="acceptFields<?php echo $row['id']; ?>" style="display: none;">
+                              <div class="mb-3">
+                                  <label class="form-label">Appointment Time:</label>
+                                  <input type="datetime-local" name="appointment_time" class="form-control">
+                              </div>
+
+                              <?php if ($row['appointment_mode'] == 'offline'): ?>
+                              <div class="mb-3">
+                                  <label class="form-label">Meeting Location:</label>
+                                  <input type="text" name="meeting_location" class="form-control" placeholder="Enter location">
+                              </div>
+                              <?php endif; ?>
+                          </div>
+
+                          <div class="mb-3">
+                              <label class="form-label">Optional Message:</label>
+                              <textarea name="response" class="form-control" rows="3"></textarea>
+                          </div>
+                      </div>
+                      <div class="modal-footer">
+                          <button type="submit" name="reply" class="btn btn-primary">Submit</button>
+                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                      </div>
+                  </form>
+              </div>
+          </div>
+      </div>
+
     <?php endwhile; ?>
 
 </div>
@@ -289,6 +331,26 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['reply'])) {
 
 
 
+
+<script>
+function handleDecisionChange(select, id) {
+    const acceptFields = document.getElementById('acceptFields' + id);
+    if (select.value === 'accepted') {
+        acceptFields.style.display = 'block';
+    } else {
+        acceptFields.style.display = 'none';
+    }
+}
+
+function toggleLocationField(modeSelect, id) {
+    const locationField = document.getElementById('locationField' + id);
+    if (modeSelect.value === 'offline') {
+        locationField.style.display = 'block';
+    } else {
+        locationField.style.display = 'none';
+    }
+}
+</script>
 
 
 

@@ -216,10 +216,23 @@ $result = mysqli_query($conn, $query);
                         </div>
                         <form action="A_book_agrologist.php" method="post" class="mt-3">
                             <input type="hidden" name="agrologist_id" value="<?php echo $row['user_id']; ?>">
-                            <div class="mb-2">
-                                <textarea name="message" class="form-control" placeholder="Write a message..." required></textarea>
-                            </div>
-                            <button type="submit" class="btn btn-book w-100">Request Appointment</button>
+                           <div class="mb-2">
+                               <label class="form-label">Appointment Type</label>
+                               <select name="appointment_type" class="form-select" required>
+                                   <option value="">-- Select Type --</option>
+                                   <option value="online">Online</option>
+                                   <option value="offline">Offline</option>
+                               </select>
+                           </div>
+
+                           <div class="mb-2">
+                               <textarea name="message" class="form-control" placeholder="Write a message..." required></textarea>
+                           </div>
+
+
+
+                           <button type="submit" class="btn btn-book w-100">Request Appointment</button>
+
                         </form>
                     </div>
                 </div>
