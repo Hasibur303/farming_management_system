@@ -59,6 +59,7 @@ $pending_reviews = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
+        /* Base Styles */
         body {
             margin: 0;
             font-family: 'Segoe UI', sans-serif;
@@ -66,6 +67,7 @@ $pending_reviews = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
             color: #333;
         }
 
+        /* Header Styling */
         header {
             position: fixed;
             top: 0;
@@ -73,15 +75,15 @@ $pending_reviews = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
             width: 100%;
             z-index: 1000;
             background-color: #28a745;
-            color: white;
+            color: #ffffff;
             padding: 15px;
             display: flex;
             justify-content: center;
             align-items: center;
-            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
 
-
+        /* Header Right Section */
         header .header-right {
             position: absolute;
             right: 20px;
@@ -94,19 +96,22 @@ $pending_reviews = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
             font-size: 1rem;
         }
 
+        /* Logout Button */
         .logout-btn {
             background-color: #dc3545;
-            color: white;
+            color: #ffffff;
             border: none;
             padding: 8px 15px;
             border-radius: 5px;
             text-decoration: none;
+            cursor: pointer;
         }
 
         .logout-btn:hover {
             background-color: #c82333;
         }
 
+        /* Sidebar Navigation */
         .sidebar {
             position: fixed;
             top: 80px;
@@ -114,8 +119,8 @@ $pending_reviews = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
             width: 70px;
             height: calc(100% - 80px);
             background-color: #28a745;
-            border-right: 1px solid #ddd;
-            transition: width 0.3s;
+            border-right: 1px solid #dddddd;
+            transition: width 0.3s ease;
             overflow-x: hidden;
         }
 
@@ -123,41 +128,43 @@ $pending_reviews = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
             width: 220px;
         }
 
+        /* Sidebar List */
         .sidebar ul {
             padding: 10px 0;
             list-style: none;
+            margin: 0;
         }
 
         .sidebar ul li {
             display: block;
         }
 
+        /* Sidebar Links */
         .sidebar .nav-link {
-            color: white;
+            color: #ffffff;
             font-size: 16px;
             padding: 10px 20px;
             display: flex;
             align-items: center;
             text-decoration: none;
-            transition: background-color 0.3s;
+            transition: background-color 0.3s ease;
         }
 
-
         .sidebar .nav-link i {
-            font-size: 24px; /* bigger icons */
+            font-size: 24px;
             font-weight: bold;
             margin-right: 30px;
         }
-
 
         .sidebar .nav-link:hover {
             background-color: #e9f5ee;
             color: #28a745;
         }
 
+        /* Language Switcher */
         .language-switcher {
             padding: 10px;
-            border-bottom: 1px solid #ddd;
+            border-bottom: 1px solid #dddddd;
             text-align: center;
         }
 
@@ -166,48 +173,53 @@ $pending_reviews = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
             padding: 5px 10px;
             font-size: 12px;
             border: none;
-            background-color: #D20103;
-            color: white;
+            background-color: #d20103;
+            color: #ffffff;
             border-radius: 4px;
             cursor: pointer;
         }
 
         .language-switcher button:hover {
-            background-color: #FF0B0D;
+            background-color: #ff0b0d;
         }
 
+        /* Page Content */
         .content {
             margin-left: 80px;
-            padding: 30px 20px;
-            transition: margin-left 0.3s;
+            padding: 100px 20px;
+            transition: margin-left 0.3s ease;
         }
 
         .sidebar:hover ~ .content {
             margin-left: 230px;
         }
 
+        /* Typography */
         h3 {
             font-size: 1.5rem;
             margin-bottom: 15px;
             color: #007bff;
         }
 
+        /* Section Container */
         .section {
-            background: #fff;
+            background-color: #ffffff;
             padding: 20px;
             margin-bottom: 25px;
             border-radius: 8px;
-            border: 1px solid #ddd;
+            border: 1px solid #dddddd;
         }
 
+        /* Product Grid */
         .product-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
             gap: 15px;
         }
 
+        /* Product Card */
         .product-card {
-            border: 1px solid #ccc;
+            border: 1px solid #cccccc;
             padding: 10px;
             border-radius: 5px;
             background-color: #fdfdfd;
@@ -222,14 +234,15 @@ $pending_reviews = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
         .product-card p {
             margin: 0;
             font-size: 0.9rem;
-            color: #555;
+            color: #555555;
         }
 
+        /* View Button */
         .btn-view {
             margin-top: 10px;
             display: inline-block;
             background-color: #007bff;
-            color: white;
+            color: #ffffff;
             padding: 6px 10px;
             border-radius: 4px;
             text-decoration: none;
@@ -240,9 +253,11 @@ $pending_reviews = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
             background-color: #0056b3;
         }
 
+        /* Pending List */
         ul.pending-list {
             padding-left: 0;
             list-style: none;
+            margin: 0;
         }
 
         ul.pending-list li {
@@ -250,7 +265,7 @@ $pending_reviews = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
             justify-content: space-between;
             align-items: center;
             padding: 8px;
-            border-bottom: 1px solid #eee;
+            border-bottom: 1px solid #eeeeee;
         }
 
         ul.pending-list li:last-child {
@@ -261,6 +276,7 @@ $pending_reviews = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
             margin: 0;
             font-size: 0.9rem;
         }
+
     </style>
 </head>
 <body>
@@ -290,48 +306,58 @@ $pending_reviews = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 </div>
 
 <div class="content">
+    <!-- Cart Section -->
     <div class="section">
         <h3 data-key="cart">আপনার কার্ট</h3>
-        <p><span data-key="cart_items">আপনার কার্টে</span> <strong><?= $cart_count; ?></strong> <span data-key="items">টি আইটেম আছে।</span></p>
-        <a href="C_market.php?action=view_cart" class="btn-view" data-key="view_cart">কার্ট দেখুন</a>
+        <p>
+            <span data-key="cart_items">বর্তমানে আপনার কার্টে</span>
+            <strong><?= $cart_count; ?></strong>
+            <span data-key="items">টি পণ্য যুক্ত রয়েছে।</span>
+        </p>
+        <a href="C_market.php?action=view_cart" class="btn-view" data-key="view_cart">কার্ট প্রদর্শন করুন</a>
     </div>
 
+    <!-- Recommended Products Section -->
     <div class="section">
-        <h3 data-key="recommend">আপনার পছন্দ হতে পারে এমন পণ্য</h3>
+        <h3 data-key="recommend">আপনার জন্য প্রস্তাবিত পণ্যসমূহ</h3>
         <div class="product-grid">
             <?php if (empty($recommended_products)): ?>
-                <p data-key="no_recommend">কোনও সুপারিশ নেই। অন্বেষণ চালিয়ে যান!</p>
+                <p data-key="no_recommend">দুঃখিত, বর্তমানে কোন প্রস্তাবিত পণ্য উপলব্ধ নেই। অনুগ্রহ করে অন্বেষণ চালিয়ে যান।</p>
             <?php else: ?>
                 <?php foreach ($recommended_products as $product): ?>
                     <div class="product-card">
                         <img src="<?= htmlspecialchars($product['image'] ?? 'images/placeholder.jpg'); ?>" alt="Product Image" style="width:100%; height:130px; object-fit:cover; border-radius:5px;">
                         <h4><?= htmlspecialchars($product['product_name']); ?></h4>
-                        <p data-key="by">By:</p> <?= htmlspecialchars($product['farmer_name']); ?>
-                        <p>৳<?= htmlspecialchars($product['price']); ?></p>
-                        <a href="C_market.php?product_id=<?= $product['product_id'] ?>" class="btn-view" data-key="view_product">পণ্য দেখুন</a>
+                        <p><span data-key="by">প্রদানকারী:</span> <?= htmlspecialchars($product['farmer_name']); ?></p>
+                        <p>মূল্য: ৳<?= htmlspecialchars($product['price']); ?></p>
+                        <a href="C_market.php?product_id=<?= $product['product_id'] ?>" class="btn-view" data-key="view_product">বিস্তারিত দেখুন</a>
                     </div>
                 <?php endforeach; ?>
-
             <?php endif; ?>
         </div>
     </div>
 
+    <!-- Pending Reviews Section -->
     <div class="section">
-        <h3 data-key="pending_review">মুলতুবি পর্যালোচনা</h3>
+        <h3 data-key="pending_review">অপেক্ষমাণ পর্যালোচনাসমূহ</h3>
         <?php if (empty($pending_reviews)): ?>
-            <p data-key="no_review">কোনও পর্যালোচনা বাকি নেই। কেনাকাটা চালিয়ে যান!</p>
+            <p data-key="no_review">বর্তমানে আপনার জন্য কোন পর্যালোচনা বাকি নেই। কেনাকাটা উপভোগ করুন!</p>
         <?php else: ?>
             <ul class="pending-list">
                 <?php foreach ($pending_reviews as $review): ?>
                     <li>
-                        <p><strong><?= $review['product_name']; ?></strong> by <?= $review['farmer_name']; ?></p>
-                        <a href="C_review.php?product_id=<?= $review['product_id']; ?>" class="btn-view" data-key="write_review">পর্যালোচনা লিখুন</a>
+                        <p>
+                            <strong><?= htmlspecialchars($review['product_name']); ?></strong>
+                            <span data-key="by">প্রদানকারী:</span> <?= htmlspecialchars($review['farmer_name']); ?>
+                        </p>
+                        <a href="C_review.php?product_id=<?= $review['product_id']; ?>" class="btn-view" data-key="write_review">পর্যালোচনা প্রদান করুন</a>
                     </li>
                 <?php endforeach; ?>
             </ul>
         <?php endif; ?>
     </div>
 </div>
+
 
 <script>
     const translations = {
