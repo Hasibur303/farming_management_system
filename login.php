@@ -161,6 +161,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <body>
 
 <div class="form-container">
+    <!-- Logo Section -->
+        <div style="text-align: center; margin-bottom: 15px;">
+            <img src="1.png" alt="SmartKrishi Logo" style="max-width: 100px;">
+        </div>
     <h2>ব্যবহারকারী লগইন</h2>
     <?php if (!empty($error)): ?>
         <div class="error"><?php echo $error; ?></div>

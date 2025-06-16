@@ -63,113 +63,145 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register</title>
     <style>
-        body {
-            font-family: 'Roboto', sans-serif;
-            background: linear-gradient(135deg, #4CAF50, #2E7D32);
-            margin: 0;
-            padding: 0;
-        }
+        * {
+                    box-sizing: border-box;
+                    margin: 0;
+                    padding: 0;
+                    font-family: 'Poppins', sans-serif;
+                }
 
-        .form-container {
-            max-width: 400px;
-            margin: 5% auto;
-            background: #ffffff;
-            padding: 30px 40px;
-            border-radius: 12px;
-            box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.2);
-            text-align: center;
-        }
+                body {
+                    background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+                    min-height: 100vh;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                }
 
-        h2 {
-            color: #333;
-            margin-bottom: 20px;
-            font-size: 1.8rem;
-        }
+                .form-container {
+                    background: white;
+                    padding: 40px;
+                    border-radius: 20px;
+                    box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+                    max-width: 420px;
+                    width: 100%;
+                    transition: 0.3s ease-in-out;
+                    text-align: center;
+                }
 
-        .form-group {
-            margin-bottom: 20px;
-            text-align: left;
-        }
+                .form-container:hover {
+                    box-shadow: 0 25px 55px rgba(0,0,0,0.15);
+                }
 
-        .form-group label {
-            display: block;
-            color: #555;
-            font-weight: bold;
-            margin-bottom: 8px;
-        }
+                .form-container img {
+                    width: 90px;
+                    margin-bottom: 20px;
+                }
 
-        .form-group input,
-        .form-group select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 16px;
-            transition: all 0.3s ease-in-out;
-        }
+                .form-container h2 {
+                    color: #2e7d32;
+                    margin-bottom: 30px;
+                    font-weight: 600;
+                }
 
-        .form-group input:focus,
-        .form-group select:focus {
-            border-color: #4CAF50;
-            box-shadow: 0px 0px 8px rgba(76, 175, 80, 0.5);
-        }
+                .form-group {
+                    margin-bottom: 20px;
+                    text-align: left;
+                }
 
-        .form-group input[type="submit"] {
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            cursor: pointer;
-            font-weight: bold;
-            text-transform: uppercase;
-            transition: background-color 0.3s ease-in-out;
-        }
+                .form-group label {
+                    display: block;
+                    margin-bottom: 6px;
+                    color: #4caf50;
+                    font-weight: 500;
+                }
 
-        .form-group input[type="submit"]:hover {
-            background-color: #388E3C;
-        }
+                .form-group input {
+                    width: 100%;
+                    padding: 12px;
+                    border-radius: 8px;
+                    border: 1px solid #ccc;
+                    transition: border-color 0.3s;
+                    font-size: 15px;
+                    color: #87CEFA;
+                }
 
-        .success {
-            color: #4CAF50;
-            margin-bottom: 15px;
-            font-weight: bold;
-        }
+                .form-group input:focus {
+                    border-color: #4caf50;
+                    outline: none;
+                }
 
-        .error {
-            color: #f44336;
-            margin-bottom: 15px;
-            font-weight: bold;
-        }
+                .form-group input[type="submit"] {
+                    background-color: #4caf50;
+                    color: white;
+                    font-weight: bold;
+                    border: none;
+                    cursor: pointer;
+                    transition: background-color 0.3s;
+                }
 
-        footer {
-            text-align: center;
-            margin-top: 20px;
-            font-size: 14px;
-            color: #fff;
-        }
+                .form-group input[type="submit"]:hover {
+                    background-color: #388e3c;
+                }
+                /* Apply light sky blue background to input and select */
+                .form-group input[type="text"],
+                .form-group input[type="email"],
+                .form-group input[type="password"],
+                .form-group select {
+                    background-color: #DFF3FE; /* Light Sky Blue */
+                    color: #000; /* Black text for readability */
+                    border: 1px solid #ccc;
+                    padding: 12px;
+                    border-radius: 8px;
+                    font-size: 15px;
+                    transition: border-color 0.3s;
+                }
 
-        .back-to-login-text {
-            margin-top: 15px;
-            text-align: center;
-        }
-
-        .back-to-login-text a {
-            color: #2e7d32; /* Greenish text */
-            text-decoration: underline;
-            font-weight: bold;
-            font-size: 16px;
-            font-family: 'Segoe UI', sans-serif;
-            transition: color 0.3s ease;
-        }
-
-        .back-to-login-text a:hover {
-            color: #1b5e20; /* Slightly darker green on hover */
-        }
+                /* Optional: focus effect */
+                .form-group input:focus,
+                .form-group select:focus {
+                    border-color: #00BFFF; /* Deep Sky Blue border on focus */
+                    outline: none;
+                    box-shadow: 0 0 6px rgba(0, 191, 255, 0.4);
+                }
 
 
-    </style>
+                .error {
+                    color: red;
+                    text-align: center;
+                    margin-bottom: 15px;
+                    font-weight: 500;
+                }
+
+                .register-link,
+                .back-link {
+                    text-align: center;
+                    margin-top: 15px;
+                    font-size: 14px;
+                }
+
+                .register-link a,
+                .back-link a {
+                    color: #388e3c;
+                    text-decoration: none;
+                    font-weight: 500;
+                }
+
+                .register-link a:hover,
+                .back-link a:hover {
+                    text-decoration: underline;
+                }
+            </style>
+
+
+
 </head>
 <body>
     <div class="form-container">
+    <!-- Logo Section -->
+            <div style="text-align: center; margin-bottom: 15px;">
+                <img src="1.png" alt="SmartKrishi Logo" style="max-width: 100px;">
+            </div>
         <h2>ব্যবহারকারী নিবন্ধন</h2>
 
         <!-- Display error or success messages -->
@@ -223,15 +255,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <input type="submit" value="Register">
             </div>
             <div class="back-to-login-text">
-                <a href="login.php">লগইন পেইজে ফিরে যান</a>
+                <a href="login.php" style="color: #388e3c; font-weight: 500;">লগইন পেইজে ফিরে যান</a>
             </div>
 
 
         </form>
     </div>
-
-    <footer>
-        &copy; <?= date('Y'); ?> কৃষি ব্যবস্থাপনা ব্যবস্থা। সর্বস্বত্ব সংরক্ষিত।
-    </footer>
 </body>
 </html>

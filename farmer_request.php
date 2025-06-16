@@ -115,17 +115,34 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['reply'])) {
             align-items: center;
             transition: background-color 0.2s;
             cursor: pointer;
-        }
-
-        .sidebar ul li:hover {
-            background-color: rgba(255, 255, 255, 0.1);
+            color: white; /* text color */
         }
 
         .sidebar ul li i {
             margin-right: 15px;
             min-width: 35px;
             text-align: center;
+            color: white; /* icon color */
         }
+
+        /* Hover effect with darker background to maintain white text visibility */
+        .sidebar ul li:hover {
+            background-color: rgba(255, 255, 255, 0.15);
+        }
+
+        /* Optional: if you're using anchor tags inside li */
+        .sidebar ul li a {
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            width: 100%;
+        }
+
+        .sidebar ul li a:hover {
+            color: white;
+        }
+
 
         /* Topbar */
         .topbar {
@@ -246,7 +263,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['reply'])) {
     <ul>
         <li><a href="agrologist.php"><i class="fas fa-dashboard"></i><span class="d-none d-md-inline"> Dashboard</span></a></li>
         <li><a href="A_profile.php"><i class="fas fa-user-md"></i><span class="d-none d-md-inline"> Profile</span></a></li>
-        <li><a href="#"><i class="fas fa-seedling"></i><span class="d-none d-md-inline"> Farmer Requests</span></a></li>
+        <li><a href="A_agro_article.php"><i class="fas fa-pen"></i><span class="d-none d-md-inline">Articals</span></a></li>
+        <li><a href="farmer_request.php"><i class="fas fa-seedling"></i><span class="d-none d-md-inline"> Farmer Requests</span></a></li>
         <li><a href="#"><i class="fas fa-sign-out-alt"></i><span class="d-none d-md-inline"> Logout</span></a></li>
     </ul>
 </div>
