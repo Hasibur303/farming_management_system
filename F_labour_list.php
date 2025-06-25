@@ -377,25 +377,39 @@ header h1 {
     </div>
 </header>
 
-
-    <div class="sidebar">
+<div class="sidebar">
         <h2>ন্যাভিগেশন</h2>
         <a href="farmer.php">
                     <i class="fas fa-wallet icon"></i>
                     <span class="text">ড্যাশবোর্ড</span>
                 </a>
+
+
+        <a href="F_Smart_Crop_Doctor.php">
+                           	<i class="fas fa-stethoscope"></i>
+                            <span class="text">  স্মার্ট ফসল ডাক্তার</span>
+                        </a>
+                        <a href="Agrologist_List.php">
+                                            <i class="fas fa-tree icon"></i>
+                                            <span class="text">কৃষি-বিশেষজ্ঞদের সেবা</span>
+                                        </a>
+        <a href="F_article.php">
+                        <i class="fas fa-pen icon"></i>
+                        <span class="text">কৃষি-বিশেষজ্ঞদের প্রবন্ধ পরুন</span>
+        </a>
         <a href="crop_management.php">
             <i class="fas fa-seedling icon"></i>
             <span class="text">ফসল/পণ্য ব্যবস্থাপনা</span>
         </a>
+
         <a href="Buy.php">
             <i class="fas fa-shopping-cart icon"></i>
             <span class="text">সরবরাহকারীদের কাছ থেকে কিনুন</span>
         </a>
         <a href="F_labour_list.php">
-                                    <i class="fas fa-list icon"></i>
-                                    <span class="text"> শ্রমিক তালিকা </span>
-                                </a>
+                            <i class="fas fa-list icon"></i>
+                            <span class="text"> শ্রমিক তালিকা </span>
+                        </a>
         <a href="labour_jobs.php">
             <i class="fas fa-briefcase icon"></i>
             <span class="text">শ্রমিকের চাকরির পোস্ট</span>
