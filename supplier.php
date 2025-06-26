@@ -154,434 +154,200 @@ try {
 }
 ?>
 
+
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Supplier Dashboard - AgriBuzz</title>
-    <style>
-        /* General Styling */
-        body {
-            font-family: 'Georgia', serif;
-            margin: 0;
-            padding: 0;
-            background: #f4f4f4;
-            color: #333;
-        }
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>সরবরাহকারী ড্যাশবোর্ড – SmartKrishi</title>
 
-        .container {
-            width: 85%;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 50px 40px;
-        }
+  <!-- Font Awesome (icons) -->
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
 
-        /* Header */
-        header {
-            background: linear-gradient(135deg, #8bc34a, #4caf50);
-            color: white;
-            padding: 30px 50px;
-            text-align: center;
-            border-bottom: 5px solid #388e3c;
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
-        }
+  <!-- === Styles (inline for demo; move to style.css in production) === -->
+  <style>
+  /* ---------- Global Reset ---------- */
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 
-        header h1 {
-            margin: 0;
-            font-size: 2em;
-            font-weight: 700;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.3);
-        }
+  body{font-family:'Segoe UI','Georgia',serif;background:#f5f7f4;color:#333}
 
-        header a {
-            color: #fff;
-            text-decoration: none;
-            font-size: 16px;
-            margin-left: 25px;
-            font-weight: 600;
-            text-transform: uppercase;
-            transition: color 0.3s ease;
-        }
+  /* ---------- Sidebar ---------- */
+  .sidebar{
+    position:fixed;top:0;left:0;height:100%;width:250px;
+    background:linear-gradient(to bottom,#4caf50,#2e7d32);
+    box-shadow:3px 0 10px rgba(0,0,0,.1);padding-top:80px;z-index:10}
+  .sidebar-menu{list-style:none;padding:0}
+  .sidebar-menu a{
+    display:block;padding:15px 25px;color:#fff;font-size:16px;font-weight:500;
+    text-decoration:none;transition:.3s;border-left:4px solid transparent}
+  .sidebar-menu a:hover,
+  .sidebar-menu a.active{
+    background:rgba(255,255,255,.1);padding-left:35px;border-left:4px solid #81c784}
+  .logout-btn{border-top:1px solid rgba(255,255,255,.2);margin-top:30px;font-weight:bold}
+  .logout-btn:hover{background:#c62828;padding-left:35px}
 
-        header a:hover {
-            color: #d4af37;
-        }
+  /* ---------- Header ---------- */
+  header{
+    background:linear-gradient(to right,#81c784,#388e3c);
+    color:#fff;padding:30px 50px;text-align:center;
+    border-bottom:4px solid #2e7d32;margin-left:250px;
+    box-shadow:0 4px 12px rgba(0,0,0,.2)}
+  header h1{font-size:2rem;font-weight:700;letter-spacing:1px;text-shadow:1px 1px 4px rgba(0,0,0,.3)}
 
-        /* Containers */
-        .form-container, .table-container {
-            background: #fff;
-            border-radius: 14px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
-            margin: 40px 0;
-            padding: 40px 30px;
-            transition: 0.4s ease;
-        }
+  /* ---------- Layout ---------- */
+  .container{max-width:1200px;margin-left:250px;padding:40px}
 
-        .form-container:hover, .table-container:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
-        }
+  .form-container,.table-container{
+    background:#fff;border-radius:12px;padding:40px 30px;
+    box-shadow:0 6px 20px rgba(0,0,0,.08);margin-bottom:40px;transition:.3s}
+  .form-container:hover,.table-container:hover{transform:translateY(-6px);box-shadow:0 12px 35px rgba(0,0,0,.15)}
+  h2{font-size:26px;color:#2e7d32;text-align:center;margin-bottom:30px;text-transform:uppercase;letter-spacing:1px}
 
-        h2 {
-            margin: 0 0 30px;
-            font-size: 28px;
-            color: #4caf50;
-            text-align: center;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-        }
+  /* ---------- Forms ---------- */
+  form label{display:block;margin:15px 0 6px;font-weight:600;font-size:15px}
+  form input[type="text"],
+  form input[type="number"],
+  form select{
+    width:100%;padding:12px;border:2px solid #ccc;border-radius:8px;
+    font-size:16px;background:#f0f0f0;margin-bottom:25px;transition:border .3s}
+  form input:focus,form select:focus{border-color:#4caf50;background:#e8f5e9;outline:0}
+  .btn-primary{
+    background:#43a047;color:#fff;border:none;padding:14px 28px;font-size:16px;
+    border-radius:8px;cursor:pointer;transition:.3s}
+  .btn-primary:hover{background:#2e7d32;transform:translateY(-2px) scale(1.03)}
+  .btn-danger{
+    background:#ff7043;color:#fff;border:none;padding:10px 16px;font-size:14px;
+    border-radius:6px;cursor:pointer;transition:.3s}
+  .btn-danger:hover{background:#e64a19;transform:scale(1.05)}
 
-        /* Form Elements */
-        form label {
-            display: block;
-            margin: 18px 0 6px;
-            font-weight: 600;
-            font-size: 15px;
-            letter-spacing: 0.5px;
-        }
+  /* ---------- Table ---------- */
+  table{width:100%;border-collapse:collapse;background:#fafafa;margin-top:20px}
+  thead th{
+    background:#66bb6a;color:#fff;padding:16px;font-size:16px;text-align:left;border-bottom:2px solid #388e3c}
+  tbody td{padding:14px 16px;border-bottom:1px solid #ddd;font-size:15px;background:#fff}
+  tbody tr:hover td{background:#f1f8e9}
 
-        form input[type="text"],
-        form input[type="number"],
-        form select {
-            width: 100%;
-            padding: 12px 14px;
-            margin-bottom: 25px;
-            border: 2px solid #ccc;
-            border-radius: 8px;
-            background: #f0f0f0;
-            font-size: 16px;
-            transition: 0.3s ease;
-        }
+  /* inline-img utility */
+  .thumb{max-width:120px;border-radius:6px;transition:.3s}
+  .thumb:hover{transform:scale(1.1)}
 
-        form input:focus, form select:focus {
-            border-color: #4caf50;
-            background: #e8f5e9;
-            outline: none;
-        }
+  /* Flex row for edit/delete buttons */
+  .inline-actions{display:flex;gap:8px;flex-wrap:wrap}
 
-        form input[type="submit"] {
-            background: #4caf50;
-            color: white;
-            border: none;
-            padding: 14px 25px;
-            font-size: 18px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
+  /* Messages */
+  .success,.error{text-align:center;font-weight:600;font-size:16px;margin:10px 0;animation:fadeIn .5s}
+  .success{color:#2e7d32}.error{color:#d32f2f}
+  @keyframes fadeIn{0%{opacity:0;transform:translateY(-10px)}100%{opacity:1;transform:translateY(0)}}
 
-        form input[type="submit"]:hover {
-            background: #388e3c;
-            transform: translateY(-2px) scale(1.03);
-        }
-
-        /* Table Styling */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background: #fafafa;
-            margin-top: 20px;
-        }
-
-        table thead th {
-            background: #8bc34a;
-            color: #fff;
-            padding: 16px;
-            font-size: 17px;
-            text-align: left;
-            border-bottom: 3px solid #388e3c;
-        }
-
-        table tbody td {
-            padding: 14px 16px;
-            font-size: 15px;
-            border-bottom: 1px solid #ddd;
-            background: #fdfdfd;
-            transition: background 0.3s ease;
-        }
-
-        table tbody td:hover {
-            background: #e8f5e9;
-        }
-
-        table td img {
-            max-width: 100px;
-            border-radius: 8px;
-            transition: 0.3s;
-        }
-
-        table td img:hover {
-            transform: scale(1.1);
-        }
-
-        table td input[type="submit"] {
-            background: #ff5722;
-            color: white;
-            padding: 10px 18px;
-            border: none;
-            border-radius: 6px;
-            font-size: 14px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        table td input[type="submit"]:hover {
-            background: #d32f2f;
-            transform: scale(1.05);
-        }
-
-        /* Messages */
-        .success, .error {
-            text-align: center;
-            font-weight: 600;
-            font-size: 16px;
-            animation: bounceIn 0.6s ease-out;
-        }
-
-        .success { color: #4caf50; }
-        .error { color: #f44336; }
-
-        @keyframes bounceIn {
-            0% { transform: scale(0.9); opacity: 0; }
-            60% { transform: scale(1.05); opacity: 1; }
-            100% { transform: scale(1); }
-        }
-
-        /* Sidebar */
-        .sidebar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            height: 100%;
-            width: 250px;
-            background: #388e3c;
-            padding-top: 80px;
-            box-shadow: 2px 0 6px rgba(0, 0, 0, 0.1);
-        }
-
-        .sidebar-menu {
-            list-style: none;
-            margin: 0;
-            padding: 0;
-        }
-
-        .sidebar-menu li {
-            margin: 0;
-        }
-
-        .sidebar-menu a {
-            display: block;
-            padding: 15px 25px;
-            color: white;
-            font-size: 16px;
-            text-decoration: none;
-            transition: all 0.3s ease;
-        }
-
-        .sidebar-menu a:hover {
-            background: #2e7d32;
-            padding-left: 35px;
-        }
-
-        .sidebar-menu a.active {
-            background: #2e7d32;
-            border-left: 5px solid #81c784;
-        }
-
-        .sidebar-menu .logout-btn {
-            color: white;
-            padding: 15px 25px;
-            display: block;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            margin-top: 20px;
-            transition: all 0.3s ease;
-        }
-
-        .sidebar-menu .logout-btn:hover {
-            background: #d32f2f;
-            padding-left: 35px;
-        }
-
-        /* Layout Adjustments */
-        .container {
-            margin-left: 250px;
-        }
-
-        header {
-            margin-left: 250px;
-            padding: 30px;
-        }
-    </style>
-
+  /* ---------- Responsive ---------- */
+  @media (max-width:768px){
+    .sidebar{width:200px}
+    .container,header{margin-left:200px;padding:20px}
+    header h1{font-size:1.5rem}
+  }
+  </style>
 </head>
+
 <body>
-<div class="sidebar">
+
+  <!-- ===== Sidebar ===== -->
+  <aside class="sidebar">
     <ul class="sidebar-menu">
-        <li><a href="supplier.php" <?php echo (basename($_SERVER['PHP_SELF']) == 'supplier.php') ? 'class="active"' : ''; ?>>ড্যাশবোর্ড</a></li>
-        <li><a href="supplier/add_equipment.php" <?php echo (basename($_SERVER['PHP_SELF']) == 'add_equipment.php') ? 'class="active"' : ''; ?>>ভাড়ার জন্য নতুন সরঞ্জাম যুক্ত করুন</a></li>
-        <li><a href="supplier/supplier_orders.php" <?php echo (basename($_SERVER['PHP_SELF']) == 'supplier_orders.php') ? 'class="active"' : ''; ?>>অর্ডার ম্যানেজমেন্ট</a></li>
-        <li><a href="supplier/add_new_supply.php" <?php echo (basename($_SERVER['PHP_SELF']) == 'add_new_supply.php') ? 'class="active"' : ''; ?>>নতুন সরবরাহ যোগ করুন</a></li>
-        <li><a href="supplier/my_supplies.php" <?php echo (basename($_SERVER['PHP_SELF']) == 'my_supplies.php') ? 'class="active"' : ''; ?>>আমার সরবরাহ</a></li>
-
-
-        <li><a href="logout.php" class="logout-btn">লগআউট</a></li>
+      <li><a href="supplier.php"               class="<?= $current==='supplier.php'             ? 'active':'' ?>">ড্যাশবোর্ড</a></li>
+      <li><a href="supplier/add_equipment.php" class="<?= $current==='add_equipment.php'        ? 'active':'' ?>">ভাড়ার জন্য নতুন সরঞ্জাম</a></li>
+      <li><a href="supplier/supplier_orders.php" class="<?= $current==='supplier_orders.php'    ? 'active':'' ?>">অর্ডার ম্যানেজমেন্ট</a></li>
+      <li><a href="supplier/add_new_supply.php"  class="<?= $current==='add_new_supply.php'     ? 'active':'' ?>">নতুন সরবরাহ যোগ করুন</a></li>
+      <li><a href="supplier/my_supplies.php"     class="<?= $current==='my_supplies.php'        ? 'active':'' ?>">আমার সরবরাহ</a></li>
+      <li><a href="logout.php" class="logout-btn"><i class="fa-solid fa-right-from-bracket"></i> লগআউট</a></li>
     </ul>
-</div>
+  </aside>
+
+  <!-- ===== Header ===== -->
+  <header>
+    <h1>সরবরাহকারী ড্যাশবোর্ড – স্মার্টকৃষি</h1>
+  </header>
+
+  <!-- ===== Main ===== -->
+  <main class="container">
 
 
-    <header>
-        <h1>সরবরাহকারী ড্যাশবোর্ড - স্মার্টকৃষি</h1>
+    <!-- Most Expensive Supply -->
+    <section class="table-container">
+      <h2>সবচেয়ে ব্যয়বহুল সরবরাহ</h2>
+      <?php if ($most_expensive): ?>
+        <p><strong>সরবরাহের নাম:</strong> <?= htmlspecialchars($most_expensive['supply_name']) ?></p>
+        <p><strong>দাম:</strong> <?= htmlspecialchars($most_expensive['price']) ?></p>
+      <?php else: ?>
+        <p>কোনও সরবরাহ পাওয়া যায়নি</p>
+      <?php endif; ?>
+    </section>
 
-    </header>
+    <!-- Supplies Table -->
+    <section class="table-container">
+      <h2>তোমার সরবরাহ</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>সরবরাহ আইডি</th>
+            <th>সরবরাহের নাম</th>
+            <th>পরিমাণ</th>
+            <th>পরিমাণের ধরণ</th>
+            <th>দাম</th>
+            <th>ছবি</th>
+            <th>প্রক্রিয়া</th>
+          </tr>
+        </thead>
+        <tbody>
+          <?php while ($supply = $supplies_result->fetch_assoc()): ?>
+            <tr>
+              <td><?= htmlspecialchars($supply['supply_id']) ?></td>
+              <td><?= htmlspecialchars($supply['supply_name']) ?></td>
+              <td><?= htmlspecialchars($supply['quantity']) ?></td>
+              <td><?= htmlspecialchars($supply['quantity_type']) ?></td>
+              <td><?= htmlspecialchars($supply['price']) ?></td>
+              <td>
+                <?php if (!empty($supply['image'])): ?>
+                  <img src="<?= htmlspecialchars($supply['image']) ?>"
+                       alt="ছবিঃ <?= htmlspecialchars($supply['supply_name']) ?>"
+                       class="thumb">
+                <?php else: ?>No Image<?php endif; ?>
+              </td>
+              <td>
+                <div class="inline-actions">
+                  <!-- Edit -->
+                  <form method="post" action="supplier.php" enctype="multipart/form-data">
+                    <input type="hidden" name="supply_id" value="<?= $supply['supply_id'] ?>">
+                    <input type="hidden" name="existing_image" value="<?= $supply['image'] ?>">
 
-    <div class="container">
-        <!-- Filter Form -->
-        <div class="form-container">
-            <h2>ফিল্টার সরবরাহ</h2>
-            <form method="GET" action="supplier.php">
-                <label for="price_min">সর্বনিম্ন মূল্য:</label>
-                <input type="number" name="price_min" value="<?= htmlspecialchars($price_min); ?>">
+                    <input type="text"     name="supply_name"   value="<?= htmlspecialchars($supply['supply_name']) ?>" required>
+                    <input type="number"   name="quantity"      value="<?= htmlspecialchars($supply['quantity']) ?>" required>
+                    <select name="quantity_type" required>
+                      <option value="Per-Kg"    <?= $supply['quantity_type']==='Per-Kg'   ? 'selected':'' ?>>Per-Kg</option>
+                      <option value="Per-Piece" <?= $supply['quantity_type']==='Per-Piece'? 'selected':'' ?>>Per-Piece</option>
+                    </select>
+                    <input type="text"     name="price"         value="<?= htmlspecialchars($supply['price']) ?>" required>
+                    <input type="file"     name="supply_image"  accept="image/*">
+                    <button type="submit" name="edit_supply" class="btn-primary">সংরক্ষণ</button>
+                  </form>
 
-                <label for="price_max">সর্বোচ্চ মূল্য:</label>
-                <input type="number" name="price_max" value="<?= htmlspecialchars($price_max); ?>">
+                  <!-- Delete -->
+                  <form method="post" action="supplier.php"
+                        onsubmit="return confirm('আপনি কি নিশ্চিত?');">
+                    <input type="hidden" name="supply_id" value="<?= $supply['supply_id'] ?>">
+                    <button type="submit" name="delete_supply" class="btn-danger">মুছে ফেলুন</button>
+                  </form>
+                </div>
+              </td>
+            </tr>
+          <?php endwhile; ?>
+        </tbody>
+      </table>
+    </section>
 
-                <label for="quantity_type">পরিমাণের ধরণ:</label>
-                <select name="quantity_type">
-                    <option value="">সব</option>
-                    <option value="Per-Kg" <?= $quantity_type === 'Per-Kg' ? 'selected' : ''; ?>>প্রতি কেজি</option>
-                    <option value="Per-Piece" <?= $quantity_type === 'Per-Piece' ? 'selected' : ''; ?>>প্রতি-পিস</option>
-                </select>
-
-                <input type="submit" value="Filter">
-            </form>
-        </div>
-
-        <!-- Add New Supply Form -->
-        <div class="form-container">
-            <h2>নতুন সরবরাহ যোগ করুন</h2>
-            <?php if (!empty($error)): ?>
-                <div class="error"><?= htmlspecialchars($error); ?></div>
-            <?php endif; ?>
-            <?php if (!empty($success_message)): ?>
-                <div class="success"><?= htmlspecialchars($success_message); ?></div>
-            <?php endif; ?>
-            <form method="POST" action="supplier.php" enctype="multipart/form-data">
-                <label for="supply_name">সরবরাহের নাম:</label>
-                <input type="text" name="supply_name" required>
-
-                <label for="quantity">পরিমাণ:</label>
-                <input type="number" name="quantity" required>
-
-                <label for="quantity_type">পরিমাণের ধরণ:</label>
-                <select name="quantity_type" required>
-                    <option value="Per-Piece" selected>প্রতি-পিস</option>
-                    <option value="Per-Kg">প্রতি কেজি</option>
-                </select>
-
-
-                <label for="price">দাম:</label>
-                <input type="text" name="price" required>
-
-                <label for="supply_image">ছবি:</label>
-                <input type="file" name="supply_image" accept="image/*">
-
-                <input type="submit" name="add_supply" value="Add Supply">
-            </form>
-        </div>
-
-        <!-- Most Expensive Supply -->
-        <div class="table-container">
-            <h2>সবচেয়ে ব্যয়বহুল সরবরাহ</h2>
-            <?php if ($most_expensive): ?>
-                <p><strong>সরবরাহের নাম:</strong> <?= htmlspecialchars($most_expensive['supply_name']); ?></p>
-                <p><strong>দাম:</strong> <?= htmlspecialchars($most_expensive['price']); ?></p>
-            <?php else: ?>
-                <p>কোনও সরবরাহ পাওয়া যায়নি</p>
-            <?php endif; ?>
-        </div>
-
-        <!-- Supplies Table -->
-        <div class="table-container">
-            <h2>তোমার সরবরাহ</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>সরবরাহ আইডি</th>
-                        <th>সরবরাহের নাম</th>
-                        <th>পরিমাণ</th>
-                        <th>পরিমাণের ধরণ</th>
-                        <th>দাম</th>
-                        <th>ছবি</th>
-                        <th>প্রক্রিয়া</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php while ($supply = $supplies_result->fetch_assoc()): ?>
-                        <tr>
-                            <td><?= htmlspecialchars($supply['supply_id']); ?></td>
-                            <td><?= htmlspecialchars($supply['supply_name']); ?></td>
-                            <td><?= htmlspecialchars($supply['quantity']); ?></td>
-                            <td><?= htmlspecialchars($supply['quantity_type']); ?></td>
-                            <td><?= htmlspecialchars($supply['price']); ?></td>
-                            <td>
-                                <?php if (!empty($supply['image'])): ?>
-                                    <img src="<?= htmlspecialchars($supply['image']); ?>" alt="Supply Image" style="max-width: 300px;">
-                                <?php else: ?>
-                                    No Image
-                                <?php endif; ?>
-                            </td>
-                            <td>
-                               <!-- Edit Form -->
-                               <form method="POST" action="supplier.php" enctype="multipart/form-data" style="display: inline-block;">
-                                   <input type="hidden" name="supply_id" value="<?= $supply['supply_id']; ?>">
-                                   <input type="hidden" name="existing_image" value="<?= $supply['image']; ?>">
-
-                                   <!-- Supply Name -->
-                                   <label>নাম:
-                                       <input type="text" name="supply_name" value="<?= htmlspecialchars($supply['supply_name']); ?>" required>
-                                   </label>
-
-                                   <!-- Quantity -->
-                                   <label>পরিমাণ:
-                                       <input type="number" name="quantity" value="<?= htmlspecialchars($supply['quantity']); ?>" required>
-                                   </label>
-
-                                   <!-- Quantity Type -->
-                                   <label>পরিমাণের ধরণ:
-                                       <select name="quantity_type" required>
-                                           <option value="Per-Kg" <?= $supply['quantity_type'] === 'Per-Kg' ? 'selected' : ''; ?>>Per-Kg</option>
-                                           <option value="Per-Piece" <?= $supply['quantity_type'] === 'Per-Piece' ? 'selected' : ''; ?>>Per-Piece</option>
-                                       </select>
-                                   </label>
-
-                                   <!-- Price -->
-                                   <label>দাম:
-                                       <input type="text" name="price" value="<?= htmlspecialchars($supply['price']); ?>" required>
-                                   </label>
-
-                                   <!-- Image Upload -->
-                                   <label>ছবি:
-                                       <input type="file" name="supply_image" accept="image/*">
-                                   </label>
-
-                                   <!-- Save Button -->
-                                   <input type="submit" name="edit_supply" value="সংরক্ষণ করুন">
-                               </form>
-
-                                <!-- Delete Form -->
-                                <form method="POST" action="supplier.php" style="display: inline-block;">
-                                    <input type="hidden" name="supply_id" value="<?= $supply['supply_id']; ?>">
-                                    <input type="submit" name="delete_supply" value="মুছে ফেলুন" onclick="return confirm('Are you sure?')">
-                                </form>
-                            </td>
-                        </tr>
-                    <?php endwhile; ?>
-                </tbody>
-            </table>
-        </div>
-    </div>
+  </main>
 </body>
 </html>
+
+

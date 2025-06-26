@@ -192,8 +192,12 @@ $result = $stmt->get_result();
     <!-- Sidebar -->
     <div class="sidebar">
         <ul class="sidebar-menu">
-            <li><a href="../supplier.php"><i class="fas fa-home"></i> ড্যাশবোর্ড</a></li>
-            <li><a href="supplier_orders.php" class="active"><i class="fas fa-box"></i> অর্ডার ম্যানেজমেন্ট</a></li>
+             <li><a href="../supplier.php"              class="<?= $current==='supplier.php'              ? 'active':'' ?>">ড্যাশবোর্ড</a></li>
+                <li><a href="add_equipment.php"           class="<?= $current==='add_equipment.php'          ? 'active':'' ?>">ভাড়ার জন্য সরঞ্জাম</a></li>
+                <li><a href="supplier_orders.php"         class="<?= $current==='supplier_orders.php'        ? 'active':'' ?>">অর্ডার ম্যানেজমেন্ট</a></li>
+                <li><a href="add_new_supply.php"          class="<?= $current==='add_new_supply.php'         ? 'active':'' ?>">নতুন সরবরাহ</a></li>
+                <li><a href="my_supplies.php"             class="<?= $current==='my_supplies.php'            ? 'active':'' ?>">আমার সরবরাহ</a></li>
+            
             <li><a href="../logout.php" class="logout-btn"><i class="fas fa-sign-out-alt"></i> লগআউট</a></li>
         </ul>
     </div>
