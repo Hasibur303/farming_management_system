@@ -860,17 +860,17 @@
           <div class="notice-card">
             <h5>🌾 কৃষি ঋণ আবেদন শুরু</h5>
             <p>ক্ষুদ্র ও মাঝারি কৃষকদের জন্য সহজ শর্তে কৃষি ঋণ প্রদান শুরু হয়েছে। বিস্তারিত জানুন স্থানীয় কৃষি অফিসে।</p>
-            <span class="date">২৪ এপ্রিল, ২০২৫</span>
+            <span class="date">২০ জুলাই, ২০২৫</span>
           </div>
           <div class="notice-card">
             <h5>💸 সারের ভর্তুকি তালিকা প্রকাশ</h5>
             <p>২০২৫ সালের জন্য সরকার নির্ধারিত সার ভর্তুকি তালিকা ওয়েবসাইটে প্রকাশিত হয়েছে।</p>
-            <span class="date">২২ এপ্রিল, ২০২৫</span>
+            <span class="date">২২ জুলাই, ২০২৫</span>
           </div>
           <div class="notice-card">
             <h5>🎓 কৃষক প্রশিক্ষণ প্রোগ্রাম</h5>
             <p>নতুন প্রযুক্তি ব্যবহারে আগ্রহী কৃষকদের জন্য বিনামূল্যে ৩ দিনের প্রশিক্ষণ কোর্স ঘোষণা করা হয়েছে।</p>
-            <span class="date">২০ এপ্রিল, ২০২৫</span>
+            <span class="date">২৪ জুলাই, ২০২৫</span>
           </div>
         </div>
       </div>
@@ -1134,14 +1134,14 @@
 
           <div class="col-6 col-md-3">
             <div class="stat-box text-center">
-              <div class="circle">৮,৫০০+</div>
+              <div class="circle">৫০০+</div>
               <div class="label">সেবা দিচ্ছি</div>
             </div>
           </div>
 
           <div class="col-6 col-md-3">
             <div class="stat-box text-center">
-              <div class="circle">২০+</div>
+              <div class="circle">২৫০+</div>
               <div class="label">পণ্য</div>
             </div>
           </div>
@@ -1168,25 +1168,113 @@
 </button>
 
 <div class="chatbot-window" id="chatWindow">
-  <div class="chat-header">
-    🔎 স্মার্ট কৃষি সহায়তা
-  </div>
+  <div class="chat-header">🔎 স্মার্ট কৃষি সহায়তা</div>
+
   <div class="chat-body" id="chatBody">
     <p>👋 হ্যালো! কিভাবে সাহায্য করতে পারি?</p>
+
+    <!-- Suggested Questions -->
+    <div id="suggestedQuestions">
+      <button onclick="handleSuggestion('ধান চাষের সময় কী সার দিতে হয়?')">🌾 ধান চাষে সার</button>
+      <button onclick="handleSuggestion('কোন ফসল এখন বপন করা ভাল?')">📅 সিজন অনুযায়ী ফসল</button>
+      <button onclick="handleSuggestion('পোকামাকড় দমন কিভাবে করব?')">🐛 পোকা দমন</button>
+      <button onclick="handleSuggestion('জমিতে পানি সেচ কতবার দেবো?')">💧 পানি সেচ</button>
+    </div>
   </div>
+
   <div class="chat-footer">
     <input type="text" id="chatInput" placeholder="আপনার প্রশ্ন লিখুন...">
     <button onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
   </div>
 </div>
 
-
+<!-- Chatbot CSS (add in <style> or external CSS) -->
+<style>
+.chatbot-window {
+  position: fixed;
+  bottom: 80px;
+  right: 20px;
+  width: 300px;
+  background: #fefefe;
+  border-radius: 10px;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.2);
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+  z-index: 999;
+}
+.chat-header {
+  background: #28a745;
+  color: white;
+  padding: 12px;
+  font-weight: bold;
+}
+.chat-body {
+  padding: 10px;
+  max-height: 300px;
+  overflow-y: auto;
+  font-family: sans-serif;
+}
+.chat-footer {
+  display: flex;
+  border-top: 1px solid #ddd;
+}
+.chat-footer input {
+  flex: 1;
+  padding: 8px;
+  border: none;
+  outline: none;
+}
+.chat-footer button {
+  background: #28a745;
+  border: none;
+  color: white;
+  padding: 0 15px;
+  cursor: pointer;
+}
+.chatbot-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #28a745;
+  color: white;
+  border: none;
+  padding: 15px;
+  border-radius: 50%;
+  font-size: 20px;
+  cursor: pointer;
+}
+.reply {
+  text-align: right;
+  background: #dcf8c6;
+  padding: 6px 10px;
+  margin: 5px 0;
+  border-radius: 8px;
+}
+#suggestedQuestions button {
+  background: #eee;
+  border: none;
+  border-radius: 8px;
+  padding: 6px 10px;
+  margin: 4px 2px;
+  cursor: pointer;
+  font-size: 14px;
+}
+#suggestedQuestions button:hover {
+  background: #d4edda;
+}
+</style>
 
 <!-- Chatbot JS -->
 <script>
 function toggleChat() {
-  var chat = document.getElementById("chatWindow");
+  const chat = document.getElementById("chatWindow");
   chat.style.display = chat.style.display === "flex" ? "none" : "flex";
+}
+
+function handleSuggestion(text) {
+  document.getElementById("chatInput").value = text;
+  sendMessage();
 }
 
 function sendMessage() {
@@ -1195,22 +1283,30 @@ function sendMessage() {
   const chatBody = document.getElementById("chatBody");
 
   if (message !== "") {
-    // User message
+    // Show user message
     const userMsg = document.createElement("p");
     userMsg.className = "reply";
     userMsg.textContent = message;
     chatBody.appendChild(userMsg);
 
-    // Bot reply
+    // Bot reply logic
     const botReply = document.createElement("p");
     setTimeout(() => {
-      if (message.includes("ফসল")) {
-        botReply.textContent = "আপনি কোন ফসল সম্পর্কে জানতে চান? যেমন ধান, গম, পেঁয়াজ?";
-      } else if (message.includes("সার")) {
-        botReply.textContent = "সার ব্যবহারের নিয়ম জানতে চাইলে নির্দিষ্ট ফসলের নাম বলুন।";
+      let reply = "";
+
+      if (message.includes("ধান") && message.includes("সার")) {
+        reply = "ধান চাষে ইউরিয়া, টিএসপি এবং এমওপি সারের সঠিক ব্যবহার ফলন বাড়াতে সাহায্য করে। চাষের ১৫ দিন পর প্রথম ডোজ দিন।";
+      } else if (message.includes("বপন") || message.includes("সিজন")) {
+        reply = "এই মৌসুমে পাট, মরিচ এবং শাক সবজি চাষের জন্য উপযুক্ত সময়।";
+      } else if (message.includes("পোকা")) {
+        reply = "জৈব পদ্ধতিতে যেমন নিম তেল বা লেবুজাতীয় তরল ব্যবহার করে পোকা দমন করা যায়।";
+      } else if (message.includes("পানি") || message.includes("সেচ")) {
+        reply = "সাধারণভাবে ধান জমিতে প্রতি ৭-১০ দিনে সেচ দেওয়া প্রয়োজন, তবে মাটির ধরন অনুযায়ী পরিবর্তন হতে পারে।";
       } else {
-        botReply.textContent = "দুঃখিত! আমি বুঝতে পারিনি। অনুগ্রহ করে স্পষ্ট করে লিখুন।";
+        reply = "দুঃখিত! আমি বুঝতে পারিনি। অনুগ্রহ করে আরেকটু স্পষ্ট করে বলুন।";
       }
+
+      botReply.textContent = reply;
       chatBody.appendChild(botReply);
       chatBody.scrollTop = chatBody.scrollHeight;
     }, 500);
@@ -1220,6 +1316,10 @@ function sendMessage() {
   }
 }
 </script>
+
+<!-- Font Awesome for Icons (Add in <head>) -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
   <section id="sheba-section" style="background: linear-gradient(135deg, #e8f5e9, #fffde7); padding: 60px 20px; font-family: 'Poppins', sans-serif;">
 
 <!-- Section 2: আমাদের সেবাসমূহ -->
@@ -1227,10 +1327,10 @@ function sendMessage() {
   <div class="section-title">আমাদের সেবাসমূহ</div>
   <div class="row g-4">
     <div class="col-md-4">
-      <div class="info-card">কৃষির মুক্তিযোদ্ধার ফসল চাষে পরামর্শ</div>
+      <div class="info-card">ফসল চাষে পরামর্শ</div>
     </div>
     <div class="col-md-4">
-      <div class="info-card bg-warning text-dark">সার প্রয়োগে কৃষির মুক্তিযুদ্ধ পরামর্শ</div>
+      <div class="info-card bg-warning text-dark">সার প্রয়োগে পরামর্শ</div>
     </div>
     <div class="col-md-4">
       <div class="info-card">কৃষি সরঞ্জাম ভাড়া</div>
