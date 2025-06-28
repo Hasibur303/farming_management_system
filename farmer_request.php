@@ -1,57 +1,67 @@
 <?php
+// farmer_request.php — Agrologist handles farmer booking requests (no location column)
 session_start();
-include 'database.php';
+require_once 'database.php';
 
-// Check login
-if (!isset($_SESSION['user_id'])) {
-    header("Location: login.php");
+// 🔐 Auth check: only logged‑in agrologist
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'Agrologist') {
+    header('Location: login.php');
     exit();
 }
-// Sample agrologist ID
-$agrologist_id = $_SESSION['user_id'];
+$agrologist_id = (int) $_SESSION['user_id'];
 
-// Fetch farmer requests
-$requests = mysqli_query($conn, "
-    SELECT b.*, u.name AS farmer_name
-    FROM bookings b
-    JOIN users u ON b.farmer_id = u.user_id
-    WHERE b.agrologist_id = $agrologist_id
-    ORDER BY b.request_date DESC
-");
+/* ------------------------------------------------------------------
+   FETCH BOOKING REQUESTS FOR DASHBOARD TABLE/LIST
+   ------------------------------------------------------------------ */
+$reqSql  = "SELECT b.*, u.name AS farmer_name
+             FROM bookings b
+             JOIN users u ON b.farmer_id = u.user_id
+             WHERE b.agrologist_id = ?
+             ORDER BY b.request_date DESC";
+$reqStmt = $conn->prepare($reqSql);
+$reqStmt->bind_param('i', $agrologist_id);
+$reqStmt->execute();
+$requests = $reqStmt->get_result();
 
-// Handle form submission
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['reply'])) {
-    $request_id = $_POST['request_id'];
-    $response = mysqli_real_escape_string($conn, $_POST['response']);
-    $decision = $_POST['decision'];
+/* ------------------------------------------------------------------
+   HANDLE REPLY (ACCEPT / DECLINE)
+   ------------------------------------------------------------------ */
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['reply'])) {
+    $request_id = (int) $_POST['request_id'];
+    $response   = trim($_POST['response'] ?? '');
+    $decision   = $_POST['decision'] ?? 'declined';
 
     if ($decision === 'accepted') {
-        $appointment_date = mysqli_real_escape_string($conn, $_POST['appointment_date']);
-        $appointment_mode = mysqli_real_escape_string($conn, $_POST['appointment_mode']);
-        $location = ($appointment_mode === 'offline') ? mysqli_real_escape_string($conn, $_POST['location']) : '';
+        $appointment_date = $_POST['appointment_date'] ?? '';
+        $appointment_mode = $_POST['appointment_mode'] ?? 'online'; // online / offline
 
-        $query = "UPDATE bookings
-                  SET
-                      message = CONCAT(message, '\n\nAgrologist Reply: ', '$response'),
-                      status = 'Accepted',
-                      appointment_date = '$appointment_date',
-                      appointment_mode = '$appointment_mode',
-                      location = '$location'
-                  WHERE id = $request_id";
+        $sql = "UPDATE bookings
+                   SET message          = CONCAT(message, '\n\nAgrologist Reply: ', ?),
+                       status           = 'Accepted',
+                       appointment_date = ?,
+                       appointment_mode = ?
+                 WHERE id = ? AND agrologist_id = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param('sssii', $response, $appointment_date, $appointment_mode, $request_id, $agrologist_id);
 
-    } elseif ($decision === 'declined') {
-        $query = "UPDATE bookings
-                  SET
-                      message = CONCAT(message, '\n\nAgrologist Reply: ', '$response'),
-                      status = 'Declined'
-                  WHERE id = $request_id";
+    } else { // declined
+        $sql = "UPDATE bookings
+                   SET message = CONCAT(message, '\n\nAgrologist Reply: ', ?),
+                       status  = 'Declined'
+                 WHERE id = ? AND agrologist_id = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param('sii', $response, $request_id, $agrologist_id);
     }
 
-    mysqli_query($conn, $query);
-    header("Location: agrologist.php");
-    exit;
-}
+    if ($stmt->execute()) {
+        $_SESSION['flash'] = 'রেসপন্স সফলভাবে আপডেট হয়েছে!';
+    } else {
+        $_SESSION['flash'] = 'ত্রুটি: ' . $conn->error;
+    }
 
+    header('Location: agrologist.php');
+    exit();
+}
 ?>
 
 <!DOCTYPE html>
@@ -321,10 +331,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['reply'])) {
                               </div>
 
                               <?php if ($row['appointment_mode'] == 'offline'): ?>
-                              <div class="mb-3">
-                                  <label class="form-label">Meeting Location:</label>
-                                  <input type="text" name="meeting_location" class="form-control" placeholder="Enter location">
-                              </div>
+
                               <?php endif; ?>
                           </div>
 
