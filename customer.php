@@ -118,7 +118,7 @@ $pending_reviews = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
             left: 0;
             width: 70px;
             height: calc(100% - 80px);
-            background-color: #28a745;
+             background: linear-gradient(to bottom, #3e4e60, #4b5c6b);
             border-right: 1px solid #dddddd;
             transition: width 0.3s ease;
             overflow-x: hidden;
