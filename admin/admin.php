@@ -451,6 +451,11 @@ form input[type="submit"]:hover {
                 </a>
             </li>
             <li class="nav-item">
+                            <a class="nav-link" href="Manage_Visitors_message.php">
+                                <i class="fas fa-users"></i> <span id="nav-farmers">দর্শনার্থীর বার্তা দেখুন</span>
+                            </a>
+                        </li>
+            <li class="nav-item">
                 <a class="nav-link" href="manage_farmers.php">
                     <i class="fas fa-users"></i> <span id="nav-farmers">কৃষকদের পরিচালনা করুন</span>
                 </a>

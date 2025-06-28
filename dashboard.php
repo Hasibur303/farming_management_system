@@ -806,7 +806,7 @@
                         <a class="nav-link" href="#sheba-section">সেবাসমূহ</a>
                       </li>
           <li class="nav-item">
-          <a class="nav-link" href="#contact-section">যোগাযোগ</a>
+          <a class="nav-link" href="Landing_Contact.php">যোগাযোগ</a>
           </li>
           <li class="nav-item"><a class="nav-link" href="blog.php">ব্লগ</a></li>
           <li class="nav-item">

@@ -151,33 +151,32 @@ include('../database.php');
                             <?php
                             $start_date = $_GET['start_date'] ?? date('Y-m-01');
                             $end_date = $_GET['end_date'] ?? date('Y-m-d');
-                            
-                           
-                            $query = "SELECT 
-                            u.name AS farmer_name,
-                            COUNT(o.order_id) AS total_orders,
-                            SUM(o.total_amount) AS total_revenue,
-                            AVG(o.total_amount) AS average_order_value,
-                            COUNT(CASE WHEN o.status = 'Delivered' THEN 1 END) AS completed_orders,
-                            COUNT(CASE WHEN o.status = 'Cancelled' THEN 1 END) AS cancelled_orders
-                          FROM farmer f
-                          JOIN users u ON f.farmer_id = u.user_id
-                          LEFT JOIN orders o ON f.farmer_id = o.farmer_id
-                          WHERE o.order_date BETWEEN ? AND ?
-                          GROUP BY f.farmer_id, u.name
-                          ORDER BY total_revenue DESC";c
-                
-                            
+
+                            $query = "SELECT
+                                u.name AS farmer_name,
+                                COUNT(o.order_id) AS total_orders,
+                                SUM(o.total_amount) AS total_revenue,
+                                AVG(o.total_amount) AS average_order_value,
+                                COUNT(CASE WHEN o.status = 'Delivered' THEN 1 END) AS completed_orders,
+                                COUNT(CASE WHEN o.status = 'Cancelled' THEN 1 END) AS cancelled_orders
+                              FROM farmer f
+                              JOIN users u ON f.farmer_id = u.user_id
+                              LEFT JOIN orders o ON f.farmer_id = o.farmer_id
+                              WHERE o.order_date BETWEEN ? AND ?
+                              GROUP BY f.farmer_id, u.name
+                              ORDER BY total_revenue DESC";  // ✅ ঠিক
+
                             $stmt = $conn->prepare($query);
                             $stmt->bind_param("ss", $start_date, $end_date);
                             $stmt->execute();
                             $result = $stmt->get_result();
-                            
+
                             while ($row = $result->fetch_assoc()) {
-                                $completion_rate = ($row['total_orders'] > 0) 
-                                    ? round(($row['completed_orders'] / $row['total_orders']) * 100, 2) 
+                                $completion_rate = ($row['total_orders'] > 0)
+                                    ? round(($row['completed_orders'] / $row['total_orders']) * 100, 2)
                                     : 0;
-                                ?>
+                            ?>
+
                                 <tr>
                                     <td><?php echo htmlspecialchars($row['farmer_name']); ?></td>
                                     <td><?php echo $row['total_orders']; ?></td>
