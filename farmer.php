@@ -645,6 +645,10 @@ header h1 {
                         <i class="fas fa-pen icon"></i>
                         <span class="text">কৃষি-বিশেষজ্ঞদের প্রবন্ধ পরুন</span>
         </a>
+        <a href="F_chatbot.php">
+                                <i class="fas fa-pen icon"></i>
+                                <span class="text">এআই চ্যাট বট</span>
+                </a>
         <a href="crop_management.php">
             <i class="fas fa-seedling icon"></i>
             <span class="text">ফসল/পণ্য ব্যবস্থাপনা</span>

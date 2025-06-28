@@ -1,28 +1,12 @@
 <?php
+$server = "localhost";
+$user = "root";
+$pass = "";
+$name = "farming_management";
 
-$server="localhost";
-$user="root";
-$pass="";
-$name="farming_management";
-$conn="";
+$conn = mysqli_connect($server, $user, $pass, $name);
 
-$conn=mysqli_connect($server,$user,$pass,$name);
-
-if($conn){
-    
-    #echo"you are connected";
-
+if (!$conn) {
+    die("ডাটাবেজে সংযোগ ব্যর্থ: " . mysqli_connect_error());
 }
-else 
-{
-    
-    #echo"not connected";
-
-  
-}
-
-
-
-
-
 ?>
