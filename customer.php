@@ -49,6 +49,28 @@ $stmt = $conn->prepare("
 $stmt->bind_param("i", $customer_id);
 $stmt->execute();
 $pending_reviews = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+
+// Cart Count (you already have this, just keep it)
+$stmt = $conn->prepare("SELECT COUNT(*) AS cart_count FROM cart WHERE user_id = ?");
+$stmt->bind_param("i", $customer_id);
+$stmt->execute();
+$cart_count = $stmt->get_result()->fetch_assoc()['cart_count'];
+
+// Active / In-Transit Orders
+$active_orders_query = $conn->prepare("SELECT COUNT(*) AS active_orders FROM orders WHERE customer_id = ? AND status NOT IN ('Delivered', 'Cancelled')");
+$active_orders_query->bind_param("i", $customer_id);
+$active_orders_query->execute();
+$active_orders = $active_orders_query->get_result()->fetch_assoc()['active_orders'];
+
+// Monthly Spending
+$month_start = date('Y-m-01');
+$today = date('Y-m-d');
+$monthly_spend_query = $conn->prepare("SELECT SUM(total_amount) AS total_spend FROM orders WHERE customer_id = ? AND status = 'Delivered' AND order_date BETWEEN ? AND ?");
+$monthly_spend_query->bind_param("iss", $customer_id, $month_start, $today);
+$monthly_spend_query->execute();
+$monthly_spend_result = $monthly_spend_query->get_result()->fetch_assoc();
+$monthly_spend = $monthly_spend_result['total_spend'] ?? 0;
+
 ?>
 <!DOCTYPE html>
 <html lang="bn">
@@ -276,6 +298,43 @@ $pending_reviews = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
             margin: 0;
             font-size: 0.9rem;
         }
+        .metric-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;         /* allow wrapping if needed */
+            gap: 40px;               /* spacing between cards */
+            margin-top: 40px;       /* optional spacing from top */
+        }
+
+
+        .metric-card {
+            width: 220px;
+            height: 180px;
+            border-radius: 20px;
+            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.25);
+            padding: 20px 10px;
+            margin: 10px;
+            transition: transform 0.3s ease;
+        }
+        .metric-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .circle {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin: auto;
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 4px solid #ffcc00;
+        }
+
 
     </style>
 </head>
@@ -307,6 +366,33 @@ $pending_reviews = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 
 <div class="content">
     <!-- Cart Section -->
+
+    <div class="metric-container">
+        <!-- Active Orders -->
+        <div class="metric-card bg-dark text-white text-center">
+            <div class="circle bg-success shadow"><span><?= $active_orders ?></span></div>
+            <div class="mt-2 fw-bold">সক্রিয় অর্ডার</div>
+        </div>
+
+        <!-- Items in Cart -->
+        <div class="metric-card bg-dark text-white text-center">
+            <div class="circle bg-primary shadow"><span><?= $cart_count ?></span></div>
+            <div class="mt-2 fw-bold">কার্টে আইটেম</div>
+        </div>
+
+        <!-- Pending Reviews -->
+        <div class="metric-card bg-dark text-white text-center">
+            <div class="circle <?= count($pending_reviews) > 0 ? 'bg-warning' : 'bg-secondary' ?> shadow"><span><?= count($pending_reviews) ?></span></div>
+            <div class="mt-2 fw-bold">অপেক্ষমাণ রিভিউ</div>
+        </div>
+
+        <!-- Monthly Spend -->
+        <div class="metric-card bg-dark text-white text-center">
+            <div class="circle bg-danger shadow"><span>৳<?= $monthly_spend ?></span></div>
+            <div class="mt-2 fw-bold">এই মাসের খরচ</div>
+        </div>
+    </div>
+
     <div class="section">
         <h3 data-key="cart">আপনার কার্ট</h3>
         <p>
