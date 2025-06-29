@@ -128,6 +128,8 @@ if (!isset($_SESSION['user_id'])) {
 <div class="sidebar">
     <h2>ন্যাভিগেশন</h2>
     <a href="farmer.php"><i class="fas fa-wallet icon"></i><span class="text">ড্যাশবোর্ড</span></a>
+        <a href="F_Agribot.php"  ><i class="fas fa-robot icon"></i><span class="text">অ্যাগ্রিবট</span></a>
+
     <a href="F_Smart_Crop_Doctor.php"><i class="fas fa-stethoscope icon"></i><span class="text">স্মার্ট ফসল ডাক্তার</span></a>
     <a href="Agrologist_List.php"><i class="fas fa-tree icon"></i><span class="text">কৃষি‑বিশেষজ্ঞদের সেবা</span></a>
     <a href="F_article.php"><i class="fas fa-pen icon"></i><span class="text">প্রবন্ধ</span></a>

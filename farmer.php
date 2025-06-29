@@ -631,6 +631,8 @@ header h1 {
                     <i class="fas fa-wallet icon"></i>
                     <span class="text">ড্যাশবোর্ড</span>
                 </a>
+                    <a href="F_Agribot.php" class="active"><i class="fas fa-robot icon"></i><span class="text">অ্যাগ্রিবট</span></a>
+
 
 
         <a href="F_Smart_Crop_Doctor.php">
