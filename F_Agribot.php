@@ -102,6 +102,12 @@ if (isset($_GET['latest'])) {
     <a href="farmer.php"><i class="fas fa-home icon"></i><span class="text">ড্যাশবোর্ড</span></a>
     <a href="F_Smart_Crop_Doctor.php"><i class="fas fa-stethoscope icon"></i><span class="text">স্মার্ট ফসল ডাক্তার</span></a>
     <a href="F_Agribot.php" class="active"><i class="fas fa-robot icon"></i><span class="text">অ্যাগ্রিবট</span></a>
+     <a href="F_Doctor.php">
+                              <i class="fas fa-stethoscope icon"></i>
+                              <span class="text">রোগ শনাক্তকরণ</span>
+                          </a>
+        <a href="F_insects.php" ><i class="fas fa-bug icon"></i><span class="text">কীটপতঙ্গ সনাক্তকরণ  </span></a>
+
     <a href="Agrologist_List.php"><i class="fas fa-tree icon"></i><span class="text">কৃষি‑বিশেষজ্ঞদের সেবা</span></a>
         <a href="F_article.php"><i class="fas fa-pen icon"></i><span class="text">প্রবন্ধ</span></a>
         <a href="F_chatbot.php"><i class="fas fa-robot icon"></i><span class="text">এআই চ্যাট বট</span></a>

@@ -633,6 +633,14 @@ header h1 {
                <i class="fas fa-stethoscope icon"></i>
                <span class="text">স্মার্ট ফসল ডাক্তার</span>
            </a>
+           <a href="F_Doctor.php">
+                          <i class="fas fa-stethoscope icon"></i>
+                          <span class="text">রোগ শনাক্তকরণ</span>
+                      </a>
+                      <a href="F_insects.php">
+                                                <i class="fas fa-bug icon"></i><span class="text">
+                                                 কীটপতঙ্গ সনাক্তকরণ</span>
+                                            </a>
 
            <a href="Agrologist_List.php">
                <i class="fas fa-tree icon"></i>
