@@ -641,6 +641,8 @@ header h1 {
                                                 <i class="fas fa-bug icon"></i><span class="text">
                                                  কীটপতঙ্গ সনাক্তকরণ</span>
                                             </a>
+                 <a href="F_Agribot.php" ><i class="fas fa-robot icon"></i><span class="text">অ্যাগ্রিবট</span></a>
+
 
            <a href="Agrologist_List.php">
                <i class="fas fa-tree icon"></i>
