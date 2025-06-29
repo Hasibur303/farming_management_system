@@ -142,88 +142,107 @@ header h1 {
 }
 
 
-       .sidebar {
-           width: 80px; /* Increased collapsed width */
-           background-color: #1f2937;
-           color: white;
-           height: calc(100vh - 70px);
-           position: fixed;
-           top: 70px;
-           left: 0;
-           padding: 15px 10px; /* Slightly increased padding */
-           transition: width 0.3s ease;
-           overflow-y: auto;
-           overflow-x: hidden;
-           z-index: 999;
-       }
+        /* Sidebar Styles */
+        .sidebar {
+            width: 60px; /* Initially narrow */
+            background-color: #1f2937;
+            color: white;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            padding: 20px 10px;
+            transition: width 0.3s ease; /* Smooth expansion */
+            overflow-y: auto;  /* 👈 Enables vertical scrolling */
+            overflow-x: hidden; /* 👈 Prevents horizontal scrollbars */
+            z-index: 999; /* Ensure it stays above content */
+            scrollbar-width: thin; /* Optional: thinner scrollbar for Firefox */
+            scrollbar-color: #888 transparent; /* Optional: scrollbar color */
+        }
 
-       .sidebar:hover {
-           width: 300px; /* Increased expanded width */
-       }
 
-       /* Adjust the dashboard feed margin to match */
-       .dashboard-feed {
-           margin-left: 100px; /* Increased from 80px */
-           transition: margin-left 0.3s ease;
-       }
+        .sidebar:hover {
+            width: 250px; /* Full width on hover */
+        }
 
-       .sidebar:hover ~ .dashboard-feed {
-           margin-left: 320px; /* Increased from 270px */
-       }
+        .sidebar h2 {
+            font-size: 1.5rem;
+            margin-bottom: 30px;
+            font-weight: 600;
+            transition: opacity 0.3s ease;
+        }
 
-       .sidebar h2 {
-           color: white;
-           font-size: 1.2rem;
-           text-align: center;
-           white-space: nowrap;
-           overflow: hidden;
-           margin-bottom: 20px;
-           padding: 0 10px;
-       }
+        /* Links inside sidebar */
+        .sidebar a {
+            color: #b0bec5;
+            text-decoration: none;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            font-weight: 500;
+            transition: background 0.3s, padding-left 0.3s ease;
+        }
 
-       .sidebar a {
-           color: #b0bec5;
-           text-decoration: none;
-           display: flex;
-           align-items: center;
-           padding: 12px 5px;
-           border-radius: 5px;
-           margin-bottom: 8px;
-           font-weight: 500;
-           transition: all 0.3s ease;
-           white-space: nowrap;
-           overflow: hidden;
-       }
+        .sidebar a:hover {
+            background-color: #4b5563;
+            color: white;
+            padding-left: 20px; /* Add space on hover for extra elegance */
+        }
 
-       .sidebar a:hover {
-           background-color: #4b5563;
-           color: white;
-       }
+        .sidebar a .icon {
+            width: 30px;
+            text-align: center;
+            margin-right: 10px;
+            transition: transform 0.3s ease;
+        }
 
-       .sidebar .icon {
-           width: 30px;
-           min-width: 30px;
-           text-align: center;
-           font-size: 1.1rem;
-           margin-right: 15px;
-           transition: transform 0.3s ease;
-       }
+        .sidebar a:hover .icon {
+            transform: translateX(5px); /* Slide effect for icons */
+        }
 
-       .sidebar .text {
-           opacity: 0;
-           transition: opacity 0.3s ease;
-           font-size: 0.9rem;
-           margin-left: 5px;
-       }
+        .sidebar a .text {
+            display: none; /* Hide text initially */
+            font-size: 1rem;
+            transition: opacity 0.3s ease;
+        }
 
-       .sidebar:hover .text {
-           opacity: 1;
-       }
+        .sidebar:hover a .text {
+            display: block; /* Show text on hover */
+            opacity: 1;
+            transition: opacity 0.3s ease;
+        }
 
-       .sidebar a:hover .icon {
-           transform: translateX(5px);
-           color: #4CAF50;
-       }
+        /* Icons and Text Visibility */
+        .sidebar a .text {
+            opacity: 0;
+        }
+
+        .sidebar:hover a .text {
+            opacity: 1;
+        }
+
+        .sidebar a {
+            justify-content: center;
+        }
+
+        /* Premium Hover Effects */
+        .sidebar a:hover {
+            background-color: #3b4a59;
+            color: #ffffff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transform: translateX(5px); /* Slight movement to the right */
+        }
+
+        .sidebar a .icon {
+            transition: transform 0.3s ease, color 0.3s ease;
+        }
+
+        .sidebar a:hover .icon {
+            color: #4CAF50; /* Change icon color on hover */
+            transform: translateX(5px); /* Add icon animation */
+        }
 
 
         .dashboard-feed {
@@ -605,88 +624,79 @@ header h1 {
     </div>
 </header>
 
-<div class="sidebar">
-    <h2>ন্যাভিগেশন</h2>
-    <a href="farmer.php">
-        <i class="fas fa-wallet icon"></i>
-        <span class="text">ড্যাশবোর্ড</span>
-    </a>
 
-    <a href="F_Smart_Crop_Doctor.php">
-        <i class="fas fa-stethoscope icon"></i>
-        <span class="text">স্মার্ট ফসল ডাক্তার</span>
-    </a>
+    <div class="sidebar">
+        <h2>ন্যাভিগেশন</h2>
+        <a href="farmer.php">
+                    <i class="fas fa-wallet icon"></i>
+                    <span class="text">ড্যাশবোর্ড</span>
+                </a>
 
-    <a href="Agrologist_List.php">
-        <i class="fas fa-tree icon"></i>
-        <span class="text">কৃষি-বিশেষজ্ঞদের সেবা</span>
-    </a>
 
-    <a href="F_article.php">
-        <i class="fas fa-pen icon"></i>
-        <span class="text">কৃষি-বিশেষজ্ঞদের প্রবন্ধ পরুন</span>
-    </a>
+        <a href="F_Smart_Crop_Doctor.php">
+                           	<i class="fas fa-stethoscope"></i>
+                            <span class="text">  স্মার্ট ফসল ডাক্তার</span>
+                        </a>
+                        <a href="Agrologist_List.php">
+                                            <i class="fas fa-tree icon"></i>
+                                            <span class="text">কৃষি-বিশেষজ্ঞদের সেবা</span>
+                                        </a>
+        <a href="F_article.php">
+                        <i class="fas fa-pen icon"></i>
+                        <span class="text">কৃষি-বিশেষজ্ঞদের প্রবন্ধ পরুন</span>
+        </a>
+        <a href="F_chatbot.php">
+                                <i class="fas fa-pen icon"></i>
+                                <span class="text">এআই চ্যাট বট</span>
+                </a>
+        <a href="crop_management.php">
+            <i class="fas fa-seedling icon"></i>
+            <span class="text">ফসল/পণ্য ব্যবস্থাপনা</span>
+        </a>
 
-    <a href="F_chatbot.php">
-        <i class="fas fa-comments icon"></i>
-        <span class="text">এআই চ্যাট বট</span>
-    </a>
+        <a href="Buy.php">
+            <i class="fas fa-shopping-cart icon"></i>
+            <span class="text">সরবরাহকারীদের কাছ থেকে কিনুন</span>
+        </a>
+        <a href="F_labour_list.php">
+                            <i class="fas fa-list icon"></i>
+                            <span class="text"> শ্রমিক তালিকা </span>
+                        </a>
+        <a href="labour_jobs.php">
+            <i class="fas fa-briefcase icon"></i>
+            <span class="text">শ্রমিকের চাকরির পোস্ট</span>
+        </a>
 
-    <a href="crop_management.php">
-        <i class="fas fa-seedling icon"></i>
-        <span class="text">ফসল/পণ্য ব্যবস্থাপনা</span>
-    </a>
+        <a href="farmer_applications.php">
+                    <i class="fas fa-briefcase icon"></i>
+                    <span class="text">শ্রমিকের আবেদন</span>
+                </a>
 
-    <a href="Buy.php">
-        <i class="fas fa-shopping-cart icon"></i>
-        <span class="text">সরবরাহকারীদের কাছ থেকে কিনুন</span>
-    </a>
-
-    <a href="F_labour_list.php">
-        <i class="fas fa-list icon"></i>
-        <span class="text">শ্রমিক তালিকা</span>
-    </a>
-
-    <a href="labour_jobs.php">
-        <i class="fas fa-briefcase icon"></i>
-        <span class="text">শ্রমিকের চাকরির পোস্ট</span>
-    </a>
-
-    <a href="farmer_applications.php">
-        <i class="fas fa-briefcase icon"></i>
-        <span class="text">শ্রমিকের আবেদন</span>
-    </a>
-
-    <a href="rent_page.php">
-        <i class="fas fa-tools icon"></i>
-        <span class="text">ভাড়ার পরিষেবা</span>
-    </a>
-
-    <a href="addNewProduct.php">
-        <i class="fas fa-plus-circle icon"></i>
-        <span class="text">নতুন পণ্য যোগ করুন</span>
-    </a>
-
-    <a href="farmer/order_management.php">
-        <i class="fas fa-clipboard-list icon"></i>
-        <span class="text">অর্ডার ম্যানেজমেন্ট</span>
-    </a>
-
-    <a href="farmer/inventory_management.php">
-        <i class="fas fa-boxes icon"></i>
-        <span class="text">ইনভেন্টরি ম্যানেজমেন্ট</span>
-    </a>
-
-    <a href="farmer/financial_overview.php">
-        <i class="fas fa-wallet icon"></i>
-        <span class="text">আর্থিক সারসংক্ষেপ</span>
-    </a>
-
-    <a href="analytics_report.php">
-        <i class="fas fa-chart-bar icon"></i>
-        <span class="text">বিশ্লেষণ এবং প্রতিবেদন</span>
-    </a>
-</div>
+        <a href="rent_page.php">
+            <i class="fas fa-shopping-cart icon"></i>
+            <span class="text">ভাড়ার পরিষেবা</span>
+        </a>
+        <a href="addNewProduct.php">
+            <i class="fas fa-plus-circle icon"></i>
+            <span class="text">নতুন পণ্য যোগ করুন</span>
+        </a>
+        <a href="farmer/order_management.php">
+            <i class="fas fa-clipboard-list icon"></i>
+            <span class="text">অর্ডার ম্যানেজমেন্ট</span>
+        </a>
+        <a href="farmer/inventory_management.php">
+            <i class="fas fa-boxes icon"></i>
+            <span class="text">ইনভেন্টরি ম্যানেজমেন্ট</span>
+        </a>
+        <a href="farmer/financial_overview.php">
+            <i class="fas fa-wallet icon"></i>
+            <span class="text">আর্থিক সারসংক্ষেপ</span>
+        </a>
+        <a href="analytics_report.php">
+            <i class="fas fa-chart-bar icon"></i>
+            <span class="text">বিশ্লেষণ এবং প্রতিবেদন</span>
+        </a>
+    </div>
 
 <div class="dashboard-feed">
     <!-- Statistics Summary -->
