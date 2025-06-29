@@ -1,163 +1,130 @@
+
 <?php
 session_start();
 include 'database.php';
-
+if (!isset($_SESSION['lang'])) {
+    $_SESSION['lang'] = 'bn';
+}
+if (isset($_GET['lang']) && in_array($_GET['lang'], ['bn', 'en'])) {
+    $_SESSION['lang'] = $_GET['lang'];
+}
+$lang = $_SESSION['lang'];
+// Text translations
+$text = [
+    'bn' => [
+        'title' => 'বাজার',
+        'search_placeholder' => 'পণ্য অনুসন্ধান করুন...',
+        'search_button' => 'অনুসন্ধান',
+        'cart' => 'কার্ট',
+        'products' => 'পণ্য সমূহ',
+        'price' => 'দাম',
+        'quantity' => 'পরিমাণ',
+        'add_to_cart' => 'কার্টে যোগ করুন',
+        'no_products' => 'কোন পণ্য পাওয়া যায়নি',
+        'welcome' => 'আপনাকে স্বাগতম'
+    ],
+    'en' => [
+        'title' => 'Market',
+        'search_placeholder' => 'Search products...',
+        'search_button' => 'Search',
+        'cart' => 'Cart',
+        'products' => 'Products',
+        'price' => 'Price',
+        'quantity' => 'Quantity',
+        'add_to_cart' => 'Add to Cart',
+        'no_products' => 'No products found',
+        'welcome' => 'Welcome'
+    ]
+];
+$current = $text[$lang];
 try {
     // Check authentication
-    if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'Customer') {
+    if (!isset($_SESSION['user_id'])) {
         header("Location: login.php");
         exit();
     }
 
-  // Fetch available products - this should be at the start of your try block
-  $productStmt = $conn->prepare("
-  SELECT fc.*, fc.farmer_id,p.image as product_image
-  FROM farmer_crops fc
-  LEFT JOIN products p ON fc.product_id = p.id
-  WHERE fc.quantity > 0
-");
-
-if (!$productStmt->execute()) {
-    throw new Exception("Error fetching products: " . $conn->error);
-}
-
-$products = $productStmt->get_result();
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
-    $userId = $_SESSION['user_id'];
-
-    try {
-        // Fetch cart items grouped by farmer
-        $stmt = $conn->prepare("
-            SELECT c.*, fc.name as crop_name, fc.farmer_id, fc.price,
-                   u.name as customer_name
-            FROM cart c
-            JOIN farmer_crops fc ON c.product_id = fc.product_id
-            JOIN users u ON c.user_id = u.user_id
-            WHERE c.user_id = ?
-        ");
-        $stmt->bind_param("i", $userId);
-        $stmt->execute();
-        $cartItems = $stmt->get_result();
-
-        if ($cartItems->num_rows > 0) {
-            $conn->begin_transaction();
-            try {
-                $orderQuery = $conn->prepare("
-                    INSERT INTO orders (
-                        farmer_id,
-                        customer_id,
-                        product_id,
-                        customer_name,
-                        crop_name,
-                        quantity,
-                        total_amount,
-                        status,
-                        order_date
-                    ) VALUES (?, ?, ?, ?, ?, ?, ?, 'pending', NOW())
-                ");
-
-                $orders = [];
-                while ($item = $cartItems->fetch_assoc()) {
-                    $farmerId = $item['farmer_id'];
-                    $orders[$farmerId][] = $item;
-                }
-
-                foreach ($orders as $farmerId => $items) {
-                    foreach ($items as $item) {
-                        $totalAmount = $item['price'] * $item['quantity'];
-                        $orderQuery->bind_param(
-                            "iiissid",
-                            $farmerId,
-                            $userId,
-                            $item['product_id'],
-                            $item['customer_name'],
-                            $item['crop_name'],
-                            $item['quantity'],
-                            $totalAmount
-                        );
-                        $orderQuery->execute();
-                    }
-                }
-
-                // Clear cart
-                $clearCart = $conn->prepare("DELETE FROM cart WHERE user_id = ?");
-                $clearCart->bind_param("i", $userId);
-                $clearCart->execute();
-
-                $conn->commit();
-                $_SESSION['message'] = "Orders placed successfully!";
-              
-            } catch (Exception $e) {
-                $conn->rollback();
-                $_SESSION['error'] = "Error placing orders: " . $e->getMessage();
-            }
-        } else {
-            $_SESSION['error'] = "Your cart is empty.";
-        }
-    } catch (Exception $e) {
-        $_SESSION['error'] = "Error processing orders: " . $e->getMessage();
-    }
-}
-
-
-  // Handle removing items from cart
-  if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['remove_from_cart'])) {
-    $productId = $_POST['product_id'];
-    $userId = $_SESSION['user_id'];
-
-    $stmt = $conn->prepare("DELETE FROM cart WHERE user_id = ? AND product_id = ?");
-    $stmt->bind_param("ii", $userId, $productId);
-
-    if ($stmt->execute()) {
-        $_SESSION['message'] = "Product removed from cart successfully!";
-    } else {
-        $_SESSION['error'] = "Error removing product from cart.";
-    }
-}
-
-
-
-    // Handle adding items to cart
+    // Handle adding to cart
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to_cart'])) {
         $productId = $_POST['product_id'];
         $userId = $_SESSION['user_id'];
-        $farmer_id= $_POST['farmer_id'];
+        $farmer_id = $_POST['farmer_id'];
         $quantity = isset($_POST['quantity']) ? (int)$_POST['quantity'] : 1;
 
-
-
-
-        // Check if product already exists in cart
+        // Check if product exists in cart
         $stmt = $conn->prepare("SELECT * FROM cart WHERE user_id = ? AND product_id = ? AND farmer_id=?");
-        $stmt->bind_param("iii", $userId, $productId,$farmer_id);
+        $stmt->bind_param("iii", $userId, $productId, $farmer_id);
         $stmt->execute();
         $result = $stmt->get_result();
 
         if ($result->num_rows > 0) {
-            // Update quantity if product exists
             $stmt = $conn->prepare("UPDATE cart SET quantity = quantity + ? WHERE user_id = ? AND product_id = ?");
             $stmt->bind_param("iii", $quantity, $userId, $productId);
         } else {
-            // Insert new cart item
-
-            $stmt = $conn->prepare("INSERT INTO cart (user_id, product_id,farmer_id, quantity) VALUES (?, ?,?, ?)");
-            $stmt->bind_param("iiii", $userId, $productId,$farmer_id, $quantity);
+            $stmt = $conn->prepare("INSERT INTO cart (user_id, product_id, farmer_id, quantity) VALUES (?, ?, ?, ?)");
+            $stmt->bind_param("iiii", $userId, $productId, $farmer_id, $quantity);
         }
 
         if ($stmt->execute()) {
-            $_SESSION['message'] = "Product added to cart successfully!";
-            header("Location: " . $_SERVER['PHP_SELF']);
-    exit();
+            $_SESSION['message'] = "Product added to cart!";
         } else {
-            $_SESSION['error'] = "Error adding product to cart.";
+            $_SESSION['error'] = "Error adding to cart";
         }
+        header("Location: C_market.php");
+        exit();
     }
 
+    // Handle removing from cart
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['remove_from_cart'])) {
+        $productId = $_POST['product_id'];
+        $userId = $_SESSION['user_id'];
+
+        $stmt = $conn->prepare("DELETE FROM cart WHERE user_id = ? AND product_id = ?");
+        $stmt->bind_param("ii", $userId, $productId);
+
+        if ($stmt->execute()) {
+            $_SESSION['message'] = "Product removed from cart!";
+        } else {
+            $_SESSION['error'] = "Error removing from cart";
+        }
+        header("Location: C_market.php");
+        exit();
+    }
+
+    // Handle quantity updates
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_quantity'])) {
+        $productId = $_POST['product_id'];
+        $userId = $_SESSION['user_id'];
+        $farmer_id = $_POST['farmer_id'];
+        $action = $_POST['update_quantity'];
+
+        if ($action === 'increase') {
+            $stmt = $conn->prepare("UPDATE cart SET quantity = quantity + 1 WHERE user_id = ? AND product_id = ? AND farmer_id=?");
+        } else {
+            $stmt = $conn->prepare("UPDATE cart SET quantity = GREATEST(1, quantity - 1) WHERE user_id = ? AND product_id = ? AND farmer_id=?");
+        }
+
+        $stmt->bind_param("iii", $userId, $productId, $farmer_id);
+        $stmt->execute();
+        header("Location: C_market.php");
+        exit();
+    }
+
+    // Fetch products with search
+    $searchTerm = isset($_GET['search']) ? '%' . $_GET['search'] . '%' : '%';
+    $productStmt = $conn->prepare("
+        SELECT fc.*, p.image as product_image
+        FROM farmer_crops fc
+        LEFT JOIN products p ON fc.product_id = p.id
+        WHERE fc.quantity > 0 AND fc.name LIKE ?
+    ");
+    $productStmt->bind_param("s", $searchTerm);
+    $productStmt->execute();
+    $products = $productStmt->get_result();
 
     // Fetch cart items
     $cartStmt = $conn->prepare("
-        SELECT c.*, fc.name, fc.price, fc.quantity_type, fc.image,fc.farmer_id
+        SELECT c.*, fc.name, fc.price, fc.quantity_type, fc.image, fc.farmer_id
         FROM cart c
         JOIN farmer_crops fc ON c.product_id = fc.product_id AND c.farmer_id=fc.farmer_id
         WHERE c.user_id = ?
@@ -165,758 +132,447 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
     $cartStmt->bind_param("i", $_SESSION['user_id']);
     $cartStmt->execute();
     $cartItems = $cartStmt->get_result()->fetch_all(MYSQLI_ASSOC);
-
-    // Calculate cart total
     $cartTotal = array_sum(array_map(function($item) {
         return $item['price'] * $item['quantity'];
     }, $cartItems));
 
 } catch (Exception $e) {
-    error_log($e->getMessage());
-    $_SESSION['error'] = "An error occurred while processing your request.";
+    $_SESSION['error'] = "Error: " . $e->getMessage();
 }
-
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_quantity'])) {
-    $productId = $_POST['product_id'];
-    $userId = $_SESSION['user_id'];
-    $farmer_id= $_POST['farmer_id'];
-    $action = $_POST['update_quantity'];
-
-    if ($action === 'increase') {
-        $stmt = $conn->prepare("UPDATE cart SET quantity = quantity + 1 WHERE user_id = ? AND product_id = ? AND farmer_id=?");
-    } elseif ($action === 'decrease') {
-        $stmt = $conn->prepare("UPDATE cart SET quantity = quantity - 1 WHERE user_id = ? AND product_id = ? AND farmer_id=?");
-    }
-
-    $stmt->bind_param("iii", $userId, $productId,$farmer_id);
-    if ($stmt->execute()) {
-        $_SESSION['message'] = "Cart updated successfully!";
-        header("Location: " . $_SERVER['PHP_SELF']);
-        exit();
-    } else {
-        $_SESSION['error'] = "Error updating cart.";
-    }
-
-   
-}
-
-// Fetch search term from request
-$searchTerm = isset($_GET['search']) ? '%' . $_GET['search'] . '%' : '%';
-
-// Fetch available products with search filter
-$productStmt = $conn->prepare("
-    SELECT fc.*, fc.farmer_id, p.image as product_image
-    FROM farmer_crops fc
-    LEFT JOIN products p ON fc.product_id = p.id
-    WHERE fc.quantity > 0 AND fc.name LIKE ?
-");
-$productStmt->bind_param("s", $searchTerm);
-
-if (!$productStmt->execute()) {
-    throw new Exception("Error fetching products: " . $conn->error);
-}
-
-$products = $productStmt->get_result();
-
-
-
-// Fetch the customer's past orders including product images
-$orderHistoryStmt = $conn->prepare("
-    SELECT
-        o.order_id,
-        o.crop_name,
-        o.quantity,
-        o.total_amount,
-        o.status,
-        o.order_date,
-        fc.price,
-        fc.quantity_type,
-        fc.image
-    FROM orders o
-    LEFT JOIN farmer_crops fc ON o.product_id = fc.product_id
-    WHERE o.customer_id = ?
-    ORDER BY o.order_date DESC
-");
-$orderHistoryStmt->bind_param("i", $_SESSION['user_id']);
-$orderHistoryStmt->execute();
-$orderHistory = $orderHistoryStmt->get_result();
-
-// Fetch top-selling products
-$query = "
-    SELECT
-        products.id AS product_id,
-        products.name AS product_name,
-        products.price AS product_price,
-        products.image AS product_image,
-        SUM(orders.quantity) AS total_sold
-    FROM
-        orders
-    JOIN
-        products ON orders.product_id = products.id
-    GROUP BY
-        products.id
-    ORDER BY
-        total_sold DESC
-    LIMIT 10
-";
-
-$result = $conn->query($query);
-
-// Initialize an array to store the results
-$topSellingProducts = [];
-if ($result->num_rows > 0) {
-    while ($row = $result->fetch_assoc()) {
-        $topSellingProducts[] = $row;
-    }
-}
-
-
-
-
-
-
-
-
+// [Previous PHP code remains the same until the closing PHP tag]
 ?>
 
-
-
-
 <!DOCTYPE html>
-<html lang="en">
+<html lang="<?= $lang ?>">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=0.5">
-    <title>Customer Dashboard - SmartKrishi</title>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Add Font Awesome for icons -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?= $current['title'] ?> - SmartKrishi</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f7f9fc;
+            color: #333;
+        }
 
-    <link rel="stylesheet" type="text/css" href="./css/customer.css">
+        /* Sidebar Styles */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 70px;
+            height: 100vh;
+            background: linear-gradient(to bottom, #3e4e60, #4b5c6b);
+            border-right: 1px solid #dddddd;
+            transition: width 0.3s ease;
+            overflow-x: hidden;
+            z-index: 1000;
+        }
 
-<style>
+        .sidebar:hover {
+            width: 220px;
+        }
 
-.payment-options {
-    display: flex;
-    gap: 20px;
-    margin: 20px 0;
-    flex-wrap: wrap;
-    justify-content: center;
-}
+        .sidebar ul {
+            padding: 70px 0 20px 0;
+            list-style: none;
+            margin: 0;
+        }
 
-.payment-option {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    cursor: pointer;
-    text-align: center;
-    background-color: #f5f5f5;
-    border: 1px solid #ddd;
-    border-radius: 12px;
-    padding: 15px;
-    width: 100px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
-    transition: all 0.3s ease-in-out;
-}
+        .sidebar .nav-link {
+            color: #ffffff;
+            font-size: 16px;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+        }
 
-.payment-option:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 6px 18px rgba(0,0,0,0.1);
-}
+        .sidebar .nav-link i {
+            font-size: 24px;
+            font-weight: bold;
+            margin-right: 30px;
+            min-width: 24px;
+        }
 
-.payment-option input[type="radio"] {
-    display: none;
-}
+        .sidebar .nav-link:hover {
+            background-color: #e9f5ee;
+            color: #28a745;
+        }
 
-.payment-option img {
-    width: 60px;
-    height: 60px;
-    object-fit: contain;
-    border: 2px solid transparent;
-    border-radius: 8px;
-    padding: 5px;
-    background-color: #f9f9f9;
-    transition: border-color 0.3s, background-color 0.3s;
-}
+        /* Language Switcher */
+        .language-switcher {
+            position: fixed;
+            top: 15px;
+            left: 15px;
+            z-index: 1001;
+        }
 
-.payment-option input[type="radio"]:checked + img {
-    border-color: #2e7d32;
-    background-color: #e0f2f1;
-}
+        .language-btn {
+            border: none;
+            padding: 5px 10px;
+            margin: 0 2px;
+            border-radius: 4px;
+            cursor: pointer;
+            background-color: #d20103;
+            color: white;
+        }
 
-.payment-option span {
-    margin-top: 8px;
-    font-size: 14px;
-    font-weight: 500;
-    color: #2e3d2f;
-}
+        .language-btn.active {
+            background-color: #28a745;
+        }
 
-/* Modal */
-.modal {
-    display: none;
-    position: fixed;
-    z-index: 1000;
-    padding-top: 100px;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgba(0,0,0,0.4);
-}
+        /* Main Content */
+        .main-content {
+            margin-left: 70px;
+            padding: 20px;
+            transition: margin-left 0.3s ease;
+            min-height: 100vh;
+        }
 
-.modal-content {
-    background: #f5f5f5;
-    margin: auto;
-    padding: 30px;
-    border: none;
-    width: 400px;
-    border-radius: 12px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-    position: relative;
-    animation: fadeIn 0.3s ease-in-out;
-}
+        .sidebar:hover ~ .main-content {
+            margin-left: 220px;
+        }
 
-.modal .close {
-    color: #c62828;
-    float: right;
-    font-size: 26px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: 0.2s;
-}
+        /* Cart Sidebar */
+        .cart-sidebar {
+            position: fixed;
+            top: 0;
+            right: -400px;
+            width: 400px;
+            height: 100vh;
+            background-color: white;
+            box-shadow: -2px 0 10px rgba(0,0,0,0.1);
+            transition: right 0.3s ease;
+            z-index: 1001;
+            padding: 20px;
+            overflow-y: auto;
+        }
 
-.modal .close:hover {
-    color: #a00000;
-}
+        .cart-sidebar.active {
+            right: 0;
+        }
 
-.payment-methods {
-    margin: 25px 0 10px;
-    font-size: 18px;
-    font-weight: 600;
-    color: #2e3d2f;
-    text-align: center;
-}
+        /* Product Grid */
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
 
-@keyframes fadeIn {
-    from { opacity: 0; transform: scale(0.95); }
-    to { opacity: 1; transform: scale(1); }
-}
+        .product-card {
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
 
-/* Cart Sidebar */
-.cart-sidebar {
-    position: fixed;
-    right: -420px;
-    top: 0;
-    width: 400px;
-    height: 100%;
-    background-color: #f0f4c3;
-    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.3);
-    padding: 25px 20px;
-    overflow-y: auto;
-    z-index: 1000;
-    transition: right 0.4s ease-in-out;
-    font-family: 'Segoe UI', sans-serif;
-    color: #2e3d2f;
-}
+        .product-card:hover {
+            transform: translateY(-5px);
+        }
 
-.cart-sidebar.open {
-    right: 0;
-}
+        /* Cart Icon */
+        .cart-icon {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #e2136e;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+        }
 
-.cart-sidebar h2 {
-    font-size: 22px;
-    color: #2e7d32;
-    margin-bottom: 10px;
-}
+        .cart-count {
+            background-color: white;
+            color: #e2136e;
+            border-radius: 50%;
+            padding: 2px 6px;
+            font-size: 12px;
+            margin-left: 5px;
+        }
 
-.cart-sidebar .close {
-    position: absolute;
-    top: 15px;
-    right: 20px;
-    font-size: 26px;
-    color: #2e7d32;
-    cursor: pointer;
-    transition: color 0.3s;
-}
-.cart-sidebar .close:hover {
-    color: #1b5e20;
-}
+        /* Payment Methods */
+        .payment-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 15px 0;
+        }
 
-.cart-item {
-    display: flex;
-    justify-content: space-between;
-    gap: 10px;
-    background-color: #ffffff;
-    padding: 15px;
-    border-radius: 12px;
-    margin-bottom: 15px;
-    box-shadow: 0 2px 8px rgba(34, 139, 34, 0.08);
-}
+        .payment-option {
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: center;
+            width: 80px;
+        }
 
-.cart-item h4 {
-    margin: 0;
-    font-size: 17px;
-    color: #2e7d32;
-}
+        .payment-option.selected {
+            border-color: #28a745;
+            background-color: #f0fff0;
+        }
 
-.cart-item p {
-    margin: 5px 0;
-    color: #4e944f;
-    font-size: 14px;
-}
+        .payment-option img {
+            width: 50px;
+            height: 50px;
+            object-fit: contain;
+        }
 
-.quantity-controls {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin: 8px 0;
-}
-
-.quantity-controls button {
-    padding: 4px 10px;
-    font-size: 16px;
-    background-color: #dcedc8;
-    color: #2e7d32;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: 0.3s;
-}
-.quantity-controls button:hover {
-    background-color: #c5e1a5;
-}
-
-.cart-item span {
-    font-size: 16px;
-    font-weight: 500;
-    color: #2e3d2f;
-}
-
-.remove-btn {
-    background-color: transparent;
-    border: 1px solid #c62828;
-    color: #c62828;
-    padding: 5px 10px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 14px;
-    transition: background-color 0.3s;
-}
-.remove-btn:hover {
-    background-color: #ffebee;
-}
-
-.cart-total {
-    font-size: 18px;
-    font-weight: bold;
-    color: #2e7d32;
-    margin: 15px 0;
-    text-align: right;
-    border-top: 1px solid #c8e6c9;
-    padding-top: 10px;
-}
-
-.place-order-form {
-    text-align: center;
-    margin-top: 10px;
-}
-
-.btn-primary {
-    background-color: #8bc34a;
-    color: white;
-    padding: 10px 25px;
-    border: none;
-    font-size: 16px;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-.btn-primary:hover {
-    background-color: #689f38;
-}
-
-
-</style>
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 0;
+            }
+            .sidebar:hover {
+                width: 220px;
+            }
+            .main-content {
+                margin-left: 0;
+            }
+            .cart-sidebar {
+                width: 100%;
+            }
+        }
+    </style>
 </head>
-   
 <body>
+
+<!-- Language Switcher -->
 
 <!-- Sidebar -->
 <div class="sidebar">
-    <!-- Language Toggle -->
-    <div class="language-toggle">
-        <button id="btn-bn" class="btn btn-secondary" onclick="changeLanguage('bn')">BN</button>
-        <button id="btn-en" class="btn btn-secondary" onclick="changeLanguage('en')">EN</button>
-    </div>
 
     <ul>
-        <li><a href="customer.php" class="nav-link"><i class="fas fa-home"></i> <span class="text-dashboard">ড্যাশবোর্ড</span></a></li>
-        <li><a href="C_market.php" class="nav-link"><i class="fas fa-store"></i> <span class="text-market">বাজার</span></a></li>
-        <li><a href="C_review.php" class="nav-link"><i class="fas fa-star"></i> <span class="text-review">পর্যালোচনা</span></a></li>
-        <li><a href="C_top_selling_products.php" class="nav-link"><i class="fas fa-chart-line"></i> <span class="text-top-selling">সর্বাধিক বিক্রিত</span></a></li>
-        <li><a href="C_order_history.php" class="nav-link"><i class="fas fa-history"></i> <span class="text-order-history">অর্ডার ইতিহাস</span></a></li>
-        <li><a href="C_purchase_history.php" class="nav-link"><i class="fas fa-shopping-cart"></i> <span class="text-purchase-history">ক্রয়ের ইতিহাস</span></a></li>
-        <li><a href="logout.php" class="nav-link"><i class="fas fa-sign-out-alt"></i> <span class="text-logout">লগআউট</span></a></li>
+    <div class="language-switcher">
+        <button class="language-btn <?= $lang === 'bn' ? 'active' : '' ?>" onclick="changeLanguage('bn')">BN</button>
+        <button class="language-btn <?= $lang === 'en' ? 'active' : '' ?>" onclick="changeLanguage('en')">EN</button>
+    </div>
+
+        <li><a href="customer.php" class="nav-link"><i class="fas fa-home"></i> <span><?= $lang === 'bn' ? 'ড্যাশবোর্ড' : 'Dashboard' ?></span></a></li>
+        <li><a href="C_market.php" class="nav-link"><i class="fas fa-store"></i> <span><?= $current['title'] ?></span></a></li>
+        <li><a href="C_review.php" class="nav-link"><i class="fas fa-star"></i> <span><?= $lang === 'bn' ? 'পর্যালোচনা' : 'Reviews' ?></span></a></li>
+        <li><a href="C_top_selling_products.php" class="nav-link"><i class="fas fa-chart-line"></i> <span><?= $lang === 'bn' ? 'সর্বাধিক বিক্রিত' : 'Top Selling' ?></span></a></li>
+        <li><a href="C_order_history.php" class="nav-link"><i class="fas fa-history"></i> <span><?= $lang === 'bn' ? 'অর্ডার ইতিহাস' : 'Order History' ?></span></a></li>
     </ul>
 </div>
 
-<header>
-    <h1 class="text-header">গ্রাহক ড্যাশবোর্ড - স্মার্টকৃষি</h1>
-</header>
+<!-- Main Content -->
+<div class="main-content">
+    <!-- Search Bar -->
+    <div class="search-container mb-4">
+        <form method="GET" class="row g-3">
+            <div class="col-md-10">
+                <input type="text" class="form-control" name="search"
+                       placeholder="<?= $current['search_placeholder'] ?>"
+                       value="<?= htmlspecialchars($_GET['search'] ?? '') ?>">
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-success w-100">
+                    <?= $current['search_button'] ?>
+                </button>
+            </div>
+        </form>
+    </div>
 
-
-
-
+    <!-- Products Grid -->
+    <h3><?= $current['products'] ?></h3>
+    <div class="product-grid">
+        <?php if ($products->num_rows > 0): ?>
+            <?php while ($product = $products->fetch_assoc()): ?>
+                <div class="product-card">
+                    <img src="<?= htmlspecialchars($product['image'] ?? $product['product_image']) ?>"
+                         class="card-img-top" alt="<?= htmlspecialchars($product['name']) ?>"
+                         style="height: 200px; width: 100%; object-fit: cover;">
+                    <div class="card-body">
+                        <h5 class="card-title"><?= htmlspecialchars($product['name']) ?></h5>
+                        <p class="card-text">
+                            <?= $current['price'] ?>: ৳<?= htmlspecialchars($product['price']) ?> / <?= htmlspecialchars($product['quantity_type']) ?>
+                        </p>
+                        <p class="card-text">
+                            <?= $current['quantity'] ?>: <?= htmlspecialchars($product['quantity']) ?> <?= htmlspecialchars($product['quantity_type']) ?>
+                        </p>
+                        <form method="POST">
+                            <input type="hidden" name="product_id" value="<?= $product['product_id'] ?>">
+                            <input type="hidden" name="farmer_id" value="<?= $product['farmer_id'] ?>">
+                            <button type="submit" name="add_to_cart" class="btn btn-success w-100">
+                                <?= $current['add_to_cart'] ?>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            <?php endwhile; ?>
+        <?php else: ?>
+            <div class="col-12">
+                <div class="alert alert-info"><?= $current['no_products'] ?></div>
+            </div>
+        <?php endif; ?>
+    </div>
+</div>
 
 <!-- Cart Icon -->
 <div class="cart-icon" onclick="toggleCart()">
-    কার্ট <span class="cart-count"><?= count($_SESSION['cart'] ?? []) ?></span>
-</div>
-<!-- Search Bar -->
-<div class="search-bar">
-    <form method="GET" action="C_market.php">
-        <input
-            type="text"
-            name="search"
-            placeholder="ফসল বা পণ্য অনুসন্ধান করুন..."
-            value="<?= htmlspecialchars($_GET['search'] ?? '') ?>"
-            class="search-input"
-        >
-        <button type="submit" class="search-button text-search-btn">অনুসন্ধান করুন</button>
-    </form>
+    <i class="fas fa-shopping-cart"></i>
+    <span class="cart-count"><?= count($cartItems) ?></span>
+    <span><?= $current['cart'] ?></span>
 </div>
 
-
-<!-- Update the cart section with confirmation -->
+<!-- Cart Sidebar -->
 <div class="cart-sidebar" id="cartSidebar">
-    <h1>শপিং কার্ট</h1>
-    <span class="close" onclick="toggleCart()">&times;</span>
-    <div id="cartItems">
-        <?php if (!empty($cartItems)): ?>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3><?= $current['cart'] ?></h3>
+        <button class="btn btn-sm btn-outline-danger" onclick="toggleCart()">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+
+    <?php if (!empty($cartItems)): ?>
+        <div class="cart-items mb-3">
             <?php foreach ($cartItems as $item): ?>
-                <div class="cart-item">
-    <div>
-        <h4><?= htmlspecialchars($item['name']) ?></h4>
-        <p>Price: TK. <?= htmlspecialchars($item['price']) ?></p>
-        <div class="quantity-controls">
-            <form method="POST" style="display: inline;">
-                <input type="hidden" name="product_id" value="<?= $item['product_id'] ?>">
-                <input type="hidden" name="farmer_id" value="<?= $item['farmer_id'] ?>">
-                <input type="hidden" name="update_quantity" value="decrease">
-                <button type="submit" class="btn-decrement">-</button>
-            </form>
-            <span><?= htmlspecialchars($item['quantity']) ?></span>
-            <form method="POST" style="display: inline;">
-                <input type="hidden" name="product_id" value="<?= $item['product_id'] ?>">
-                <input type="hidden" name="update_quantity" value="increase">
-                <input type="hidden" name="farmer_id" value="<?= $item['farmer_id'] ?>">
-                <button type="submit" class="btn-increment">+</button>
-            </form>
-        </div>
-        <p>Total: TK. <?= htmlspecialchars($item['price'] * $item['quantity']) ?></p>
-    </div>
-    <form method="POST">
-        <input type="hidden" name="product_id" value="<?= $item['product_id'] ?>">
-        <button type="submit" name="remove_from_cart" class="remove-btn">অপসারণ</button>
-    </form>
-</div>
-
-            <?php endforeach; ?>
-            <div class="cart-total">
-                Total: TK. <?= htmlspecialchars($cartTotal) ?>
-            </div>
-
-            <!-- Place Order Button -->
-            <form method="POST" class="place-order-form" onsubmit="return confirmOrder()">
-                <button type="submit" name="place_order" class="btn-primary">অর্ডার দিন</button>
-            </form>
-
-        <?php else: ?>
-            <p>তোমার কার্ট খালি।</p>
-        <?php endif; ?>
-
-
-        <!-- Payment Method Selection -->
-        <div class="payment-methods">
-            <h3>পেমেন্ট পদ্ধতি নির্বাচন করুন:</h3>
-            <div class="payment-options">
-                                <label class="payment-option">
-                                    <input type="radio" name="payment_method" value="bkash" required>
-                                    <img src="bkash.jpeg" alt="bKash">
-                                    <span>bKash</span>
-                                </label>
-                                <label class="payment-option">
-                                    <input type="radio" name="payment_method" value="nagad">
-                                    <img src="nagad.jpeg" alt="Nagad">
-                                    <span>Nagad</span>
-                                </label>
-                                <label class="payment-option">
-                                    <input type="radio" name="payment_method" value="rocket">
-                                    <img src="rocket.jpg" alt="Rocket">
-                                    <span>Rocket</span>
-                                </label>
-                                <label class="payment-option">
-                                    <input type="radio" name="payment_method" value="cod">
-                                    <img src="cod.jpg" alt="Cash on Delivery">
-                                    <span>COD</span>
-                                </label>
-        </div>
-         </div>
-
-        <!-- Order Button -->
-        <button onclick="handleOrderClick()" class="btn-primary">অর্ডার দিন</button>
-
-        <!-- Payment Modal -->
-        <div id="paymentModal" class="modal" style="display:none;">
-            <div class="modal-content">
-                <span class="close" onclick="closePaymentModal()">&times;</span>
-                <h3>পেমেন্ট তথ্য দিন</h3>
-                <form method="POST">
-                    <label>একাউন্ট নম্বর:</label><br>
-                    <input type="text" name="account_number" required><br><br>
-
-                    <label>পরিমাণ (টাকা):</label><br>
-                    <input type="number" name="amount" required><br><br>
-
-                    <label>পিন নম্বর:</label><br>
-                    <input type="password" name="pin" required><br><br>
-
-                    <button type="submit" name="confirm_payment" class="btn-primary">নিশ্চিত করুন</button>
-                </form>
-            </div>
-        </div>
-
-    </div>
-</div>
-
-
-
-<!-- Add message display -->
-<?php if (isset($_SESSION['message'])): ?>
-    <div class="alert alert-success">
-        <?= htmlspecialchars($_SESSION['message']) ?>
-        <?php unset($_SESSION['message']); ?>
-    </div>
-<?php endif; ?>
-
-<?php if (isset($_SESSION['error'])): ?>
-    <div class="alert alert-danger">
-        <?= htmlspecialchars($_SESSION['error']) ?>
-        <?php unset($_SESSION['error']); ?>
-    </div>
-<?php endif; ?>
-
-
-
-<div id="productModal" class="modal">
-    <div class="modal-content">
-        <span class="close" onclick="closeModal()">&times;</span>
-        <div id="productDetails">
-            <!-- Product details will be inserted here -->
-        </div>
-    </div>
-</div>
-
-
-
-<h2 class="market-title text-market-title">বাজারের পণ্য</h2>
-
-
-
-
-<div class="product-grid">
-    <?php if ($products->num_rows > 0): ?>
-        <?php while ($row = $products->fetch_assoc()): ?>
-            <div class="product-card" onclick="showProductDetails(<?= htmlspecialchars(json_encode($row)) ?>)">
-                <div class="card">
-                    <?php
-                    $display_image = !empty($row['image']) ? $row['image'] : $row['product_image'];
-                    ?>
-                    <img src="<?= htmlspecialchars($display_image); ?>"
-                         class="card-img-top"
-                         alt="<?= htmlspecialchars($row['name']); ?>"
-                         style="height: 200px; object-fit: cover;">
+                <div class="card mb-2">
                     <div class="card-body">
-                        <h3 class="card-title"><?= htmlspecialchars($row['name']); ?></h3>
-                        <p class="card-text">Price: TK. <?= htmlspecialchars($row['price']); ?> / <?= htmlspecialchars($row['quantity_type']); ?></p>
-                        <p class="card-text">Available: <?= htmlspecialchars($row['quantity']); ?> <?= htmlspecialchars($row['quantity_type']); ?></p>
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h5><?= htmlspecialchars($item['name']) ?></h5>
+                                <p>৳<?= htmlspecialchars($item['price']) ?> / <?= htmlspecialchars($item['quantity_type']) ?></p>
+                                <div class="d-flex align-items-center">
+                                    <form method="POST" class="me-2">
+                                        <input type="hidden" name="product_id" value="<?= $item['product_id'] ?>">
+                                        <input type="hidden" name="farmer_id" value="<?= $item['farmer_id'] ?>">
+                                        <input type="hidden" name="update_quantity" value="decrease">
+                                        <button type="submit" class="btn btn-sm btn-outline-secondary">-</button>
+                                    </form>
+                                    <span class="mx-2"><?= $item['quantity'] ?></span>
+                                    <form method="POST" class="ms-2">
+                                        <input type="hidden" name="product_id" value="<?= $item['product_id'] ?>">
+                                        <input type="hidden" name="farmer_id" value="<?= $item['farmer_id'] ?>">
+                                        <input type="hidden" name="update_quantity" value="increase">
+                                        <button type="submit" class="btn btn-sm btn-outline-secondary">+</button>
+                                    </form>
+                                </div>
+                                <p class="mt-2">Total: ৳<?= $item['price'] * $item['quantity'] ?></p>
+                            </div>
+                            <form method="POST">
+                                <input type="hidden" name="product_id" value="<?= $item['product_id'] ?>">
+                                <button type="submit" name="remove_from_cart" class="btn btn-sm btn-danger">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
+                        </div>
                     </div>
                 </div>
+            <?php endforeach; ?>
+        </div>
+
+        <div class="cart-total mb-3">
+            <h4 class="text-end"><?= $current['price'] ?>: ৳<?= number_format($cartTotal, 2) ?></h4>
+        </div>
+
+        <!-- Payment Methods -->
+        <div class="payment-methods mb-3">
+            <h5><?= $lang === 'bn' ? 'পেমেন্ট পদ্ধতি নির্বাচন করুন' : 'Select Payment Method' ?>: <span class="text-danger">*</span></h5>
+            <div class="payment-options">
+                <div class="payment-option" onclick="selectPayment('bkash')">
+                    <img src="bkash.jpeg" alt="bKash">
+                    <span>bKash</span>
+                </div>
+                <div class="payment-option" onclick="selectPayment('nagad')">
+                    <img src="nagad.jpeg" alt="Nagad">
+                    <span>Nagad</span>
+                </div>
+
+                <div class="payment-option" onclick="selectPayment('cod')">
+                    <img src="cod.jpg" alt="COD">
+                    <span>COD</span>
+                </div>
             </div>
-        <?php endwhile; ?>
+            <div id="paymentError" class="text-danger mt-2" style="display: none;">
+                <?= $lang === 'bn' ? 'দয়া করে একটি পেমেন্ট পদ্ধতি নির্বাচন করুন' : 'Please select a payment method' ?>
+            </div>
+        </div>
+
+        <form method="POST" action="process_order.php" id="orderForm">
+            <input type="hidden" name="payment_method" id="selectedPaymentMethod">
+            <button type="submit" class="btn btn-success w-100 py-2" onclick="return validatePayment()">
+                <i class="fas fa-shopping-bag"></i> <?= $lang === 'bn' ? 'অর্ডার সম্পন্ন করুন' : 'Place Order' ?>
+            </button>
+        </form>
     <?php else: ?>
-        <p style="text-align: center;">এই মুহূর্তে কোনও পণ্য উপলব্ধ নেই।</p>
+        <div class="alert alert-info"><?= $current['no_products'] ?></div>
     <?php endif; ?>
 </div>
 
+<!-- Messages -->
+<?php if (isset($_SESSION['message'])): ?>
+    <div class="alert alert-success alert-dismissible fade show" style="position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 1100;">
+        <?= $_SESSION['message'] ?>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    <?php unset($_SESSION['message']); ?>
+<?php endif; ?>
 
+<?php if (isset($_SESSION['error'])): ?>
+    <div class="alert alert-danger alert-dismissible fade show" style="position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 1100;">
+        <?= $_SESSION['error'] ?>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    <?php unset($_SESSION['error']); ?>
+<?php endif; ?>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-
-// Store the default language setting in the session or local storage (default Bangla)
-if (!localStorage.getItem('language')) {
-    localStorage.setItem('language', 'bn'); // Default to Bangla
-}
-
-function changeLanguage(language) {
-    localStorage.setItem('language', language);
-    location.reload(); // Refresh the page to reflect the change
-}
-
-// Load the language when the page loads
-document.addEventListener('DOMContentLoaded', function() {
-    const language = localStorage.getItem('language');
-    if (language === 'en') {
-        // Change all text to English
-        document.body.classList.add('en');
-    } else {
-        // Change all text to Bangla
-        document.body.classList.remove('en');
-    }
-});
-
-
-function toggleCart() {
-    document.getElementById('cartSidebar').classList.toggle('active');
-}
-
-function confirmOrder() {
-    return confirm('আপনি কি নিশ্চিত যে আপনি এই অর্ডারটি দিতে চান?');
-}
-
-function showProductDetails(product) {
-    const modal = document.getElementById('productModal');
-    const details = document.getElementById('productDetails');
-
-    details.innerHTML = `
-        <h2>${product.name}</h2>
-        <img src="${product.image || product.product_image}" alt="${product.name}" style="max-width: 200px;">
-        <p>দাম :  ${product.price} টাকা</p>
-        <form method="POST">
-            <input type="hidden" name="product_id" value="${product.product_id}">
-            <input type="hidden" name="farmer_id" value="${product.farmer_id}">
-            <div class="form-group">
-                <label>পরিমাণ:</label>
-                <input type="number" name="quantity" min="1" value="1" required class="form-control">
-            </div>
-            <button type="submit" name="add_to_cart" class="btn-primary">কার্ট এ যোগ করুন</button>
-        </form>
-    `;
-
-    modal.style.display = "block";
-}
-
-function closeModal() {
-    document.getElementById('productModal').style.display = 'none';
-}
-
-window.onclick = function(event) {
-    const modal = document.getElementById('productModal');
-    if (event.target == modal) {
-        closeModal();
-    }
-};
-
-document.addEventListener('DOMContentLoaded', function() {
-    const alerts = document.querySelectorAll('.alert');
-    alerts.forEach(alert => {
-        setTimeout(() => {
-            alert.style.opacity = '0';
-            setTimeout(() => alert.remove(), 500);
-        }, 3000);
-    });
-});
-
-function handleOrderClick() {
-    const selectedMethod = document.querySelector('input[name="payment_method"]:checked');
-    if (!selectedMethod) {
-        alert("দয়া করে একটি পেমেন্ট পদ্ধতি নির্বাচন করুন।");
-        return;
+    // Language switching
+    function changeLanguage(lang) {
+        window.location.href = '?lang=' + lang;
     }
 
-    let url = "";
-
-    switch (selectedMethod.value) {
-        case "bkash":
-            url = "bkash.php"; // 🟣 Real Bkash sandbox redirection
-            break;
-        case "nagad":
-            url = "nagad.php"; // 🟠 Mock Nagad page
-            break;
-        case "rocket":
-            url = "rocket.php"; // 🔵 Mock Rocket page
-            break;
-        default:
-            document.querySelector('form.place-order-form').submit();
-            return;
+    // Toggle cart sidebar
+    function toggleCart() {
+        document.getElementById('cartSidebar').classList.toggle('active');
     }
 
-    // Redirect to payment page
-    window.location.href = url;
-}
+    // Select payment method
+    function selectPayment(method) {
+        document.getElementById('selectedPaymentMethod').value = method;
 
-function closePaymentModal() {
-    document.getElementById("paymentModal").style.display = "none";
-}
-</script>
+        // Update UI
+        document.querySelectorAll('.payment-option').forEach(option => {
+            option.classList.remove('selected');
+        });
+        event.currentTarget.classList.add('selected');
+        document.getElementById('paymentError').style.display = 'none';
+    }
 
-<!-- JavaScript Language Switcher -->
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-    const lang = localStorage.getItem("language") || "bn";
-    setLanguage(lang);
-});
+    // Validate payment before submission
+    function validatePayment() {
+        const paymentMethod = document.getElementById('selectedPaymentMethod').value;
 
-function changeLanguage(lang) {
-    localStorage.setItem("language", lang);
-    setLanguage(lang);
-}
-
-function setLanguage(lang) {
-    const textMap = {
-        bn: {
-            "text-dashboard": "ড্যাশবোর্ড",
-            "text-market": "বাজার",
-            "text-review": "পর্যালোচনা",
-            "text-top-selling": "সর্বাধিক বিক্রিত",
-            "text-order-history": "অর্ডার ইতিহাস",
-            "text-purchase-history": "ক্রয়ের ইতিহাস",
-            "text-logout": "লগআউট",
-            "text-header": "গ্রাহক ড্যাশবোর্ড - স্মার্টকৃষি",
-            "text-cart-label": "কার্ট",
-            "text-market-title": "বাজারের পণ্য",
-            "text-search-btn": "অনুসন্ধান করুন"
-        },
-        en: {
-            "text-dashboard": "Dashboard",
-            "text-market": "Market",
-            "text-review": "Review",
-            "text-top-selling": "Top Selling",
-            "text-order-history": "Order History",
-            "text-purchase-history": "Purchase History",
-            "text-logout": "Logout",
-            "text-header": "Customer Dashboard - SmartKirshi",
-            "text-cart-label": "Cart",
-            "text-market-title": "Market Products",
-            "text-search-btn": "Search"
-
+        if (!paymentMethod) {
+            document.getElementById('paymentError').style.display = 'block';
+            document.querySelector('.payment-methods').scrollIntoView({ behavior: 'smooth' });
+            return false;
         }
-    };
 
-    Object.keys(textMap[lang]).forEach(cls => {
-        const el = document.querySelector(`.${cls}`);
-        if (el) el.innerText = textMap[lang][cls];
-    });
-}
+        return confirm("<?= $lang === 'bn' ? 'আপনি কি নিশ্চিত যে আপনি এই অর্ডারটি দিতে চান?' : 'Are you sure you want to place this order?' ?>");
+    }
+
+    // Auto-close alerts after 5 seconds
+    window.setTimeout(() => {
+        const alerts = document.querySelectorAll('.alert');
+        alerts.forEach(alert => {
+            const bsAlert = new bootstrap.Alert(alert);
+            bsAlert.close();
+        });
+    }, 5000);
 </script>
-
-
-
-
-
-
-
 </body>
 </html>
