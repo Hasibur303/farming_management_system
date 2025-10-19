@@ -1393,23 +1393,15 @@ function sendMessage() {
             </div>
         </div>
         <div class="creator">
-            <img src="sabbir.jpg" alt="Md Sabbir Ahmed">
+            <img src="muntasir.jpg" alt="Md Sabbir Ahmed">
             <div class="creator-info">
-                <h3>মোঃ সাব্বির আহমেদ</h3>
-                <p><strong>ফোন:</strong> 01722835319</p>
-                <p><strong>ইমেইল:</strong> <a href="mailto:mdsabbirahmed1703@gmail.com">mdsabbirahmed1703@gmail.com</a></p>
-                <p><strong>ফেসবুক:</strong> <a href="https://www.facebook.com/sabbir.ahmed.445453" target="_blank">Sabbir's Facebook</a></p>
+                <h3>মুনতাসির মাশুক হাসানায়েন</h3>
+                <p><strong>ফোন:</strong> 01793349312</p>
+                <p><strong>ইমেইল:</strong> <a href="mailto:muntasirhasnayen404@gmail.com">muntasirhasnayen404@gmail.com</a></p>
+                <p><strong>ফেসবুক:</strong> <a href="https://www.facebook.com/muntasir.mashuque" target="_blank">Muntasir's Facebook</a></p>
             </div>
         </div>
-        <div class="creator">
-            <img src="rafi.jpg" alt="Ar Rafi Hossain Ishty">
-            <div class="creator-info">
-                <h3>আর রাফি হোসেন ইশতি</h3>
-                <p><strong>ফোন:</strong> +880 1867-726881</p>
-                <p><strong>ইমেইল:</strong> <a href="mailto:aisty223793@bscse.uiu.ac.bd">aisty223793@bscse.uiu.ac.bd</a></p>
-                <p><strong>ফেসবুক:</strong> <a href="https://www.facebook.com/arrafi.hossain.102" target="_blank">Rafi's Facebook</a></p>
-            </div>
-        </div>
+
     </div>
 </section>
 
