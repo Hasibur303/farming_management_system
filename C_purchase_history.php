@@ -9,6 +9,11 @@ try {
         exit();
     }
 
+
+
+
+
+
   // Fetch available products - this should be at the start of your try block
   $productStmt = $conn->prepare("
   SELECT fc.*, fc.farmer_id,p.image as product_image
