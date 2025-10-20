@@ -14,6 +14,7 @@ if (!isset($_GET['id'])) {
     exit();
 }
 
+
 $agrologist_id = $_GET['id'];
 
 $sql = "SELECT a.*, u.full_name
