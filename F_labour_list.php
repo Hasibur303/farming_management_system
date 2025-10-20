@@ -579,6 +579,7 @@ $districts = [
                 <?php
             }
         } else {
+
             echo "<div class='col-12'><p class='text-center text-muted'>নির্বাচিত জেলার জন্য কোন শ্রমিক পাওয়া যায়নি।</p></div>";
         }
         ?>
