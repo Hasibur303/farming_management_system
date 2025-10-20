@@ -9,6 +9,10 @@ $text = [
 ];
 $current = $text[$lang];
 ?>
+
+
+
+
 <!DOCTYPE html>
 <html lang="<?= $lang ?>">
 <head>

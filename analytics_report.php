@@ -10,6 +10,9 @@ if (!isset($_SESSION['user_id'])) {
     header("Location: ../login.php");
     exit();
 }
+
+
+
 $farmer_id = $_SESSION['user_id'];
 // Analytics Functions
 function getProductPerformanceReport($farmer_id) {
