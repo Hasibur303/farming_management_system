@@ -95,6 +95,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             font-weight: 600;
         }
 
+
+
+
         .form-group {
             margin-bottom: 20px;
         }
@@ -183,6 +186,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <div class="form-group">
             <input type="submit" value="লগইন">
         </div>
+
+
     </form>
 
     <div class="register-link">
