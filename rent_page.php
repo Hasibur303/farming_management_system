@@ -23,6 +23,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['rent_now'])) {
     $stmt->fetch();
     $stmt->close();
 
+
+
+
     $days = (strtotime($end_date) - strtotime($start_date)) / (60 * 60 * 24);
     $total_cost = $rate * $quantity * ($days > 0 ? $days : 1);
 
