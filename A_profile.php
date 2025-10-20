@@ -301,6 +301,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             text-align: center;
         }
 
+
+
+
+
         /* Uploaded Image Preview */
         .profile-form img {
             border-radius: 10px;
