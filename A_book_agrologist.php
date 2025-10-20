@@ -15,6 +15,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['agrologist_id'])) {
     mysqli_query($conn, $query);
 
 
+
+
     if (mysqli_query($conn, $query)) {
         header("Location: agrologist_list.php?success=1");
     } else {
