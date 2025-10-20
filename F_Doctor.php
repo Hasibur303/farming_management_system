@@ -211,6 +211,9 @@ function identifyCrop(string $path): array
     <?php endif; ?>
 </div>
 
+
+
+
 <!-- ---------- Scripts ---------- -->
 <script>
 function previewImage(e){
