@@ -1,153 +1,105 @@
-# 🌾 SmartKrishi
+# SmartKrishi – Farming Management System
 
-SmartKrishi is an intelligent agriculture platform designed to help farmers, suppliers, customers and agricultural experts connect and operate efficiently. It simplifies job posting, product supply, feedback & advisory services by harnessing modern web tech for usability, reliability, and scalability.
+SmartKrishi is a PHP and MySQL web application that connects farmers, customers,
+suppliers, labourers, administrators, and agricultural specialists.
 
----
+## Features
 
-## 🚀 Features
+- Role-based registration, login, and dashboards
+- Crop and inventory management
+- Product marketplace and order management
+- Supplier product and equipment management
+- Labour job posting and applications
+- Agrologist articles, appointments, and responses
+- Crop and insect identification through the Kindwise APIs
+- Admin and analytics pages
+- bKash, Nagad, Rocket, and cash-on-delivery payment flows
 
-- **User Roles:** Farmers, Labourers, Suppliers, Customers, Agrologists  
-- **Job Management:** Farmers post job requests, labourers apply and track status  
-- **Product Supply:** Suppliers upload products, customers browse and purchase  
-- **Adaptive Marketplace:** Product listings, cart management, payment options  
-- **AI + Advisory:** Weather alerts, agricultural tips, seasonal advisory (planned)  
-- **Responsive UI/UX:** Clean dashboards for different user roles  
-- **Admin Tools:** Manage users, jobs, products, system monitoring  
+## Technology
 
----
+- PHP 8.0 or newer
+- MySQL or MariaDB
+- HTML, CSS, JavaScript, and Bootstrap
+- PHP extensions: `mysqli`, `curl`, `fileinfo`, and `mbstring`
 
-## 🎯 Objectives
+## Local setup with XAMPP
 
-- Empower small-scale farmers and labourers by giving them digital tools  
-- Reduce middleman costs by enabling direct supplier-customer interactions  
-- Provide real-time advisory & feedback to improve agricultural outcomes  
-- Build a scalable system ready for expansion into new regions or modules  
-
----
-
-## 🧰 Tech Stack & Architecture
-
-| Layer | Technology |
-|---|---|
-| Frontend | React.js + Tailwind CSS |
-| Backend | Flask (Python) |
-| Database | SQLite (for prototyping; can scale to PostgreSQL/MySQL) |
-| AI / Advisory | Planned integration (Weather API, Agrologist inputs) |
-| Authentication & Authorization | JWT / Role-based access control |
-| Deployment | Docker / Cloud server or Platform as a Service (PaaS) |
-
----
-
-## 📂 Project Structure
-
-```bash
-SmartKrishi/
-├── backend/  
-│   ├── app.py  
-│   ├── models/  
-│   ├── routes/  
-│   ├── utils/  
-│   └── requirements.txt  
-├── frontend/  
-│   ├── public/  
-│   ├── src/  
-│   │   ├── components/  
-│   │   ├── pages/  
-│   │   ├── assets/  
-│   │   └── styles/  
-│   └── package.json  
-├── docs/  
-├── .gitignore  
-└── README.md
-````
-
----
-
-## ⚙️ Installation & Quickstart
-
-1. **Clone the repo**
+1. Clone the repository into the XAMPP web directory:
 
    ```bash
-   git clone https://github.com/Muhtasim-Masum-Hasnayen/SmartKrishi.git
-   cd SmartKrishi
+   cd C:\xampp\htdocs
+   git clone https://github.com/Hasibur303/farming_management_system.git
+   cd farming_management_system
    ```
 
-2. **Backend Setup**
+2. Start Apache and MySQL from the XAMPP control panel.
+
+3. Create a database named `farming_management`.
+
+4. Import `farming_management.sql` using phpMyAdmin or the MySQL command line:
 
    ```bash
-   cd backend
-   python3 -m venv venv
-   source venv/bin/activate        # or `venv\Scripts\activate` on Windows
-   pip install -r requirements.txt
-   flask run --port 5000
+   mysql -u root -p farming_management < farming_management.sql
    ```
 
-3. **Frontend Setup**
+5. Copy the example environment file:
 
-   ```bash
-   cd ../frontend
-   npm install
-   npm run dev
+   ```powershell
+   Copy-Item .env.example .env
    ```
 
-4. **Environment Variables**
-   In backend, create `.env` file (if used) with variables like:
+6. Update `.env` with your local database credentials and API keys. Never commit
+   `.env`.
 
+7. Open the application:
+
+   ```text
+   http://localhost/farming_management_system/dashboard.php
    ```
-   FLASK_APP=app.py
-   FLASK_ENV=development
-   SECRET_KEY=your_secret
-   DATABASE_URL=sqlite:///smartkrishi.db
-   ```
 
----
+## Environment variables
 
-## 🛠 Roadmap & Planned Enhancements
+| Variable | Purpose | Default |
+|---|---|---|
+| `DB_HOST` | Database server | `localhost` |
+| `DB_PORT` | Database port | `3306` |
+| `DB_NAME` | Database name | `farming_management` |
+| `DB_USER` | Database username | `root` |
+| `DB_PASSWORD` | Database password | empty |
+| `KINDWISE_API_KEY` | Crop identification API key | none |
+| `KINDWISE_ENDPOINT` | Crop API endpoint | Kindwise crop endpoint |
+| `INSECT_API_KEY` | Insect identification API key | none |
+| `INSECT_ENDPOINT` | Insect API endpoint | Kindwise insect endpoint |
 
-* [x] Core user flows: job posting, product supply, cart, authentication
-* [ ] Weather alerts & seasonal advisory module
-* [ ] Supplier rating & reviews
-* [ ] Payment gateway integration
-* [ ] Dashboard analytics for farmers & suppliers
-* [ ] Mobile responsiveness & possibly mobile app
+## Project layout
 
----
-
-## ✅ Challenges & Learnings
-
-* Synchronizing database schema across user roles (farmers, suppliers, labourers)
-* Creating responsive UI designs that work well across devices
-* Balancing simplicity vs. rich functionality for non-tech savvy users
-
----
-
-## 🤝 Contributing
-
-Contributions are welcome!
-
-1. Fork the repository
-2. Create a new branch (`git checkout -b feature/your-feature-name`)
-3. Make your changes & test them locally
-4. Commit with descriptive message (`git commit -m "Feat: add payment integration"`)
-5. Push and open a Pull Request
-
-Please read the code of conduct in `CODE_OF_CONDUCT.md` (if exists or plan to add).
-
----
-
-## 📜 License
-
-SmartKrishi is open source under the **MIT License** – see the [LICENSE](LICENSE) file for details.
-
----
-
-## 👨‍💻 Team
-
-* **Masum** – Project Lead ,  Frontend Developer & UI/UX Designer , Integration & Testing
-* **Hasib** – Ai Specialist, Backend Specialist , DevOps 
-
----
-
-“Farming smarter, connecting stronger.” 🌱
-
+```text
+admin/       Administration pages
+analytics/   Reporting and analytics
+css/         Shared stylesheets
+farmer/      Farmer-specific pages
+images/      Static application images
+supplier/    Supplier-specific pages
+uploads/     Runtime user uploads
+*.php        Current page controllers and views
 ```
+
+The application currently uses page-oriented PHP files. When adding new code,
+reuse `database.php` for the database connection and keep credentials in `.env`.
+
+## Security notes
+
+- Rotate any API key that was previously committed to Git history.
+- Validate uploaded files and all request input.
+- Use prepared statements for every query containing user input.
+- Do not enable PHP error display in production.
+- Ensure `uploads/` cannot execute PHP files in the production web server.
+
+## Team
+
+- Masum — frontend, UI/UX, integration, and testing
+- Hasib — backend, AI integration, and DevOps
+
+## License
+
+This project is licensed under the MIT License. See [LICENSE](LICENSE).

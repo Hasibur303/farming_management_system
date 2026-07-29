@@ -32,6 +32,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['insect_image'])) {
 // ---------- 2) Kindwise Insect.id API helper ----------
 function identifyInsect(string $path): array
 {
+    if (INSECT_API_KEY === '') {
+        return [
+            'success' => false,
+            'message' => 'Insect identification is not configured. Add INSECT_API_KEY to .env.',
+        ];
+    }
+
     $imageB64 = base64_encode(file_get_contents($path));
     $payload = [
         'images'         => [$imageB64],

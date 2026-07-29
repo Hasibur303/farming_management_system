@@ -34,6 +34,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['crop_image'])) {
 // ---------- 2) Kindwise API helper ----------
 function identifyCrop(string $path): array
 {
+    if (KINDWISE_API_KEY === '') {
+        return [
+            'success' => false,
+            'message' => 'Crop identification is not configured. Add KINDWISE_API_KEY to .env.',
+        ];
+    }
+
     $cfile  = new CURLFile($path, mime_content_type($path), basename($path));
     $fields = ['images' => $cfile /* ,'similar_images' => 'false' */];
 

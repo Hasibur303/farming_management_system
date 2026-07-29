@@ -1,4 +1,8 @@
 <?php
-// KEEP THIS FILE OUTSIDE WEB ROOT IN PRODUCTION
-define('KINDWISE_API_KEY', 'VPGqWcEjN1mjNvPkGGnZVDWARwaFmxNj4Zv26gOG4AX59X0K0v');
-define('KINDWISE_ENDPOINT', 'https://crop.kindwise.com/api/v1/identification');
+require_once __DIR__ . '/environment.php';
+
+define('KINDWISE_API_KEY', env('KINDWISE_API_KEY', ''));
+define(
+    'KINDWISE_ENDPOINT',
+    env('KINDWISE_ENDPOINT', 'https://crop.kindwise.com/api/v1/identification')
+);
