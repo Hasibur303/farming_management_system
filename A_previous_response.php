@@ -1,5 +1,5 @@
 <?php
-session_start();
+require_once __DIR__ . '/security/bootstrap.php';
 include 'database.php';
 
 if (!isset($_SESSION['user_id'])) {
@@ -10,8 +10,9 @@ if (!isset($_SESSION['user_id'])) {
 $farmer_id = $_SESSION['user_id'];
 
 /* কৃষকের জেলা বের করা */
-$farmer = mysqli_fetch_assoc(mysqli_query($conn,
-            "SELECT district FROM agrologists WHERE user_id='$farmer_id'"));
+$farmerStatement = $pdo->prepare('SELECT district FROM agrologists WHERE user_id = ?');
+$farmerStatement->execute([$farmer_id]);
+$farmer = $farmerStatement->fetch() ?: [];
 $farmer_district = $farmer['district'] ?? '';
 
 /* কৃষক যাদের বুক করেছেন / করবেন এমন সব কৃষি-বিশেষজ্ঞ */
@@ -25,9 +26,11 @@ $query = "SELECT a.*, u.name,
           JOIN users u ON a.user_id = u.user_id
           LEFT JOIN bookings b
                  ON a.user_id = b.agrologist_id
-                AND b.farmer_id = '$farmer_id'
-          WHERE a.user_id != '$farmer_id'";
-$result = mysqli_query($conn, $query);
+                AND b.farmer_id = ?
+          WHERE a.user_id != ?";
+$statement = $pdo->prepare($query);
+$statement->execute([$farmer_id, $farmer_id]);
+$result = new DatabaseResult($statement->fetchAll());
 ?>
 <!DOCTYPE html>
 <html lang="bn">
@@ -166,7 +169,7 @@ $result = mysqli_query($conn, $query);
         <h2 class="mb-4">আপনার কৃষি-বিশেষজ্ঞ সম্পর্কিত প্রতিক্রিয়া ও অ্যাপয়েন্টমেন্ট</h2>
 
         <div class="row">
-        <?php while ($row = mysqli_fetch_assoc($result)): ?>
+        <?php while ($row = $result->fetch_assoc()): ?>
             <div class="col-md-6 mb-4">
                 <div class="card p-3">
                     <div class="d-flex align-items-center">
@@ -186,7 +189,7 @@ $result = mysqli_query($conn, $query);
                     <?php if (empty($row['booking_id']) || $row['status'] === 'Pending'): ?>
                       <form action="A_book_agrologist.php" method="post" class="mt-3">
                           <input type="hidden" name="agrologist_id"
-                                 value="<?= $row['user_id']; ?>">
+                                 value="<?= e($row['user_id']) ?>">
 
                           <div class="mb-2">
                               <label class="form-label text-white">বার্তা লিখুন</label>

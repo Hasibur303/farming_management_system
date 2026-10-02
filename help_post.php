@@ -1,6 +1,7 @@
 <?php
-session_start();
+require_once __DIR__ . '/security/bootstrap.php';
 include 'database.php';
+require_once __DIR__ . '/security/upload.php';
 
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
@@ -9,45 +10,46 @@ if (!isset($_SESSION['user_id'])) {
 
 // Handle new post submission
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['title'])) {
-    $title = mysqli_real_escape_string($conn, $_POST['title']);
-    $content = mysqli_real_escape_string($conn, $_POST['content']);
+    $title = trim((string) $_POST['title']);
+    $content = trim((string) $_POST['content']);
     $farmer_id = $_SESSION['user_id'];
 
        $photo_name = null;
         if (isset($_FILES['photo']) && $_FILES['photo']['error'] === UPLOAD_ERR_OK) {
-            $upload_dir = 'uploads/';
-            $photo_name = time() . '_' . basename($_FILES['photo']['name']);
-            $target_path = $upload_dir . $photo_name;
-            move_uploaded_file($_FILES['photo']['tmp_name'], $target_path);
+            $stored = secure_image_upload($_FILES['photo'], __DIR__ . '/uploads');
+            $photo_name = $stored['filename'];
         }
 
    // Insert post with photo
-    $sql = "INSERT INTO help_posts (farmer_id, title, content, photo)
-            VALUES ('$farmer_id', '$title', '$content', " . ($photo_name ? "'$photo_name'" : "NULL") . ")";
-    mysqli_query($conn, $sql);
+    $statement = $pdo->prepare('INSERT INTO help_posts (farmer_id, title, content, photo) VALUES (?, ?, ?, ?)');
+    $statement->execute([$farmer_id, $title, $content, $photo_name]);
 
     header("Location: help_post.php");
     exit();
 }
 
 // Fetch all posts with farmer name
-$posts = mysqli_query($conn, "
+$postsStatement = $pdo->prepare("
     SELECT hp.*, u.name AS farmer_name
     FROM help_posts hp
     JOIN users u ON hp.farmer_id = u.user_id
     ORDER BY hp.created_at DESC
 ");
+$postsStatement->execute();
+$posts = new DatabaseResult($postsStatement->fetchAll());
 
 // Fetch all comments with agrologist name and photo
-$comments_result = mysqli_query($conn, "
+$commentsStatement = $pdo->prepare("
     SELECT c.*, u.name AS agrologist_name, a.photo
     FROM help_comments c
     JOIN users u ON c.user_id = u.user_id
     LEFT JOIN agrologists a ON c.user_id = a.user_id
 ");
+$commentsStatement->execute();
+$comments_result = new DatabaseResult($commentsStatement->fetchAll());
 
 $comments = [];
-while ($comment = mysqli_fetch_assoc($comments_result)) {
+while ($comment = $comments_result->fetch_assoc()) {
     $comments[$comment['post_id']][] = $comment;
 }
 ?>
@@ -205,7 +207,7 @@ while ($comment = mysqli_fetch_assoc($comments_result)) {
 
 
         <?php
-        while ($post = mysqli_fetch_assoc($posts)):
+        while ($post = $posts->fetch_assoc()):
 
             $post_id = $post['post_id'];
             $collapse_id = 'collapse-comments-' . $post_id;
@@ -226,7 +228,7 @@ while ($comment = mysqli_fetch_assoc($comments_result)) {
 
                 <small class="text-muted">
                     Posted by: <?php echo htmlspecialchars($post['farmer_name']); ?>
-                    on <?php echo $post['created_at']; ?>
+                    on <?= e($post['created_at']) ?>
                 </small>
 
 

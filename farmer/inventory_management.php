@@ -1,5 +1,5 @@
 <?php
-session_start();
+require_once dirname(__DIR__) . '/security/bootstrap.php';
 include('../database.php');
 
 $farmer_id = $_SESSION['user_id']; // Farmer ID from session

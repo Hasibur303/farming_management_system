@@ -1,5 +1,5 @@
 <?php
-session_start();
+require_once __DIR__ . '/security/bootstrap.php';
 if (!isset($_SESSION['lang'])) $_SESSION['lang'] = 'bn';
 if (isset($_GET['lang']) && in_array($_GET['lang'], ['bn', 'en'])) $_SESSION['lang'] = $_GET['lang'];
 $lang = $_SESSION['lang'];
@@ -17,7 +17,7 @@ $current = $text[$lang];
 <html lang="<?= $lang ?>">
 <head>
     <meta charset="UTF-8">
-    <title><?= $current['title'] ?> | SmartKirshi</title>
+    <title><?= e($current['title']) ?> | SmartKirshi</title>
     <style>
         body {
             font-family: 'Segoe UI', sans-serif;
@@ -93,21 +93,21 @@ $current = $text[$lang];
     <div class="logo">
         <img src="bkash.jpeg" alt="bkash Logo">
     </div>
-    <h1><?= $current['title'] ?></h1>
+    <h1><?= e($current['title']) ?></h1>
     <form method="POST" action="">
         <div class="form-group">
-            <label><?= $current['number'] ?>:</label>
+            <label><?= e($current['number']) ?>:</label>
             <input type="text" name="bkash_number" required>
         </div>
         <div class="form-group">
-            <label><?= $current['trxid'] ?>:</label>
+            <label><?= e($current['trxid']) ?>:</label>
             <input type="text" name="trx_id" required>
         </div>
         <div class="form-group">
-            <label><?= $current['amount'] ?>:</label>
+            <label><?= e($current['amount']) ?>:</label>
             <input type="number" name="amount" required>
         </div>
-        <button type="submit"><?= $current['submit'] ?></button>
+        <button type="submit"><?= e($current['submit']) ?></button>
     </form>
 </body>
 </html>

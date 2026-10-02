@@ -1,6 +1,7 @@
 <?php
 include('database.php'); // Include the database connection file
-session_start();
+require_once __DIR__ . '/security/bootstrap.php';
+require_once __DIR__ . '/security/upload.php';
 
 // Check if the user is logged in
 if (!isset($_SESSION['user_id'])) {
@@ -22,16 +23,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Validate inputs
     if (!empty($productName) && !empty($quantityType) && !empty($image['name'])) {
         // Save the uploaded image
-        $targetDir = "../uploads/";
-        $imageName = basename($image['name']);
-        $targetFilePath = $targetDir . time() . "_" . $imageName;
-
-        // Ensure the uploads directory exists
-        if (!is_dir($targetDir)) {
-            mkdir($targetDir, 0777, true);
-        }
-
-        if (move_uploaded_file($image['tmp_name'], $targetFilePath)) {
+        try {
+            $stored = secure_image_upload($image, __DIR__ . '/uploads');
+            $targetFilePath = 'uploads/' . $stored['filename'];
             // Insert product request into the database
             if ($conn) { // Check connection before using
                 $query = "INSERT INTO product_requests (farmer_id, product_name, product_image, quantity_type, status) VALUES (?, ?, ?, ?, 'Pending')";
@@ -51,8 +45,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             } else {
                 $message = "ডাটাবেস সংযোগ ত্রুটি।";
             }
-        } else {
-            $message = "ছবি আপলোড করা যায়নি।";
+        } catch (RuntimeException $exception) {
+            $message = $exception->getMessage();
         }
     } else {
         $message = "সবগুলো ফিল্ড আবশ্যক!";

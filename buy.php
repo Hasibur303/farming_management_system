@@ -1,5 +1,5 @@
 <?php
-session_start();
+require_once __DIR__ . '/security/bootstrap.php';
 include 'database.php'; // Include database connection
 
 function validateQuantity($quantity) {
@@ -412,9 +412,9 @@ body {
                 <h4><?= htmlspecialchars($item['supply_name']); ?></h4>
                 <p>Price: TK.<?= htmlspecialchars($item['price']); ?></p>
                 <form method="POST">
-                    <input type="hidden" name="supply_id" value="<?= $item['supply_id']; ?>">
-                    <input type="hidden" name="supplier_id" value="<?= $item['supplier_id']; ?>">
-                    <input type="number" name="quantity" value="<?= $item['quantity']; ?>" min="1">
+                    <input type="hidden" name="supply_id" value="<?= e($item['supply_id']) ?>">
+                    <input type="hidden" name="supplier_id" value="<?= e($item['supplier_id']) ?>">
+                    <input type="number" name="quantity" value="<?= e($item['quantity']) ?>" min="1">
                     <input type="submit" name="update_quantity" value="Update">
                     <input type="submit" name="remove_item" value="Remove">
                 </form>

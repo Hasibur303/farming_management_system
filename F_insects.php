@@ -3,29 +3,26 @@
 // Farmer-side insect identification page using Kindwise Insect.id API
 // -------------------------------------------------------------------------
 
-session_start();
+require_once __DIR__ . '/security/bootstrap.php';
 include 'database.php';
 require 'insects_config.php';
+require_once __DIR__ . '/security/upload.php';
 
 $diagnosis = null;
 $errorMsg  = null;
 
 // ---------- 1) File upload + API call ----------
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['insect_image'])) {
-    $dir = __DIR__ . '/uploads/';
-    if (!is_dir($dir)) { mkdir($dir, 0755, true); }
-
-    $relative = 'uploads/' . uniqid('insect_') . '_' . basename($_FILES['insect_image']['name']);
-    $absolute = __DIR__ . '/' . $relative;
-
-    if (move_uploaded_file($_FILES['insect_image']['tmp_name'], $absolute)) {
+    try {
+        $stored = secure_image_upload($_FILES['insect_image'], __DIR__ . '/uploads');
+        $absolute = $stored['path'];
         $diagnosis = identifyInsect($absolute);
         if (!$diagnosis['success']) {
             $errorMsg  = $diagnosis['message'];
             $diagnosis = null;
         }
-    } else {
-        $errorMsg = "ফাইল আপলোড ব্যর্থ হয়েছে!";
+    } catch (RuntimeException $exception) {
+        $errorMsg = $exception->getMessage();
     }
 }
 
@@ -171,7 +168,7 @@ function identifyInsect(string $path): array
   <div class="content">
     <h2 class="mb-4">Insect Identifier</h2>
     <?php if ($errorMsg): ?>
-      <div class="alert alert-danger py-2 px-3 mb-4"><?= $errorMsg; ?></div>
+      <div class="alert alert-danger py-2 px-3 mb-4"><?= e($errorMsg) ?></div>
     <?php endif; ?>
     <form method="POST" enctype="multipart/form-data" class="mb-4">
       <label class="form-label">কীটপতঙ্গের ছবি দিন</label>
@@ -185,16 +182,16 @@ function identifyInsect(string $path): array
     <div class="card-custom">
       <h3>সনাক্তন ফলাফল</h3>
       <?php if ($top): ?>
-        <p><strong>নাম:</strong> <?= $top['name']; ?></p>
+        <p><strong>নাম:</strong> <?= e($top['name']) ?></p>
         <p><strong>নিশ্চয়তা:</strong> <?= round(($top['probability'] ?? 0) * 100, 2); ?>%</p>
         <?php if (!empty($top['details']['description']['value'])): ?>
-          <p><strong>বর্ণনা:</strong> <?= $top['details']['description']['value']; ?></p>
+          <p><strong>বর্ণনা:</strong> <?= e($top['details']['description']['value']) ?></p>
         <?php endif; ?>
         <?php if (!empty($top['details']['taxonomy'])): ?>
           <p><strong>Taxonomy:</strong>
-            <?= $top['details']['taxonomy']['order'] ?? ''; ?> »
-            <?= $top['details']['taxonomy']['family'] ?? ''; ?> »
-            <?= $top['details']['taxonomy']['genus'] ?? ''; ?>
+            <?= e($top['details']['taxonomy']['order'] ?? '') ?> »
+            <?= e($top['details']['taxonomy']['family'] ?? '') ?> »
+            <?= e($top['details']['taxonomy']['genus'] ?? '') ?>
           </p>
         <?php endif; ?>
       <?php else: ?>

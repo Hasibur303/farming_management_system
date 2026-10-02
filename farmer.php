@@ -1,5 +1,5 @@
 <?php
-session_start();
+require_once __DIR__ . '/security/bootstrap.php';
 include 'database.php';
 
 if (!isset($_SESSION['user_id'])) {
@@ -773,7 +773,7 @@ header h1 {
            $stmt->execute();
            $result = $stmt->get_result()->fetch_assoc();
            ?>
-           <div class="stat-circle"><?= $result['count'] ?></div>
+           <div class="stat-circle"><?= e($result['count']) ?></div>
            <div class="stat-label">সক্রিয় তালিকা</div>
        </div>
 
@@ -790,7 +790,7 @@ header h1 {
            $stmt->execute();
            $result = $stmt->get_result()->fetch_assoc();
            ?>
-           <div class="stat-circle"><?= $result['count'] ?></div>
+           <div class="stat-circle"><?= e($result['count']) ?></div>
            <div class="stat-label">মুলতুবি অর্ডার</div>
        </div>
 

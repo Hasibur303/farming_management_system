@@ -1,5 +1,5 @@
 <?php
-session_start();
+require_once __DIR__ . '/security/bootstrap.php';
 include('database.php');
 
 // Dummy farmer ID for demonstration
@@ -38,7 +38,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['application_id'], $_P
 }
 
 // Fetch all job posts by this farmer
-$job_posts = $conn->query("SELECT * FROM labour_jobpost WHERE farmer_ID = $farmer_id ORDER BY post_date DESC");
+$jobPostStatement = $pdo->prepare('SELECT * FROM labour_jobpost WHERE farmer_ID = ? ORDER BY post_date DESC');
+$jobPostStatement->execute([$farmer_id]);
+$job_posts = new DatabaseResult($jobPostStatement->fetchAll());
 ?>
 <!DOCTYPE html>
 <html lang="bn">
@@ -284,7 +286,7 @@ $job_posts = $conn->query("SELECT * FROM labour_jobpost WHERE farmer_ID = $farme
 
 <?php while ($job = $job_posts->fetch_assoc()): ?>
     <div class="job-container">
-        <h3>পোস্ট: <?= htmlspecialchars($job['caption']) ?> 🕒 <?= $job['post_date'] ?></h3>
+        <h3>পোস্ট: <?= htmlspecialchars($job['caption']) ?> 🕒 <?= e($job['post_date']) ?></h3>
         <?php
         $job_id = $job['id'];
         $stmt = $conn->prepare("SELECT ja.*, l.name, l.photo, l.age, l.salary_per_day, l.description, l.job_experience, l.location
@@ -309,12 +311,12 @@ $job_posts = $conn->query("SELECT * FROM labour_jobpost WHERE farmer_ID = $farme
                     <p>🟠 <strong>স্ট্যাটাস:</strong> <?= htmlspecialchars($app['status']) ?></p>
                     <?php if ($app['status'] === 'Pending'): ?>
                         <form method="POST" style="display: inline;">
-                            <input type="hidden" name="application_id" value="<?= $app['id'] ?>">
+                            <input type="hidden" name="application_id" value="<?= e($app['id']) ?>">
                             <input type="hidden" name="status" value="Accepted">
                             <button class="btn btn-accept" type="submit">✔️ গ্রহণ করুন</button>
                         </form>
                         <form method="POST" style="display: inline;">
-                            <input type="hidden" name="application_id" value="<?= $app['id'] ?>">
+                            <input type="hidden" name="application_id" value="<?= e($app['id']) ?>">
                             <input type="hidden" name="status" value="Rejected">
                             <button class="btn btn-reject" type="submit">❌ প্রত্যাখ্যান করুন</button>
                         </form>

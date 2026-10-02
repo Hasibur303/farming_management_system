@@ -1,27 +1,35 @@
 <?php
 include('../database.php');
-session_start();
+require_once dirname(__DIR__) . '/security/bootstrap.php';
 
 // Check if user is logged in
-if (!isset($_SESSION['user_id'])) {
-    header('Location: login.php');
-    exit();
-}
+require_role('Farmer');
 
 $farmer_id = $_SESSION['user_id'];
 
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['order_id']) && isset($_POST['status'])) {
-    $order_id = $_POST['order_id'];
-    $new_status = $_POST['status'];
+    $order_id = (int) $_POST['order_id'];
+    $new_status = (string) $_POST['status'];
+    $allowedStatuses = ['pending', 'Processing', 'Completed', 'Cancelled'];
+    if (!in_array($new_status, $allowedStatuses, true)) {
+        security_log('order.invalid_status', ['order_id' => $order_id]);
+        http_response_code(422);
+        exit('Invalid order status.');
+    }
     
 // First, get the current status of the order
-$current_status_query = "SELECT status FROM orders WHERE order_id = ?";
+$current_status_query = "SELECT status FROM orders WHERE order_id = ? AND farmer_id = ?";
 $stmt = $conn->prepare($current_status_query);
-$stmt->bind_param("i", $order_id);
+$stmt->bind_param("ii", $order_id, $farmer_id);
 $stmt->execute();
 $result = $stmt->get_result();
 $order = $result->fetch_assoc();
+if (!$order) {
+    security_log('authorization.ownership_denied', ['resource' => 'order', 'resource_id' => $order_id]);
+    http_response_code(403);
+    exit('You do not own this order.');
+}
 $current_status = $order['status'];
 
 
@@ -32,9 +40,9 @@ if ($current_status === 'pending' && $new_status === 'Processing') {
     
     try {
         // Get order items
-        $items_query = "SELECT product_id,farmer_id, quantity FROM orders WHERE order_id = ?";
+        $items_query = "SELECT product_id, farmer_id, quantity FROM orders WHERE order_id = ? AND farmer_id = ?";
         $stmt = $conn->prepare($items_query);
-        $stmt->bind_param("i", $order_id);
+        $stmt->bind_param("ii", $order_id, $farmer_id);
         $stmt->execute();
         $items_result = $stmt->get_result();
         
@@ -57,7 +65,7 @@ if ($current_status === 'pending' && $new_status === 'Processing') {
     // Update order status
     $update_query = "UPDATE orders SET status = ? WHERE order_id = ? AND farmer_id = ?";
     $stmt = $conn->prepare($update_query);
-    $stmt->bind_param("sii", $status, $order_id, $farmer_id);
+    $stmt->bind_param("sii", $new_status, $order_id, $farmer_id);
     
     $stmt->execute();
 
@@ -79,9 +87,9 @@ if ($current_status === 'pending' && $new_status === 'Processing') {
 
 }else {
     // For other status changes, just update the status without affecting inventory
-    $update_query = "UPDATE orders SET status = ? WHERE order_id = ?";
+    $update_query = "UPDATE orders SET status = ? WHERE order_id = ? AND farmer_id = ?";
     $stmt = $conn->prepare($update_query);
-    $stmt->bind_param("si", $new_status, $order_id);
+    $stmt->bind_param("sii", $new_status, $order_id, $farmer_id);
     $stmt->execute();
     
     // Redirect or show success message
@@ -133,9 +141,9 @@ if (!$order) {
                 ← অর্ডার ম্যানেজমেন্ট-এ ফিরে যান
             </a>
 
-                <h5 class="card-title">Order #<?php echo $order['order_id']; ?></h5>
+                <h5 class="card-title">Order #<?= e($order['order_id']) ?></h5>
                 <form method="POST">
-                    <input type="hidden" name="order_id" value="<?php echo $order['order_id']; ?>">
+                    <input type="hidden" name="order_id" value="<?= e($order['order_id']) ?>">
                     
                     <div class="mb-3">
                         <label for="status" class="form-label">অর্ডার স্ট্যাটাস</label>
@@ -149,7 +157,7 @@ if (!$order) {
                     </div>
                     
                     <button type="submit" class="btn btn-primary">স্ট্যাটাস আপডেট করুন</button>
-                    <a href="order_management.php?id=<?php echo $order['order_id']; ?>" class="btn btn-secondary">বাতিল করুন</a>
+                    <a href="order_management.php?id=<?= e($order['order_id']) ?>" class="btn btn-secondary">বাতিল করুন</a>
                 </form>
             </div>
         </div>

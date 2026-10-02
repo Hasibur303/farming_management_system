@@ -90,10 +90,17 @@ reuse `database.php` for the database connection and keep credentials in `.env`.
 ## Security notes
 
 - Rotate any API key that was previously committed to Git history.
-- Validate uploaded files and all request input.
-- Use prepared statements for every query containing user input.
+- Database access is PDO-backed with native prepared statements.
+- POST and other state-changing requests require CSRF tokens.
+- Uploaded images are validated, randomized, quarantined, and integrated with
+  ClamAV scanning.
+- Role policies and security event logging are applied by the shared security
+  bootstrap.
 - Do not enable PHP error display in production.
 - Ensure `uploads/` cannot execute PHP files in the production web server.
+
+See [SECURITY.md](SECURITY.md) for ClamAV, Wazuh, ModSecurity/OWASP CRS, and
+OWASP ZAP setup and testing instructions.
 
 ## Team
 

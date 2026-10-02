@@ -1,6 +1,7 @@
 <?php
-session_start();
+require_once __DIR__ . '/security/bootstrap.php';
 include 'database.php';
+require_once __DIR__ . '/security/upload.php';
 
 // Check login
 if (!isset($_SESSION['user_id'])) {
@@ -28,9 +29,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Upload photo if exists
     $photo_name = $agrologist['photo'] ?? '';
     if ($_FILES['photo']['name']) {
-        $photo_name = uniqid() . '_' . basename($_FILES["photo"]["name"]);
-        $target = "uploads/" . $photo_name;
-        move_uploaded_file($_FILES["photo"]["tmp_name"], $target);
+        $stored = secure_image_upload($_FILES['photo'], __DIR__ . '/uploads');
+        $photo_name = $stored['filename'];
     }
 
     if ($agrologist) {
@@ -343,13 +343,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <!-- Full Name -->
         <div class="mb-3">
             <label class="form-label">পুরো নাম</label>
-            <input type="text" name="full_name" class="form-control" required value="<?= $agrologist['full_name'] ?? '' ?>">
+            <input type="text" name="full_name" class="form-control" required value="<?= e($agrologist['full_name'] ?? '') ?>">
         </div>
 
         <!-- Sector -->
         <div class="mb-3">
             <label class="form-label">খাত (Sector)</label>
-            <input type="text" name="sector" class="form-control" required value="<?= $agrologist['sector'] ?? '' ?>">
+            <input type="text" name="sector" class="form-control" required value="<?= e($agrologist['sector'] ?? '') ?>">
         </div>
 
         <!-- District Dropdown -->
@@ -379,13 +379,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <!-- Qualification -->
         <div class="mb-3">
             <label class="form-label">যোগ্যতা</label>
-            <textarea name="qualification" class="form-control" rows="3" required><?= $agrologist['qualification'] ?? '' ?></textarea>
+            <textarea name="qualification" class="form-control" rows="3" required><?= e($agrologist['qualification'] ?? '') ?></textarea>
         </div>
 
         <!-- Experience -->
         <div class="mb-3">
             <label class="form-label">অভিজ্ঞতা</label>
-            <textarea name="experience" class="form-control" rows="3" required><?= $agrologist['experience'] ?? '' ?></textarea>
+            <textarea name="experience" class="form-control" rows="3" required><?= e($agrologist['experience'] ?? '') ?></textarea>
         </div>
 
         <!-- Specialization -->
@@ -415,7 +415,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <div class="mb-3">
             <label class="form-label">প্রোফাইল ছবি</label><br>
             <?php if (!empty($agrologist['photo'])): ?>
-                        <img src="uploads/<?= $agrologist['photo'] ?>" alt="Profile Photo" width="100" class="mt-2">
+                        <img src="uploads/<?= e($agrologist['photo']) ?>" alt="Profile Photo" width="100" class="mt-2">
                     <?php endif; ?>
             <input type="file" name="photo" class="form-control">
         </div>

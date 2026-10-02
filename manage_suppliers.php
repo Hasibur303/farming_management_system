@@ -1,5 +1,5 @@
 <?php
-session_start();
+require_once __DIR__ . '/security/bootstrap.php';
 include 'database.php'; // Include the database connection file
 
 // Check if the user is logged in and has the role of 'Admin'
@@ -7,6 +7,10 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'Admin') {
     header("Location: login.php");
     exit();
 }
+
+// The maintained supplier-management page lives in the admin section.
+header('Location: admin/manage_suppliers.php');
+exit;
 
 // Initialize messages
 $error = '';
@@ -88,8 +92,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['edit_supplier'])) {
 }
 
 // Handle Delete Supplier
-if (isset($_GET['delete_supplier']) && is_numeric($_GET['delete_supplier'])) {
-    $supplier_id = $_GET['delete_supplier'];
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_supplier']) && is_numeric($_POST['delete_supplier'])) {
+    $supplier_id = (int) $_POST['delete_supplier'];
 
     $sql = "DELETE FROM suppliers WHERE id = ?";
     $stmt = $conn->prepare($sql);
@@ -375,8 +379,8 @@ form input[type="submit"]:hover {
                     <tbody>
                         <?php while ($supplier = $top_suppliers_result->fetch_assoc()): ?>
                         <tr>
-                            <td><?= $supplier['supplier_name'] ?></td>
-                            <td><?= $supplier['total_supplies'] ?></td>
+                            <td><?= e($supplier['supplier_name']) ?></td>
+                            <td><?= e($supplier['total_supplies']) ?></td>
                             <td>$<?= number_format($supplier['total_revenue'], 2) ?></td>
                         </tr>
                         <?php endwhile; ?>
@@ -434,9 +438,9 @@ form input[type="submit"]:hover {
                         <tbody>
                             <?php while ($supply = $filtered_result->fetch_assoc()): ?>
                                 <tr>
-                                    <td><?= $supply['supply_id'] ?></td>
-                                    <td><?= $supply['supplier_name'] ?></td>
-                                    <td><?= $supply['quantity'] ?></td>
+                                    <td><?= e($supply['supply_id']) ?></td>
+                                    <td><?= e($supply['supplier_name']) ?></td>
+                                    <td><?= e($supply['quantity']) ?></td>
                                     <td>$<?= number_format($supply['price'], 2) ?></td>
                                 </tr>
                             <?php endwhile; ?>
@@ -460,7 +464,7 @@ form input[type="submit"]:hover {
                         <tbody>
                             <?php while ($supplier = $inconsistent_pricing_result->fetch_assoc()): ?>
                             <tr>
-                                <td><?= $supplier['supplier_name'] ?></td>
+                                <td><?= e($supplier['supplier_name']) ?></td>
                                 <td>$<?= number_format($supplier['max_price'], 2) ?></td>
                                 <td>$<?= number_format($supplier['min_price'], 2) ?></td>
                                 <td>$<?= number_format($supplier['price_difference'], 2) ?></td>
@@ -485,10 +489,10 @@ form input[type="submit"]:hover {
                                 <tbody>
                                     <?php while ($supply = $supplies_result->fetch_assoc()): ?>
                                     <tr>
-                                        <td><?= $supply['supply_id'] ?></td>
+                                        <td><?= e($supply['supply_id']) ?></td>
 
-                                        <td><?= $supply['supplier_name'] ?></td>
-                                        <td><?= $supply['quantity'] ?></td>
+                                        <td><?= e($supply['supplier_name']) ?></td>
+                                        <td><?= e($supply['quantity']) ?></td>
                                         <td>$<?= number_format($supply['price'], 2) ?></td>
                                     </tr>
                                     <?php endwhile; ?>

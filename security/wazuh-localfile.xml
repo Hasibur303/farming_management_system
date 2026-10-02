@@ -1,0 +1,13 @@
+<!-- Add this block inside <ossec_config> on a Wazuh agent. -->
+<localfile>
+  <location>D:\farming_management_system\storage\logs\security.jsonl</location>
+  <log_format>json</log_format>
+  <label key="application">smartkrishi</label>
+</localfile>
+
+<localfile>
+  <location>D:\farming_management_system\storage\logs\modsecurity-audit.log</location>
+  <log_format>apache</log_format>
+  <label key="application">smartkrishi-modsecurity</label>
+</localfile>
+

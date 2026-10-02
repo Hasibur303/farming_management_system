@@ -1,25 +1,40 @@
 <?php
-session_start();
+require_once __DIR__ . '/security/bootstrap.php';
 include 'database.php';
+require_once __DIR__ . '/security/auth.php';
+
+ensure_login_attempts_table($pdo);
 
 $error = '';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $phone_number = $_POST['phone_number'];
-    $password = $_POST['password'];
+    $phone_number = trim((string) ($_POST['phone_number'] ?? ''));
+    $password = (string) ($_POST['password'] ?? '');
 
-    $sql = "SELECT * FROM users WHERE phone_number = ?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("s", $phone_number);
-    $stmt->execute();
-    $result = $stmt->get_result();
+    if (login_is_rate_limited($pdo, $phone_number)) {
+        security_log('authentication.rate_limited', ['identifier_hash' => login_identifier_hash($phone_number)]);
+        http_response_code(429);
+        $error = 'Too many failed login attempts. Please try again in 15 minutes.';
+    } else {
 
-    if ($result->num_rows > 0) {
-        $user = $result->fetch_assoc();
-        if (password_verify($password, $user['password'])) {
+        $stmt = $pdo->prepare('SELECT * FROM users WHERE phone_number = ? LIMIT 1');
+        $stmt->execute([$phone_number]);
+        $user = $stmt->fetch();
+
+        if ($user && password_verify($password, $user['password'])) {
+            record_login_attempt($pdo, $phone_number, true);
+            session_regenerate_id(true);
             $_SESSION['user_id'] = $user['user_id'];
             $_SESSION['username'] = $user['name'];
             $_SESSION['role'] = $user['role'];
+            $_SESSION['_created_at'] = time();
+
+            if (password_needs_rehash($user['password'], preferred_password_algorithm())) {
+                $newHash = password_hash($password, preferred_password_algorithm());
+                $rehash = $pdo->prepare('UPDATE users SET password = ? WHERE user_id = ?');
+                $rehash->execute([$newHash, (int) $user['user_id']]);
+            }
+            security_log('authentication.login_succeeded', [], 'info');
 
             $role = $user['role'];
             if ($role === 'Admin') {
@@ -43,10 +58,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
             exit();
         } else {
-            $error = "Invalid password.";
+            record_login_attempt($pdo, $phone_number, false);
+            security_log('authentication.login_failed', ['identifier_hash' => login_identifier_hash($phone_number)]);
+            usleep(random_int(150000, 350000));
+            $error = 'Invalid phone number or password.';
         }
-    } else {
-        $error = "No user found with that phone number.";
     }
 }
 ?>
@@ -170,7 +186,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </div>
     <h2>ব্যবহারকারী লগইন</h2>
     <?php if (!empty($error)): ?>
-        <div class="error"><?php echo $error; ?></div>
+        <div class="error"><?= e($error) ?></div>
     <?php endif; ?>
     <form method="POST" action="login.php">
         <div class="form-group">

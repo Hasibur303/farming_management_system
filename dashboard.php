@@ -1,4 +1,4 @@
-
+<?php require_once __DIR__ . '/security/bootstrap.php'; ?>
 <!DOCTYPE html>
 <html lang="bn">
 <head>
@@ -1699,7 +1699,7 @@ function submitReview() {
       headers: {
         "Content-Type": "application/x-www-form-urlencoded"
       },
-      body: "crop_name=" + encodeURIComponent(crop)
+      body: "crop_name=" + encodeURIComponent(crop) + "&_csrf_token=" + encodeURIComponent("<?= e(csrf_token()) ?>")
     })
     .then(response => response.json())
     .then(data => {

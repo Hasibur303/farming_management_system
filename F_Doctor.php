@@ -5,29 +5,26 @@
 // PHP pre‑processing (session, DB, Kindwise API call)
 //------------------------------------------------------
 
-session_start();
+require_once __DIR__ . '/security/bootstrap.php';
 include 'database.php';     // your DB connection (if needed for logging)
 require 'config.php';        // contains KINDWISE_API_KEY & KINDWISE_ENDPOINT
+require_once __DIR__ . '/security/upload.php';
 
 $diagnosis = null;
 $errorMsg  = null;
 
 // ---------- 1) File upload & API Call ----------
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['crop_image'])) {
-    $dir = __DIR__ . '/uploads/';          // absolute path safer
-    if (!is_dir($dir)) { mkdir($dir, 0755, true); }
-
-    $newNameRel = 'uploads/' . uniqid('crop_') . '_' . basename($_FILES['crop_image']['name']); // relative path for later use
-    $newNameAbs = __DIR__ . '/' . $newNameRel;
-
-    if (move_uploaded_file($_FILES['crop_image']['tmp_name'], $newNameAbs)) {
+    try {
+        $stored = secure_image_upload($_FILES['crop_image'], __DIR__ . '/uploads');
+        $newNameAbs = $stored['path'];
         $diagnosis = identifyCrop($newNameAbs);   // Kindwise API
         if (!$diagnosis['success']) {
             $errorMsg  = $diagnosis['message'];
             $diagnosis = null;
         }
-    } else {
-        $errorMsg = "ছবি আপলোডে সমস্যা হয়েছে।";
+    } catch (RuntimeException $exception) {
+        $errorMsg = $exception->getMessage();
     }
 }
 
@@ -180,7 +177,7 @@ function identifyCrop(string $path): array
     <h2 class="mb-4">Smart Crop Doctor</h2>
 
     <?php if ($errorMsg): ?>
-        <div class="alert alert-danger py-2 px-3 mb-4"><?= $errorMsg; ?></div>
+        <div class="alert alert-danger py-2 px-3 mb-4"><?= e($errorMsg) ?></div>
     <?php endif; ?>
 
     <!-- Upload form -->
@@ -198,16 +195,16 @@ function identifyCrop(string $path): array
         <div class="card-custom">
             <h3>রোগ শনাক্তকরণ ফলাফল</h3>
             <?php if ($cropSug): ?>
-                <p><strong>ফসল:</strong> <?= $cropSug['name']; ?> (<?= $cropSug['scientific_name']; ?>)</p>
+                <p><strong>ফসল:</strong> <?= e($cropSug['name']) ?> (<?= e($cropSug['scientific_name']) ?>)</p>
             <?php endif; ?>
             <?php if ($disease): ?>
-                <p><strong>সম্ভাব্য রোগ/পেস্ট:</strong> <?= $disease['name']; ?> (<?= $disease['scientific_name']; ?>)</p>
+                <p><strong>সম্ভাব্য রোগ/পেস্ট:</strong> <?= e($disease['name']) ?> (<?= e($disease['scientific_name']) ?>)</p>
                 <p><strong>নিশ্চয়তা:</strong> <?= round($disease['probability'] * 100, 2); ?>%</p>
                 <?php if (!empty($disease['details']['treatment'])): ?>
                     <p class="mb-1"><strong>চিকিৎসা/দমন কৌশল:</strong></p>
                     <ul class="mb-0">
                         <?php foreach ($disease['details']['treatment'] as $type => $tip): ?>
-                            <li><em><?= ucfirst($type); ?>:</em> <?= $tip; ?></li>
+                            <li><em><?= e(ucfirst($type)) ?>:</em> <?= e($tip) ?></li>
                         <?php endforeach; ?>
                     </ul>
                 <?php endif; ?>

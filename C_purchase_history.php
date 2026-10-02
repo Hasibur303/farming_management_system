@@ -1,5 +1,5 @@
 <?php
-session_start();
+require_once __DIR__ . '/security/bootstrap.php';
 include 'database.php';
 
 try {
@@ -955,13 +955,13 @@ form input:focus, form select:focus, .form-control:focus {
         <p>দাম: <?= htmlspecialchars($item['price']) ?> টাকা</p>
         <div class="quantity-controls">
             <form method="POST" style="display: inline;">
-                <input type="hidden" name="product_id" value="<?= $item['product_id'] ?>">
+                <input type="hidden" name="product_id" value="<?= e($item['product_id']) ?>">
                 <input type="hidden" name="update_quantity" value="decrease">
                 <button type="submit" class="btn-decrement">-</button>
             </form>
             <span><?= htmlspecialchars($item['quantity']) ?></span>
             <form method="POST" style="display: inline;">
-                <input type="hidden" name="product_id" value="<?= $item['product_id'] ?>">
+                <input type="hidden" name="product_id" value="<?= e($item['product_id']) ?>">
                 <input type="hidden" name="update_quantity" value="increase">
                 <button type="submit" class="btn-increment">+</button>
             </form>
@@ -969,7 +969,7 @@ form input:focus, form select:focus, .form-control:focus {
         <p>মোট: <?= htmlspecialchars($item['price'] * $item['quantity']) ?> টাকা </p>
     </div>
     <form method="POST">
-        <input type="hidden" name="product_id" value="<?= $item['product_id'] ?>">
+        <input type="hidden" name="product_id" value="<?= e($item['product_id']) ?>">
         <button type="submit" name="remove_from_cart" class="remove-btn">অপসারণ</button>
     </form>
 </div>

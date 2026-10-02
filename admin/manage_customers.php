@@ -1,5 +1,5 @@
 <?php
-session_start();
+require_once dirname(__DIR__) . '/security/bootstrap.php';
 include '../database.php'; // Include database connection
 
 // Fetch all customers
@@ -102,7 +102,11 @@ $result = $stmt->get_result();
                     <td><?= htmlspecialchars($row['email']); ?></td>
                     <td><?= htmlspecialchars($row['phone_number']); ?></td>
                     <td>
-                        <a href="manage_customers.php?action=delete&customer_id=<?= $row['customer_id']; ?>" class="delete-btn" onclick="return confirm('Are you sure you want to delete this customer?')">Delete</a>
+                        <form method="post" style="display:inline" onsubmit="return confirm('Are you sure you want to delete this customer?')">
+                            <input type="hidden" name="action" value="delete">
+                            <input type="hidden" name="customer_id" value="<?= e($row['customer_id']); ?>">
+                            <button type="submit" class="delete-btn">Delete</button>
+                        </form>
                     </td>
                 </tr>
             <?php endwhile; ?>
@@ -112,8 +116,8 @@ $result = $stmt->get_result();
 
 <?php
 // Handle delete action
-if (isset($_GET['action']) && $_GET['action'] == 'delete' && isset($_GET['customer_id'])) {
-    $customer_id = intval($_GET['customer_id']);
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'delete' && isset($_POST['customer_id'])) {
+    $customer_id = intval($_POST['customer_id']);
 
     // Prepare the delete statement
     $delete_stmt = $conn->prepare("DELETE FROM customer WHERE customer_id = ?");

@@ -1,5 +1,5 @@
 <?php
-session_start();
+require_once __DIR__ . '/security/bootstrap.php';
 include 'database.php';
 
 
@@ -85,7 +85,7 @@ $result = $stmt->get_result();
 <html lang="<?= $lang ?>">
 <head>
     <meta charset="UTF-8">
-    <title><?= $current_text['title'] ?> | SmartKirshi</title>
+    <title><?= e($current_text['title']) ?> | SmartKirshi</title>
     <style>
         body {
             margin: 0;
@@ -264,29 +264,29 @@ $result = $stmt->get_result();
 
 <div class="sidebar">
     <h2>SmartKirshi</h2>
-    <a href="labour.php">🏠 <span><?= $current_text['dashboard'] ?></span></a>
-    <a href="L_profile.php">🧑‍🌾 <span><?= $current_text['profile'] ?></span></a>
-    <a href="L_job.php">📋 <span><?= $current_text['jobs'] ?></span></a>
-    <a href="messages.php">💬 <span><?= $current_text['messages'] ?></span></a>
-    <a href="notifications.php">🔔 <span><?= $current_text['notifications'] ?></span></a>
-    <a href="settings.php">⚙️ <span><?= $current_text['settings'] ?></span></a>
-    <a class="logout-sidebar" href="logout.php">🚪 <span><?= $current_text['logout'] ?></span></a>
+    <a href="labour.php">🏠 <span><?= e($current_text['dashboard']) ?></span></a>
+    <a href="L_profile.php">🧑‍🌾 <span><?= e($current_text['profile']) ?></span></a>
+    <a href="L_job.php">📋 <span><?= e($current_text['jobs']) ?></span></a>
+    <a href="messages.php">💬 <span><?= e($current_text['messages']) ?></span></a>
+    <a href="notifications.php">🔔 <span><?= e($current_text['notifications']) ?></span></a>
+    <a href="settings.php">⚙️ <span><?= e($current_text['settings']) ?></span></a>
+    <a class="logout-sidebar" href="logout.php">🚪 <span><?= e($current_text['logout']) ?></span></a>
 </div>
 
 <div class="main">
     <div class="top-bar">
-        <h2><?= $current_text['title'] ?></h2>
+        <h2><?= e($current_text['title']) ?></h2>
         <div>
             <a href="?lang=bn"><button class="logout-button language-btn">🇧🇩 Bn</button></a>
             <a href="?lang=en"><button class="logout-button language-btn">🇬🇧 En</button></a>
-            <a href="logout.php"><button class="logout-button">🚪 <?= $current_text['logout'] ?></button></a>
+            <a href="logout.php"><button class="logout-button">🚪 <?= e($current_text['logout']) ?></button></a>
         </div>
     </div>
 
 
 
 <h3 style="text-align:center; font-size:24px; margin-bottom:25px;">
-        <?= $current_text['job_list'] ?>
+        <?= e($current_text['job_list']) ?>
     </h3>
 
 
@@ -303,8 +303,8 @@ $result = $stmt->get_result();
         <tr>
             <td><?= htmlspecialchars($row['farmer_name']) ?></td>
             <td><?= htmlspecialchars($row['caption']) ?></td>
-            <td><?= $row['post_date'] ?></td>
-            <td><?= $row['status'] ?></td>
+            <td><?= e($row['post_date']) ?></td>
+            <td><?= e($row['status']) ?></td>
         </tr>
     <?php endwhile; ?>
 </table>

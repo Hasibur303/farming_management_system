@@ -1,6 +1,6 @@
 <?php
 // Start session and connect DB
-session_start();
+require_once __DIR__ . '/security/bootstrap.php';
 include('database.php');
 
 // Fetch available equipment
@@ -245,8 +245,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['rent_now'])) {
                             <td>৳<?= htmlspecialchars($row['rental_rate_per_day']) ?></td>
                             <td>
                                 <form method="POST" class="rent-form">
-                                    <input type="hidden" name="equipment_id" value="<?= $row['equipment_id'] ?>">
-                                    <input type="number" name="quantity" min="1" max="<?= $row['quantity_available'] ?>" required placeholder="সংখ্যা">
+                                    <input type="hidden" name="equipment_id" value="<?= e($row['equipment_id']) ?>">
+                                    <input type="number" name="quantity" min="1" max="<?= e($row['quantity_available']) ?>" required placeholder="সংখ্যা">
                                     <input type="date" name="start_date" required>
                                     <input type="date" name="end_date" required>
                                     <input type="submit" name="rent_now" value="ভাড়া নিন">

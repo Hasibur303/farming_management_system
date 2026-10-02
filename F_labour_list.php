@@ -1,6 +1,7 @@
 <?php
-session_start();
+require_once __DIR__ . '/security/bootstrap.php';
 include 'database.php';
+require_once __DIR__ . '/security/upload.php';
 
 if (isset($_POST['submit_contract'])) {
     $labour_id = $_POST['labour_id'];
@@ -12,8 +13,8 @@ if (isset($_POST['submit_contract'])) {
     $photoName = '';
 
     if (isset($_FILES['photo']) && $_FILES['photo']['error'] == 0) {
-        $photoName = time() . '_' . basename($_FILES['photo']['name']);
-        move_uploaded_file($_FILES['photo']['tmp_name'], "uploads/" . $photoName);
+        $stored = secure_image_upload($_FILES['photo'], __DIR__ . '/uploads');
+        $photoName = $stored['filename'];
     }
 
     $user_id = $_SESSION['user_id'];
@@ -511,9 +512,9 @@ $districts = [
                             <div>
                                 <h5 class="mb-1"><?= htmlspecialchars($labour['name']) ?></h5>
                                 <p class="mb-1"><?= htmlspecialchars($labour['description']) ?></p>
-                                <p class="mb-1"><strong>বয়স:</strong> <?= $labour['age'] ?> বছর</p>
-                                <p class="mb-1"><strong>দৈনিক বেতন:</strong> ৳<?= $labour['salary_per_day'] ?></p>
-                                <p class="mb-1"><strong>অভিজ্ঞতা:</strong> <?= $labour['job_experience'] ?> বছর</p>
+                                <p class="mb-1"><strong>বয়স:</strong> <?= e($labour['age']) ?> বছর</p>
+                                <p class="mb-1"><strong>দৈনিক বেতন:</strong> ৳<?= e($labour['salary_per_day']) ?></p>
+                                <p class="mb-1"><strong>অভিজ্ঞতা:</strong> <?= e($labour['job_experience']) ?> বছর</p>
                                 <p class="mb-1"><strong>অবস্থান:</strong> <?= htmlspecialchars($labour['location']) ?>, <?= htmlspecialchars($labour['district']) ?></p>
                                 <span class="badge <?= ($status === "সক্রিয় শ্রমিক") ? 'bg-success' : 'bg-secondary' ?>">
                                     <?= $status ?>
@@ -521,12 +522,12 @@ $districts = [
 
 
                                 <!-- Contract Proposal Button -->
-                                <button class="btn btn-primary mt-2" data-bs-toggle="modal" data-bs-target="#contractModal<?= $labour['id'] ?>">
+                                <button class="btn btn-primary mt-2" data-bs-toggle="modal" data-bs-target="#contractModal<?= e($labour['id']) ?>">
                                     চুক্তির প্রস্তাব
                                 </button>
 
                                 <!-- Contract Modal -->
-                                <div class="modal fade" id="contractModal<?= $labour['id'] ?>" tabindex="-1">
+                                <div class="modal fade" id="contractModal<?= e($labour['id']) ?>" tabindex="-1">
                                   <div class="modal-dialog">
                                     <form action="" method="POST" enctype="multipart/form-data" class="modal-content">
                                       <div class="modal-header">
@@ -534,7 +535,7 @@ $districts = [
                                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                       </div>
                                       <div class="modal-body">
-                                        <input type="hidden" name="labour_id" value="<?= $labour['user_id'] ?>">
+                                        <input type="hidden" name="labour_id" value="<?= e($labour['user_id']) ?>">
                                         <div class="mb-2">
                                           <label class="form-label">জেলা</label>
                                           <select name="district" class="form-select" required>

@@ -1,6 +1,7 @@
 <?php
-session_start();
+require_once dirname(__DIR__) . '/security/bootstrap.php';
 include '../database.php'; // Include the database connection file
+require_once dirname(__DIR__) . '/security/upload.php';
 
 // Check if the user is logged in and has the role of 'Admin'
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'Admin') {
@@ -40,16 +41,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['add_product'])) {
 
     // Handle image upload
     if (isset($_FILES['product_image']) && $_FILES['product_image']['error'] == 0) {
-        $image_tmp = $_FILES['product_image']['tmp_name'];
-        $image_name = basename($_FILES['product_image']['name']);
-        $image_path = 'uploads/' .$image_name;
-
-        // Ensure 'uploads/' directory exists
-        if (!is_dir('uploads')) {
-            mkdir('uploads', 0777, true);
-        }
-
-        if (move_uploaded_file($image_tmp, 'uploads/' . $image_name)) {
+        try {
+            $stored = secure_image_upload($_FILES['product_image'], dirname(__DIR__) . '/uploads');
+            $image_path = 'uploads/' . $stored['filename'];
             // Insert into database
             $sql = "INSERT INTO products (name, image, quantity_type) VALUES (?, ?, ?)";
             $stmt = $conn->prepare($sql);
@@ -59,8 +53,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['add_product'])) {
             // Redirect to refresh page
             header('Location: manage_products.php');
             exit();
-        } else {
-            $error = "Error uploading the image to the server.";
+        } catch (RuntimeException $exception) {
+            $error = $exception->getMessage();
         }
     } else {
         $error = "Please upload a valid image.";
@@ -76,16 +70,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_product'])) {
 
     // Handle new image upload
     if (isset($_FILES['product_image']) && $_FILES['product_image']['error'] == 0) {
-        $image_tmp = $_FILES['product_image']['tmp_name'];
-        $image_name = basename($_FILES['product_image']['name']);
-        $image_path = '../uploads/' . $image_name;
-
-        // Ensure 'uploads/' directory exists
-        if (!is_dir('uploads')) {
-            mkdir('uploads', 0777, true);
-        }
-
-        if (move_uploaded_file($image_tmp, $image_path)) {
+        try {
+            $stored = secure_image_upload($_FILES['product_image'], dirname(__DIR__) . '/uploads');
+            $image_path = 'uploads/' . $stored['filename'];
             // Update product with new image
             $sql = "UPDATE products SET name = ?, image = ?, quantity_type = ? WHERE id = ?";
             $stmt = $conn->prepare($sql);
@@ -95,8 +82,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_product'])) {
             // Redirect to refresh page
             header('Location: manage_products.php');
             exit();
-        } else {
-            $error = "Error uploading the image.";
+        } catch (RuntimeException $exception) {
+            $error = $exception->getMessage();
         }
     } else {
         // No image upload, just update name and quantity type
@@ -113,8 +100,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_product'])) {
 
 
 // Handle product deletion
-if (isset($_GET['delete_product']) && is_numeric($_GET['delete_product'])) {
-    $product_id = $_GET['delete_product'];
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_product']) && is_numeric($_POST['delete_product'])) {
+    $product_id = (int) $_POST['delete_product'];
 
     // Prepare the DELETE query
     $sql = "DELETE FROM products WHERE id = ?";
@@ -505,7 +492,7 @@ table tbody td img {
         <?php if ($result->num_rows > 0): ?>
             <?php while ($row = $result->fetch_assoc()): ?>
                 <tr>
-                    <td><?php echo $row['id']; ?></td>
+                    <td><?= e($row['id']) ?></td>
                     <td><?php echo htmlspecialchars($row['product_name']); ?></td>
                     <td>
                         <img src="../<?php echo htmlspecialchars($row['product_image']); ?>" alt="Product Image" width="100">
@@ -516,7 +503,7 @@ table tbody td img {
                     <td><span class="badge bg-warning"><?php echo htmlspecialchars($row['status']); ?></span></td>
                     <td>
                         <form method="POST" action="process_request.php" style="display:inline;">
-                            <input type="hidden" name="request_id" value="<?php echo $row['id']; ?>">
+                            <input type="hidden" name="request_id" value="<?= e($row['id']) ?>">
                             <button type="submit" name="action" value="approve" class="btn btn-success btn-sm">Approve</button>
                             <button type="submit" name="action" value="reject" class="btn btn-danger btn-sm">Reject</button>
                         </form>
@@ -599,9 +586,12 @@ table tbody td img {
                     </td>
                     <td>
                         <!-- Edit Product -->
-                        <a href="manage_products.php?edit_product=<?= $product['id']; ?>" class="button">Edit</a>
+                        <a href="manage_products.php?edit_product=<?= e($product['id']) ?>" class="button">Edit</a>
                         <!-- Delete Product -->
-                        <a href="manage_products.php?delete_product=<?= $product['id']; ?>" class="button" style="background: #d9534f;">Delete</a>
+                        <form method="post" style="display:inline" onsubmit="return confirm('Delete this product?');">
+                            <input type="hidden" name="delete_product" value="<?= e($product['id']); ?>">
+                            <button type="submit" class="button" style="background:#d9534f;border:0;">Delete</button>
+                        </form>
                     </td>
                 </tr>
             <?php endwhile; ?>
@@ -623,7 +613,9 @@ table tbody td img {
 
     if (isset($_GET['edit_product'])) {
         $product_id = (int)$_GET['edit_product']; // Typecast to int for security
-        $result = $conn->query("SELECT * FROM products WHERE id = $product_id");
+        $editStatement = $pdo->prepare('SELECT * FROM products WHERE id = ?');
+        $editStatement->execute([$product_id]);
+        $result = new DatabaseResult($editStatement->fetchAll());
 
         if ($result && $result->num_rows > 0) {
             $product = $result->fetch_assoc();
@@ -637,7 +629,7 @@ table tbody td img {
     ?>
 
     <label for="product_name">Name:</label>
-    <input type="text" id="product_name" name="product_name" value="<?= $product_name; ?>" required>
+    <input type="text" id="product_name" name="product_name" value="<?= e($product_name) ?>" required>
 
     <label for="product_image">Upload Picture (optional):</label>
     <input type="file" id="product_image" name="product_image" accept="image/*">

@@ -1,21 +1,38 @@
 <?php
 include 'database.php'; // Include your database connection file
+require_once __DIR__ . '/security/auth.php';
 
 // Initialize variables to hold success and error messages
 $success_message = '';
 $error = '';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $name = $_POST['name'];
-    $email = $_POST['email'];
-    $phone_number = $_POST['phone_number'];
-    $password = $_POST['password'];
-    $confirm_password = $_POST['confirm_password'];
-    $role = $_POST['role'];
+    $name = trim((string) ($_POST['name'] ?? ''));
+    $email = trim((string) ($_POST['email'] ?? ''));
+    $phone_number = trim((string) ($_POST['phone_number'] ?? ''));
+    $password = (string) ($_POST['password'] ?? '');
+    $confirm_password = (string) ($_POST['confirm_password'] ?? '');
+    $submittedRole = strtolower(trim((string) ($_POST['role'] ?? '')));
+    $roleMap = [
+        'farmer' => 'Farmer',
+        'supplier' => 'Supplier',
+        'customer' => 'Customer',
+        'labour' => 'Labour',
+        'agrologist' => 'Agrologist',
+    ];
+    $role = $roleMap[$submittedRole] ?? '';
     $start_date = date('Y-m-d');
 
     // Check if passwords match
-    if ($password !== $confirm_password) {
+    if ($name === '' || mb_strlen($name) > 100 || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $error = 'Please provide a valid name and email address.';
+    } elseif (!preg_match('/^[0-9+ -]{7,15}$/', $phone_number)) {
+        $error = 'Please provide a valid phone number.';
+    } elseif ($role === '') {
+        $error = 'Invalid role selected.';
+    } elseif (strlen($password) < 10) {
+        $error = 'Password must be at least 10 characters long.';
+    } elseif ($password !== $confirm_password) {
         $error = "Passwords do not match.";
     } else {
         // Check if email or phone number already exists
@@ -29,7 +46,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $error = "Email or Phone Number already exists.";
         } else {
             // Hash the password
-            $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+            $hashed_password = password_hash($password, preferred_password_algorithm());
 
             // Prepare and execute the SQL statement
             $sql = "INSERT INTO users (name, email, phone_number, password, role, start_date)

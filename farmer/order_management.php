@@ -1,6 +1,6 @@
 <?php
 include('../database.php');
-session_start();
+require_once dirname(__DIR__) . '/security/bootstrap.php';
 
 // Check if the user is logged in
 if (!isset($_SESSION['user_id'])) {

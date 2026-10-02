@@ -1,6 +1,7 @@
 <?php
-session_start();
+require_once dirname(__DIR__) . '/security/bootstrap.php';
 include('../database.php');
+$current = basename((string) ($_SERVER['PHP_SELF'] ?? 'supplier_orders.php'));
 
 
 // Ensure that the user is logged in as a supplier
@@ -212,7 +213,7 @@ $result = $stmt->get_result();
         <!-- Success Message -->
         <?php if (isset($_GET['success'])): ?>
             <div class="alert alert-success">
-                <i class="fas fa-check-circle"></i> <?php echo $_GET['success']; ?>
+                <i class="fas fa-check-circle"></i> <?= e($_GET['success']) ?>
             </div>
         <?php endif; ?>
 
@@ -244,7 +245,7 @@ $result = $stmt->get_result();
                                 <td>
                                     <!-- Status change form -->
                                     <form method="POST" action="supplier_orders.php">
-                                        <input type="hidden" name="order_id" value="<?php echo $row['supplies_sale_id']; ?>">
+                                        <input type="hidden" name="order_id" value="<?= e($row['supplies_sale_id']) ?>">
                                         <select name="status" class="form-select">
                                             <option value="Pending" <?php echo ($row['status'] == 'Pending') ? 'selected' : ''; ?>>Pending(মুলতুবি)</option>
                                             <option value="Processing" <?php echo ($row['status'] == 'Processing') ? 'selected' : ''; ?>>Processing(প্রক্রিয়াকরণ)</option>

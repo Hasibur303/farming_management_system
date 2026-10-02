@@ -1,5 +1,5 @@
 <?php
-session_start();
+require_once __DIR__ . '/security/bootstrap.php';
 include 'database.php';
 
 
@@ -328,16 +328,16 @@ if ($result->num_rows > 0) {
                 <p>Price: TK. <?= htmlspecialchars($item['price']) ?></p>
                 <div class="quantity-controls">
                     <form method="POST" style="display: inline;">
-                        <input type="hidden" name="product_id" value="<?= $item['product_id'] ?>">
+                        <input type="hidden" name="product_id" value="<?= e($item['product_id']) ?>">
                         <input type="hidden" name="update_quantity" value="decrease">
                          <input type="hidden" name="update_quantity" value="decrease">
-                         <input type="hidden" name="farmer_id" value="<?= $item['farmer_id'] ?>">
+                         <input type="hidden" name="farmer_id" value="<?= e($item['farmer_id']) ?>">
                         <button type="submit" class="btn-decrement">-</button>
                     </form>
                     <span><?= htmlspecialchars($item['quantity']) ?></span>
                     <form method="POST" style="display: inline;">
-                        <input type="hidden" name="product_id" value="<?= $item['product_id'] ?>">
-                        <input type="hidden" name="farmer_id" value="<?= $item['farmer_id'] ?>">
+                        <input type="hidden" name="product_id" value="<?= e($item['product_id']) ?>">
+                        <input type="hidden" name="farmer_id" value="<?= e($item['farmer_id']) ?>">
                         <input type="hidden" name="update_quantity" value="increase">
                         <button type="submit" class="btn-increment">+</button>
                     </form>
@@ -345,7 +345,7 @@ if ($result->num_rows > 0) {
                 <p>Total: TK. <?= htmlspecialchars($item['price'] * $item['quantity']) ?></p>
             </div>
             <form method="POST">
-                <input type="hidden" name="product_id" value="<?= $item['product_id'] ?>">
+                <input type="hidden" name="product_id" value="<?= e($item['product_id']) ?>">
                 <button type="submit" name="remove_from_cart" class="remove-btn">অপসারণ</button>
             </form>
         </div>

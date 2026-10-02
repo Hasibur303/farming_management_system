@@ -1,5 +1,5 @@
 <?php
-session_start();
+require_once dirname(__DIR__) . '/security/bootstrap.php';
 include '../database.php'; // Include the database connection file
 
 // Check if the user is logged in and has the role of 'Admin'

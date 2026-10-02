@@ -1,5 +1,5 @@
 <?php
-session_start();
+require_once __DIR__ . '/security/bootstrap.php';
 include 'database.php';
 
 // Check login
@@ -78,27 +78,25 @@ $text = [
 $current_text = $text[$lang];
 
 // Function to safely fetch counts
-function getCount($conn, $query) {
-    $result = mysqli_query($conn, $query);
-    if ($result && mysqli_num_rows($result) > 0) {
-        $row = mysqli_fetch_assoc($result);
-        return isset($row['total']) ? (int)$row['total'] : 0;
-    }
-    return 0;
+function getCount(PDO $pdo, string $query, array $parameters = []): int {
+    $statement = $pdo->prepare($query);
+    $statement->execute($parameters);
+    return (int) ($statement->fetchColumn() ?: 0);
 }
 
 // Job metrics
-$totalJobs = getCount($conn, "SELECT COUNT(*) AS total FROM labour_jobpost");
-$appliedJobs = getCount($conn, "SELECT COUNT(*) AS total FROM job_applications WHERE labour_id = " . intval($labour_id));
-$acceptedJobs = getCount($conn, "SELECT COUNT(*) AS total FROM job_applications WHERE labour_id = " . intval($labour_id) . " AND status = 'Accepted'");
-$processingJobs = getCount($conn, "SELECT COUNT(*) AS total FROM job_applications WHERE labour_id = " . intval($labour_id) . " AND status = 'Pending'");
+$totalJobs = getCount($pdo, 'SELECT COUNT(*) FROM labour_jobpost');
+$appliedJobs = getCount($pdo, 'SELECT COUNT(*) FROM job_applications WHERE labour_id = ?', [$labour_id]);
+$acceptedJobs = getCount($pdo, "SELECT COUNT(*) FROM job_applications WHERE labour_id = ? AND status = 'Accepted'", [$labour_id]);
+$processingJobs = getCount($pdo, "SELECT COUNT(*) FROM job_applications WHERE labour_id = ? AND status = 'Pending'", [$labour_id]);
 
 
 // Fetch district and last login of this labour
-$labourInfoQuery = mysqli_query($conn, "SELECT district, last_login FROM labour WHERE user_id = $labour_id");
+$labourInfoStatement = $pdo->prepare('SELECT district, last_login FROM labour WHERE user_id = ?');
+$labourInfoStatement->execute([$labour_id]);
+$labourInfo = $labourInfoStatement->fetch();
 
-if ($labourInfoQuery && mysqli_num_rows($labourInfoQuery) > 0) {
-    $labourInfo = mysqli_fetch_assoc($labourInfoQuery);
+if ($labourInfo) {
     $labourDistrict = $labourInfo['district'];
     $lastLogin = $labourInfo['last_login'];
 } else {
@@ -108,15 +106,13 @@ if ($labourInfoQuery && mysqli_num_rows($labourInfoQuery) > 0) {
 }
 
 // Get new job posts in same district after last login
-$notificationsQuery = mysqli_query($conn, "
-    SELECT * FROM labour_jobpost
-    WHERE district = '$labourDistrict'
-    AND post_date > '$lastLogin'
-    ORDER BY post_date DESC
-");
+$notificationsStatement = $pdo->prepare('SELECT * FROM labour_jobpost
+                                         WHERE district = ? AND post_date > ?
+                                         ORDER BY post_date DESC');
+$notificationsStatement->execute([$labourDistrict, $lastLogin]);
 
 $newJobs = [];
-while ($row = mysqli_fetch_assoc($notificationsQuery)) {
+while ($row = $notificationsStatement->fetch()) {
     $newJobs[] = $row;
 }
 ?>
@@ -126,7 +122,7 @@ while ($row = mysqli_fetch_assoc($notificationsQuery)) {
 <html lang="<?= $lang ?>">
 <head>
     <meta charset="UTF-8">
-    <title><?= $current_text['title'] ?> | SmartKirshi</title>
+    <title><?= e($current_text['title']) ?> | SmartKirshi</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
         body {
@@ -471,24 +467,24 @@ while ($row = mysqli_fetch_assoc($notificationsQuery)) {
 
 <div class="sidebar">
     <h2>SmartKirshi</h2>
-    <a href="labour.php">🏠 <span><?= $current_text['dashboard'] ?></span></a>
-    <a href="L_profile.php">🧑‍🌾 <span><?= $current_text['profile'] ?></span></a>
-    <a href="L_job.php">📋 <span><?= $current_text['jobs'] ?></span></a>
-    <a href="L_supplier_product.php">📋 <span><?= $current_text['buyfromsupplier'] ?></span></a>
-    <a href="L_contract_message.php">💬 <span><?= $current_text['contractrequest'] ?></span></a>
-    <a href="L_apply_job_list.php">📋 <span><?= $current_text['appliedjobs'] ?></span></a>
-    <a href="notifications.php">🔔 <span><?= $current_text['notifications'] ?></span></a>
-    <a href="settings.php">⚙️ <span><?= $current_text['settings'] ?></span></a>
-    <a class="logout-sidebar" href="logout.php">🚪 <span><?= $current_text['logout'] ?></span></a>
+    <a href="labour.php">🏠 <span><?= e($current_text['dashboard']) ?></span></a>
+    <a href="L_profile.php">🧑‍🌾 <span><?= e($current_text['profile']) ?></span></a>
+    <a href="L_job.php">📋 <span><?= e($current_text['jobs']) ?></span></a>
+    <a href="L_supplier_product.php">📋 <span><?= e($current_text['buyfromsupplier']) ?></span></a>
+    <a href="L_contract_message.php">💬 <span><?= e($current_text['contractrequest']) ?></span></a>
+    <a href="L_apply_job_list.php">📋 <span><?= e($current_text['appliedjobs']) ?></span></a>
+    <a href="notifications.php">🔔 <span><?= e($current_text['notifications']) ?></span></a>
+    <a href="settings.php">⚙️ <span><?= e($current_text['settings']) ?></span></a>
+    <a class="logout-sidebar" href="logout.php">🚪 <span><?= e($current_text['logout']) ?></span></a>
 </div>
 
 <div class="main">
     <div class="top-bar">
-        <h1><?= $current_text['title'] ?></h1>
+        <h1><?= e($current_text['title']) ?></h1>
         <div>
             <a href="?lang=bn"><button class="logout-button language-btn">🇧🇩 Bn</button></a>
             <a href="?lang=en"><button class="logout-button language-btn">🇬🇧 En</button></a>
-            <a href="logout.php"><button class="logout-button">🚪 <?= $current_text['logout'] ?></button></a>
+            <a href="logout.php"><button class="logout-button">🚪 <?= e($current_text['logout']) ?></button></a>
         </div>
     </div>
 
@@ -498,28 +494,28 @@ while ($row = mysqli_fetch_assoc($notificationsQuery)) {
                 <i class="fas fa-briefcase icon"></i>
                 <h3><?= $totalJobs ?></h3>
             </div>
-            <?= $current_text['totaljobpost'] ?>
+            <?= e($current_text['totaljobpost']) ?>
         </div>
         <div class="metric-card">
             <div class="circle">
                 <i class="fas fa-paper-plane icon"></i>
                 <h3><?= $appliedJobs ?></h3>
             </div>
-            <?= $current_text['jobsyouapplied'] ?>
+            <?= e($current_text['jobsyouapplied']) ?>
         </div>
         <div class="metric-card">
             <div class="circle">
                 <i class="fas fa-check-circle icon"></i>
                 <h3><?= $acceptedJobs ?></h3>
             </div>
-            <?= $current_text['acceptedjobs'] ?>
+            <?= e($current_text['acceptedjobs']) ?>
         </div>
         <div class="metric-card">
             <div class="circle">
                 <i class="fas fa-spinner icon"></i>
                 <h3><?= $processingJobs ?></h3>
             </div>
-            <?= $current_text['processingjobs'] ?>
+            <?= e($current_text['processingjobs']) ?>
         </div>
     </div>
 

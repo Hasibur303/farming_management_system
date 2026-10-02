@@ -1,5 +1,5 @@
 <?php
-session_start();
+require_once dirname(__DIR__) . '/security/bootstrap.php';
 include '../database.php'; // DB connection
 
 // 🔐 Authentication check
@@ -9,9 +9,10 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'Admin') {
 }
 
 // 🗑️ Delete single message if requested
-if (isset($_GET['delete'])) {
-    $id = intval($_GET['delete']);
-    $conn->query("DELETE FROM landing_contact WHERE id = $id");
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete'])) {
+    $id = intval($_POST['delete']);
+    $statement = $pdo->prepare('DELETE FROM landing_contact WHERE id = ?');
+    $statement->execute([$id]);
     header("Location: Manage_Visitors_message.php?msg=deleted");
     exit();
 }
@@ -109,19 +110,22 @@ $result = $conn->query("SELECT id, name, contact_info, subject, message, submitt
                             <?php if ($result && $result->num_rows > 0): ?>
                                 <?php while($row = $result->fetch_assoc()): ?>
                                     <tr>
-                                        <td><?= $row['id']; ?></td>
+                                        <td><?= e($row['id']) ?></td>
                                         <td><?= htmlspecialchars($row['name']); ?></td>
                                         <td><?= htmlspecialchars($row['contact_info']); ?></td>
                                         <td class="truncate" title="<?= htmlspecialchars($row['subject']); ?>"><?= htmlspecialchars($row['subject']); ?></td>
                                         <td class="truncate" title="<?= htmlspecialchars($row['message']); ?>"><?= htmlspecialchars($row['message']); ?></td>
                                         <td><?= date('d-m-Y H:i', strtotime($row['submitted_at'])); ?></td>
                                         <td class="text-center">
-                                            <a href="#viewModal" data-bs-toggle="modal" data-bs-target="#view<?= $row['id']; ?>" class="btn btn-sm btn-primary"><i class="fas fa-eye"></i></a>
-                                            <a href="?delete=<?= $row['id']; ?>" class="btn btn-sm btn-danger" onclick="return confirm('আপনি কি নিশ্চিত মুছে ফেলতে চান?');"><i class="fas fa-trash"></i></a>
+                                            <a href="#viewModal" data-bs-toggle="modal" data-bs-target="#view<?= e($row['id']) ?>" class="btn btn-sm btn-primary"><i class="fas fa-eye"></i></a>
+                                            <form method="post" style="display:inline" onsubmit="return confirm('আপনি কি নিশ্চিত মুছে ফেলতে চান?');">
+                                                <input type="hidden" name="delete" value="<?= e($row['id']); ?>">
+                                                <button type="submit" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
+                                            </form>
                                         </td>
                                     </tr>
                                     <!-- View Modal -->
-                                    <div class="modal fade" id="view<?= $row['id']; ?>" tabindex="-1" aria-hidden="true">
+                                    <div class="modal fade" id="view<?= e($row['id']) ?>" tabindex="-1" aria-hidden="true">
                                         <div class="modal-dialog modal-lg modal-dialog-centered">
                                             <div class="modal-content">
                                                 <div class="modal-header bg-success text-white">

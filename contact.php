@@ -1,3 +1,4 @@
+<?php require_once __DIR__ . '/security/bootstrap.php'; ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>

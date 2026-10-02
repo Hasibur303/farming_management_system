@@ -1,5 +1,5 @@
 <?php
-session_start();
+require_once dirname(__DIR__) . '/security/bootstrap.php';
 include '../database.php'; // Include database connection
 
 // Fetch all suppliers
@@ -103,7 +103,7 @@ $result = $stmt->get_result();
                     <td><?= htmlspecialchars($row['phone_number']); ?></td>
                     <td><?= htmlspecialchars($row['address']); ?></td>
                     <td>
-                        <a href="delete_supplier.php?supplier_id=<?= $row['supplier_id']; ?>" class="delete-btn" onclick="return confirm('Are you sure you want to delete this supplier?')">Delete</a>
+                        <a href="delete_supplier.php?supplier_id=<?= e($row['supplier_id']) ?>" class="delete-btn" onclick="return confirm('Are you sure you want to delete this supplier?')">Delete</a>
                     </td>
                 </tr>
             <?php endwhile; ?>

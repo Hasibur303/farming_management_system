@@ -1,5 +1,5 @@
 <?php
-session_start();
+require_once __DIR__ . '/security/bootstrap.php';
 include 'database.php';
 // Fetch all job posts
 $jobs = $conn->query("SELECT * FROM labour_jobpost ORDER BY post_date DESC");
@@ -104,7 +104,7 @@ $current_text = $text[$lang];
 <html lang="<?= $lang ?>">
 <head>
     <meta charset="UTF-8">
-    <title><?= $current_text['title'] ?> | SmartKirshi</title>
+    <title><?= e($current_text['title']) ?> | SmartKirshi</title>
     <style>
         body {
             margin: 0;
@@ -283,36 +283,36 @@ $current_text = $text[$lang];
 
 <div class="sidebar">
     <h2>SmartKirshi</h2>
-    <a href="labour.php">🏠 <span><?= $current_text['dashboard'] ?></span></a>
-    <a href="L_profile.php">🧑‍🌾 <span><?= $current_text['profile'] ?></span></a>
-    <a href="L_job.php">📋 <span><?= $current_text['jobs'] ?></span></a>
-    <a href="messages.php">💬 <span><?= $current_text['messages'] ?></span></a>
-    <a href="notifications.php">🔔 <span><?= $current_text['notifications'] ?></span></a>
-    <a href="settings.php">⚙️ <span><?= $current_text['settings'] ?></span></a>
-    <a class="logout-sidebar" href="logout.php">🚪 <span><?= $current_text['logout'] ?></span></a>
+    <a href="labour.php">🏠 <span><?= e($current_text['dashboard']) ?></span></a>
+    <a href="L_profile.php">🧑‍🌾 <span><?= e($current_text['profile']) ?></span></a>
+    <a href="L_job.php">📋 <span><?= e($current_text['jobs']) ?></span></a>
+    <a href="messages.php">💬 <span><?= e($current_text['messages']) ?></span></a>
+    <a href="notifications.php">🔔 <span><?= e($current_text['notifications']) ?></span></a>
+    <a href="settings.php">⚙️ <span><?= e($current_text['settings']) ?></span></a>
+    <a class="logout-sidebar" href="logout.php">🚪 <span><?= e($current_text['logout']) ?></span></a>
 </div>
 
 <div class="main">
     <div class="top-bar">
-        <h2><?= $current_text['title'] ?></h2>
+        <h2><?= e($current_text['title']) ?></h2>
         <div>
             <a href="?lang=bn"><button class="logout-button language-btn">🇧🇩 Bn</button></a>
             <a href="?lang=en"><button class="logout-button language-btn">🇬🇧 En</button></a>
-            <a href="logout.php"><button class="logout-button">🚪 <?= $current_text['logout'] ?></button></a>
+            <a href="logout.php"><button class="logout-button">🚪 <?= e($current_text['logout']) ?></button></a>
         </div>
     </div>
 
 
 
 <h3 style="text-align:center; font-size:24px; margin-bottom:25px;">
-        <?= $current_text['job_list'] ?>
+        <?= e($current_text['job_list']) ?>
     </h3>
 
     <?php if ($jobs->num_rows > 0): ?>
         <?php while ($row = $jobs->fetch_assoc()): ?>
             <div class="job-container">
                 <div class="job-meta">
-                    👨‍🌾 <?= htmlspecialchars($row['farmer_name']) ?> | 🕒 <?= $row['post_date'] ?>
+                    👨‍🌾 <?= htmlspecialchars($row['farmer_name']) ?> | 🕒 <?= e($row['post_date']) ?>
                 </div>
                 <?php if (!empty($row['photo'])): ?>
                     <img src="<?= htmlspecialchars($row['photo']) ?>" alt="Job Image">
@@ -320,13 +320,16 @@ $current_text = $text[$lang];
                 <div class="job-caption">
                     <?= nl2br(htmlspecialchars($row['caption'])) ?>
                 </div>
-              <a href="L_apply_job.php?job_id=<?= $row['id'] ?>" class="apply-button">আবেদন করুন</a>
+              <form method="post" action="L_apply_job.php" style="display:inline">
+                  <input type="hidden" name="job_id" value="<?= e($row['id']) ?>">
+                  <button type="submit" class="apply-button">আবেদন করুন</button>
+              </form>
 
             </div>
         <?php endwhile; ?>
     <?php else: ?>
         <p style="text-align:center; font-size:18px; color:gray;">
-            <?= $current_text['no_jobs'] ?>
+            <?= e($current_text['no_jobs']) ?>
         </p>
     <?php endif; ?>
     </div>

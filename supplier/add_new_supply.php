@@ -1,6 +1,7 @@
 <?php
-session_start();
+require_once dirname(__DIR__) . '/security/bootstrap.php';
 include('../database.php');
+require_once dirname(__DIR__) . '/security/upload.php';
 
 // Check if the user is logged in and has the role of 'Supplier'
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'Supplier') {
@@ -27,24 +28,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_supply'])) {
 
     // Handle image upload
     if (isset($_FILES['supply_image']) && $_FILES['supply_image']['error'] == 0) {
-        $target_dir = "uploads/";
-        if (!is_dir($target_dir)) {
-            mkdir($target_dir, 0777, true); // Create the directory if it doesn't exist
-        }
-        $target_file = $target_dir . basename($_FILES["supply_image"]["name"]);
-        $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
-
-        // Validate image file type
-        $allowed_types = ['jpg', 'jpeg', 'png', 'gif'];
-        if (!in_array($imageFileType, $allowed_types)) {
-            $error = "Only JPG, JPEG, PNG & GIF files are allowed.";
-        } else {
-            // Move the file to the target directory
-            if (move_uploaded_file($_FILES["supply_image"]["tmp_name"], $target_file)) {
-                $image_path = $target_file;
-            } else {
-                $error = "Failed to upload the image.";
-            }
+        try {
+            $stored = secure_image_upload($_FILES['supply_image'], dirname(__DIR__) . '/uploads');
+            $image_path = 'uploads/' . $stored['filename'];
+        } catch (RuntimeException $exception) {
+            $error = $exception->getMessage();
         }
     }
 
@@ -95,16 +83,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['edit_supply'])) {
 
     // Handle image upload
     if (isset($_FILES['supply_image']) && $_FILES['supply_image']['error'] == 0) {
-        $target_dir = "uploads/";
-        if (!is_dir($target_dir)) {
-            mkdir($target_dir, 0777, true);
-        }
-        $target_file = $target_dir . basename($_FILES["supply_image"]["name"]);
-        $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
-        $allowed_types = ['jpg', 'jpeg', 'png', 'gif'];
-
-        if (in_array($imageFileType, $allowed_types) && move_uploaded_file($_FILES["supply_image"]["tmp_name"], $target_file)) {
-            $image_path = $target_file;
+        try {
+            $stored = secure_image_upload($_FILES['supply_image'], dirname(__DIR__) . '/uploads');
+            $image_path = 'uploads/' . $stored['filename'];
+        } catch (RuntimeException $exception) {
+            $error = $exception->getMessage();
         }
     }
 

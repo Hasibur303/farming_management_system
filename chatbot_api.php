@@ -1,6 +1,6 @@
 <?php
 header('Content-Type: application/json');
-session_start();
+require_once __DIR__ . '/security/bootstrap.php';
 
 // Check if user is logged in
 if (!isset($_SESSION['user_id'])) {

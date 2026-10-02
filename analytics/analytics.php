@@ -1,5 +1,5 @@
 <?php
-session_start();
+require_once dirname(__DIR__) . '/security/bootstrap.php';
 include('../database.php');
 
 
@@ -116,12 +116,12 @@ include('../database.php');
                     <div class="col-md-4">
                         <label>Start Date:</label>
                         <input type="date" name="start_date" class="form-control" 
-                               value="<?php echo $_GET['start_date'] ?? date('Y-m-01'); ?>">
+                               value="<?= e($_GET['start_date'] ?? date('Y-m-01')) ?>">
                     </div>
                     <div class="col-md-4">
                         <label>End Date:</label>
                         <input type="date" name="end_date" class="form-control" 
-                               value="<?php echo $_GET['end_date'] ?? date('Y-m-d'); ?>">
+                               value="<?= e($_GET['end_date'] ?? date('Y-m-d')) ?>">
                     </div>
                     <div class="col-md-2">
                         <label>&nbsp;</label>
@@ -179,11 +179,11 @@ include('../database.php');
 
                                 <tr>
                                     <td><?php echo htmlspecialchars($row['farmer_name']); ?></td>
-                                    <td><?php echo $row['total_orders']; ?></td>
+                                    <td><?= e($row['total_orders']) ?></td>
                                     <td>Taka:<?php echo number_format($row['total_revenue'], 2); ?></td>
                                     <td>Taka:<?php echo number_format($row['average_order_value'], 2); ?></td>
-                                    <td><?php echo $row['completed_orders']; ?></td>
-                                    <td><?php echo $row['cancelled_orders']; ?></td>
+                                    <td><?= e($row['completed_orders']) ?></td>
+                                    <td><?= e($row['cancelled_orders']) ?></td>
                                     <td><?php echo $completion_rate; ?>%</td>
                                 </tr>
                             <?php } ?>

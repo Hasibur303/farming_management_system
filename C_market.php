@@ -1,6 +1,6 @@
 
 <?php
-session_start();
+require_once __DIR__ . '/security/bootstrap.php';
 include 'database.php';
 if (!isset($_SESSION['lang'])) {
     $_SESSION['lang'] = 'bn';
@@ -147,7 +147,7 @@ try {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= $current['title'] ?> - SmartKrishi</title>
+    <title><?= e($current['title']) ?> - SmartKrishi</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
@@ -359,7 +359,7 @@ try {
     </div>
 
         <li><a href="customer.php" class="nav-link"><i class="fas fa-home"></i> <span><?= $lang === 'bn' ? 'ড্যাশবোর্ড' : 'Dashboard' ?></span></a></li>
-        <li><a href="C_market.php" class="nav-link"><i class="fas fa-store"></i> <span><?= $current['title'] ?></span></a></li>
+        <li><a href="C_market.php" class="nav-link"><i class="fas fa-store"></i> <span><?= e($current['title']) ?></span></a></li>
         <li><a href="C_review.php" class="nav-link"><i class="fas fa-star"></i> <span><?= $lang === 'bn' ? 'পর্যালোচনা' : 'Reviews' ?></span></a></li>
         <li><a href="C_top_selling_products.php" class="nav-link"><i class="fas fa-chart-line"></i> <span><?= $lang === 'bn' ? 'সর্বাধিক বিক্রিত' : 'Top Selling' ?></span></a></li>
         <li><a href="C_order_history.php" class="nav-link"><i class="fas fa-history"></i> <span><?= $lang === 'bn' ? 'অর্ডার ইতিহাস' : 'Order History' ?></span></a></li>
@@ -373,19 +373,19 @@ try {
         <form method="GET" class="row g-3">
             <div class="col-md-10">
                 <input type="text" class="form-control" name="search"
-                       placeholder="<?= $current['search_placeholder'] ?>"
+                       placeholder="<?= e($current['search_placeholder']) ?>"
                        value="<?= htmlspecialchars($_GET['search'] ?? '') ?>">
             </div>
             <div class="col-md-2">
                 <button type="submit" class="btn btn-success w-100">
-                    <?= $current['search_button'] ?>
+                    <?= e($current['search_button']) ?>
                 </button>
             </div>
         </form>
     </div>
 
     <!-- Products Grid -->
-    <h3><?= $current['products'] ?></h3>
+    <h3><?= e($current['products']) ?></h3>
     <div class="product-grid">
         <?php if ($products->num_rows > 0): ?>
             <?php while ($product = $products->fetch_assoc()): ?>
@@ -396,16 +396,16 @@ try {
                     <div class="card-body">
                         <h5 class="card-title"><?= htmlspecialchars($product['name']) ?></h5>
                         <p class="card-text">
-                            <?= $current['price'] ?>: ৳<?= htmlspecialchars($product['price']) ?> / <?= htmlspecialchars($product['quantity_type']) ?>
+                            <?= e($current['price']) ?>: ৳<?= htmlspecialchars($product['price']) ?> / <?= htmlspecialchars($product['quantity_type']) ?>
                         </p>
                         <p class="card-text">
-                            <?= $current['quantity'] ?>: <?= htmlspecialchars($product['quantity']) ?> <?= htmlspecialchars($product['quantity_type']) ?>
+                            <?= e($current['quantity']) ?>: <?= htmlspecialchars($product['quantity']) ?> <?= htmlspecialchars($product['quantity_type']) ?>
                         </p>
                         <form method="POST">
-                            <input type="hidden" name="product_id" value="<?= $product['product_id'] ?>">
-                            <input type="hidden" name="farmer_id" value="<?= $product['farmer_id'] ?>">
+                            <input type="hidden" name="product_id" value="<?= e($product['product_id']) ?>">
+                            <input type="hidden" name="farmer_id" value="<?= e($product['farmer_id']) ?>">
                             <button type="submit" name="add_to_cart" class="btn btn-success w-100">
-                                <?= $current['add_to_cart'] ?>
+                                <?= e($current['add_to_cart']) ?>
                             </button>
                         </form>
                     </div>
@@ -413,7 +413,7 @@ try {
             <?php endwhile; ?>
         <?php else: ?>
             <div class="col-12">
-                <div class="alert alert-info"><?= $current['no_products'] ?></div>
+                <div class="alert alert-info"><?= e($current['no_products']) ?></div>
             </div>
         <?php endif; ?>
     </div>
@@ -423,13 +423,13 @@ try {
 <div class="cart-icon" onclick="toggleCart()">
     <i class="fas fa-shopping-cart"></i>
     <span class="cart-count"><?= count($cartItems) ?></span>
-    <span><?= $current['cart'] ?></span>
+    <span><?= e($current['cart']) ?></span>
 </div>
 
 <!-- Cart Sidebar -->
 <div class="cart-sidebar" id="cartSidebar">
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <h3><?= $current['cart'] ?></h3>
+        <h3><?= e($current['cart']) ?></h3>
         <button class="btn btn-sm btn-outline-danger" onclick="toggleCart()">
             <i class="fas fa-times"></i>
         </button>
@@ -446,15 +446,15 @@ try {
                                 <p>৳<?= htmlspecialchars($item['price']) ?> / <?= htmlspecialchars($item['quantity_type']) ?></p>
                                 <div class="d-flex align-items-center">
                                     <form method="POST" class="me-2">
-                                        <input type="hidden" name="product_id" value="<?= $item['product_id'] ?>">
-                                        <input type="hidden" name="farmer_id" value="<?= $item['farmer_id'] ?>">
+                                        <input type="hidden" name="product_id" value="<?= e($item['product_id']) ?>">
+                                        <input type="hidden" name="farmer_id" value="<?= e($item['farmer_id']) ?>">
                                         <input type="hidden" name="update_quantity" value="decrease">
                                         <button type="submit" class="btn btn-sm btn-outline-secondary">-</button>
                                     </form>
-                                    <span class="mx-2"><?= $item['quantity'] ?></span>
+                                    <span class="mx-2"><?= e($item['quantity']) ?></span>
                                     <form method="POST" class="ms-2">
-                                        <input type="hidden" name="product_id" value="<?= $item['product_id'] ?>">
-                                        <input type="hidden" name="farmer_id" value="<?= $item['farmer_id'] ?>">
+                                        <input type="hidden" name="product_id" value="<?= e($item['product_id']) ?>">
+                                        <input type="hidden" name="farmer_id" value="<?= e($item['farmer_id']) ?>">
                                         <input type="hidden" name="update_quantity" value="increase">
                                         <button type="submit" class="btn btn-sm btn-outline-secondary">+</button>
                                     </form>
@@ -462,7 +462,7 @@ try {
                                 <p class="mt-2">Total: ৳<?= $item['price'] * $item['quantity'] ?></p>
                             </div>
                             <form method="POST">
-                                <input type="hidden" name="product_id" value="<?= $item['product_id'] ?>">
+                                <input type="hidden" name="product_id" value="<?= e($item['product_id']) ?>">
                                 <button type="submit" name="remove_from_cart" class="btn btn-sm btn-danger">
                                     <i class="fas fa-trash"></i>
                                 </button>
@@ -474,7 +474,7 @@ try {
         </div>
 
         <div class="cart-total mb-3">
-            <h4 class="text-end"><?= $current['price'] ?>: ৳<?= number_format($cartTotal, 2) ?></h4>
+            <h4 class="text-end"><?= e($current['price']) ?>: ৳<?= number_format($cartTotal, 2) ?></h4>
         </div>
 
         <!-- Payment Methods -->
@@ -507,14 +507,14 @@ try {
             </button>
         </form>
     <?php else: ?>
-        <div class="alert alert-info"><?= $current['no_products'] ?></div>
+        <div class="alert alert-info"><?= e($current['no_products']) ?></div>
     <?php endif; ?>
 </div>
 
 <!-- Messages -->
 <?php if (isset($_SESSION['message'])): ?>
     <div class="alert alert-success alert-dismissible fade show" style="position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 1100;">
-        <?= $_SESSION['message'] ?>
+        <?= e($_SESSION['message']) ?>
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
     <?php unset($_SESSION['message']); ?>
@@ -522,7 +522,7 @@ try {
 
 <?php if (isset($_SESSION['error'])): ?>
     <div class="alert alert-danger alert-dismissible fade show" style="position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 1100;">
-        <?= $_SESSION['error'] ?>
+        <?= e($_SESSION['error']) ?>
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
     <?php unset($_SESSION['error']); ?>

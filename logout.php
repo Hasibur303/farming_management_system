@@ -1,18 +1,10 @@
 <?php
-session_start();
+require_once __DIR__ . '/security/bootstrap.php';
 include 'database.php';
 
-if (isset($_SESSION['user_id'])) {
-    $labour_id = $_SESSION['user_id'];
-
-//     // Correct column name: user_id
-//     //$query = "UPDATE labour SET last_login = NOW() WHERE user_id = $labour_id";
-//     if (!mysqli_query($conn, $query)) {
-//         die("Error updating last_login: " . mysqli_error($conn));
-//     }
-}
-
+security_log('authentication.logout', [], 'info');
 session_unset();
 session_destroy();
+setcookie(session_name(), '', ['expires' => time() - 3600, 'path' => '/', 'secure' => security_is_https(), 'httponly' => true, 'samesite' => 'Lax']);
 header("Location: login.php");
 exit();

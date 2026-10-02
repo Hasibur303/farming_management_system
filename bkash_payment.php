@@ -1,5 +1,5 @@
 <?php
-session_start();
+require_once __DIR__ . '/security/bootstrap.php';
 include 'database.php';
 
 // Language handling
@@ -94,7 +94,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if ($update->execute()) {
             // Update order status
-            $conn->query("UPDATE orders SET status = 'processing' WHERE payment_id = $paymentId");
+            $orderUpdate = $pdo->prepare("UPDATE orders SET status = 'processing' WHERE payment_id = ?");
+            $orderUpdate->execute([$paymentId]);
 
             $_SESSION['message'] = $current['success'];
             header("Location: order_confirmation.php?payment_id=$paymentId");
@@ -115,7 +116,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= $current['title'] ?> | SmartKrishi</title>
+    <title><?= e($current['title']) ?> | SmartKrishi</title>
     <style>
         body {
             font-family: 'Segoe UI', sans-serif;
@@ -226,7 +227,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </style>
 </head>
 <body>
- <h1><?= $current['title'] ?></h1>
+ <h1><?= e($current['title']) ?></h1>
     <div class="logo">
         <img src="bkash.jpeg" alt="bKash Logo">
     </div>
@@ -244,18 +245,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <form method="POST" action="">
         <div class="form-group">
-            <label><?= $current['number'] ?>:</label>
+            <label><?= e($current['number']) ?>:</label>
             <input type="text" name="bkash_number" placeholder="<?= ($lang === 'bn' ? '০১XXXXXXXXX' : '01XXXXXXXXX') ?>" required>
         </div>
         <div class="form-group">
-            <label><?= $current['trxid'] ?>:</label>
+            <label><?= e($current['trxid']) ?>:</label>
             <input type="text" name="trx_id" placeholder="<?= ($lang === 'bn' ? 'TRX1234567890' : 'TRX1234567890') ?>" required>
         </div>
         <div class="form-group">
-            <label><?= $current['amount'] ?>:</label>
+            <label><?= e($current['amount']) ?>:</label>
             <input type="number" name="amount" value="<?= number_format($payment['amount'], 2) ?>" step="0.01" required>
         </div>
-        <button type="submit"><?= $current['submit'] ?></button>
+        <button type="submit"><?= e($current['submit']) ?></button>
     </form>
 
     <div class="back">
@@ -272,7 +273,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         document.querySelector('form').addEventListener('submit', function(e) {
             const bkashNumber = document.querySelector('input[name="bkash_number"]').value;
             if (!/^01[3-9]\d{8}$/.test(bkashNumber)) {
-                alert("<?= $current['invalid_number'] ?>");
+                alert("<?= e($current['invalid_number']) ?>");
                 e.preventDefault();
             }
         });

@@ -1,23 +1,15 @@
 <?php
-// DB connection
-$host = 'localhost';
-$db = 'farming_management';
-$user = 'root';
-$pass = '';
-
-$conn = new mysqli($host, $user, $pass, $db);
-if ($conn->connect_error) die("Connection failed: " . $conn->connect_error);
+require_once __DIR__ . '/security/bootstrap.php';
+require_once __DIR__ . '/database.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-  $name = $conn->real_escape_string($_POST['name']);
-  $contact_info = $conn->real_escape_string($_POST['email']);
-  $subject = $conn->real_escape_string($_POST['subject']);
-  $message = $conn->real_escape_string($_POST['message']);
+  $name = trim((string) ($_POST['name'] ?? ''));
+  $contact_info = trim((string) ($_POST['email'] ?? ''));
+  $subject = trim((string) ($_POST['subject'] ?? ''));
+  $message = trim((string) ($_POST['message'] ?? ''));
+  $statement = $pdo->prepare('INSERT INTO landing_contact (name, contact_info, subject, message) VALUES (?, ?, ?, ?)');
 
-$sql = "INSERT INTO landing_contact (name, contact_info, subject, message)
-        VALUES ('$name', '$contact_info', '$subject', '$message')";
-
-  if ($conn->query($sql) === TRUE) {
+  if ($statement->execute([$name, $contact_info, $subject, $message])) {
     echo "<script>alert('Message Sent Successfully!');</script>";
   } else {
     echo "<script>alert('Error sending message');</script>";

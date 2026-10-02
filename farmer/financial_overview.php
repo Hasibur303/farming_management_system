@@ -1,6 +1,6 @@
 <?php
 
-session_start();
+require_once dirname(__DIR__) . '/security/bootstrap.php';
 
 include('../database.php');
 
@@ -469,7 +469,7 @@ $financial_result = $financial_query->get_result();
                                     <tr>
                                         <td><?php echo date("F Y", mktime(0, 0, 0, $row['month'], 1, $row['year'])); ?></td>
                                         <td>৳<?php echo number_format($row['total_sales'], 2); ?></td>
-                                        <td><?php echo $row['total_orders']; ?></td>
+                                        <td><?= e($row['total_orders']) ?></td>
                                         <td>৳<?php echo number_format($row['average_order_value'], 2); ?></td>
                                         <td>
                                             <?php
@@ -522,7 +522,7 @@ $financial_result = $financial_query->get_result();
                                             <div class="progress">
                                                 <div class="progress-bar bg-success" 
                                                      role="progressbar" 
-                                                     style="width: <?php echo $row['revenue_percentage']; ?>%">
+                                                     style="width: <?= e($row['revenue_percentage']) ?>%">
                                                     <?php echo number_format($row['revenue_percentage'], 1); ?>%
                                                 </div>
                                             </div>
@@ -624,7 +624,7 @@ $financial_result = $financial_query->get_result();
                                         <td class="<?php echo $row['net_profit'] >= 0 ? 'text-success' : 'text-danger'; ?>">
                                             ৳<?php echo number_format($row['net_profit'], 2); ?>
                                         </td>
-                                        <td><?php echo $row['total_purchases']; ?></td>
+                                        <td><?= e($row['total_purchases']) ?></td>
                                         <td>৳<?php echo number_format($row['average_purchase_amount'], 2); ?></td>
                                         <td>
                                             <?php 

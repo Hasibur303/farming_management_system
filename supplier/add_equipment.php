@@ -2,8 +2,9 @@
 /* ==============================================================
    add_equipment.php – SmartKrishi Supplier Portal
    ============================================================== */
-session_start();
+require_once dirname(__DIR__) . '/security/bootstrap.php';
 include('../database.php');
+require_once dirname(__DIR__) . '/security/upload.php';
 
 /* ---------- Handle form submission ---------- */
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -17,19 +18,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     /* ---- Image Upload ---- */
     if (!empty($_FILES['image']['name'])) {
-        $imageName  = basename($_FILES['image']['name']);
-        $folderName = "uploads/";
-        $targetDir  = "../" . $folderName;              // Physical path
-        $fileName   = time() . "_" . $imageName;
-        $targetFile = $targetDir . $fileName;
-
-        if (!is_dir($targetDir)) {
-            mkdir($targetDir, 0755, true);
-        }
-        if (move_uploaded_file($_FILES['image']['tmp_name'], $targetFile)) {
-            $imagePath = $folderName . $fileName;       // Save relative path
-        } else {
-            $error = "ফাইল আপলোড করতে সমস্যা হয়েছে!";
+        try {
+            $stored = secure_image_upload($_FILES['image'], dirname(__DIR__) . '/uploads');
+            $imagePath = 'uploads/' . $stored['filename'];
+        } catch (RuntimeException $exception) {
+            $error = $exception->getMessage();
         }
     }
 

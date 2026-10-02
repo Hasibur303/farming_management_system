@@ -1,0 +1,40 @@
+env:
+  contexts:
+    - name: SmartKrishi Local
+      urls:
+        - http://localhost/farming_management_system/
+      includePaths:
+        - http://localhost/farming_management_system/.*
+      excludePaths:
+        - http://localhost/farming_management_system/logout\.php.*
+  parameters:
+    failOnError: true
+    failOnWarning: false
+    progressToStdout: true
+
+jobs:
+  - type: passiveScan-config
+    parameters:
+      maxAlertsPerRule: 20
+      scanOnlyInScope: true
+  - type: spider
+    parameters:
+      context: SmartKrishi Local
+      url: http://localhost/farming_management_system/
+      maxDuration: 5
+  - type: passiveScan-wait
+    parameters:
+      maxDuration: 5
+  - type: activeScan
+    parameters:
+      context: SmartKrishi Local
+      policy: Default Policy
+      maxRuleDurationInMins: 2
+      maxScanDurationInMins: 15
+  - type: report
+    parameters:
+      template: traditional-html
+      reportDir: D:/farming_management_system/storage/reports
+      reportFile: zap-report.html
+      reportTitle: SmartKrishi OWASP ZAP Security Report
+

@@ -1,6 +1,7 @@
 <?php
-session_start();
+require_once __DIR__ . '/security/bootstrap.php';
 include('database.php');
+require_once __DIR__ . '/security/upload.php';
 
 // Enable error reporting
 error_reporting(E_ALL);
@@ -37,18 +38,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_product'])) {
         // Handle file upload if present
         $image_path = '';
         if (isset($_FILES['photo']) && $_FILES['photo']['error'] == 0) {
-            $target_dir = "uploads/";
-            if (!file_exists($target_dir)) {
-                mkdir($target_dir, 0777, true);
-            }
-
-            $file_extension = strtolower(pathinfo($_FILES["photo"]["name"], PATHINFO_EXTENSION));
-            $new_filename = uniqid() . '.' . $file_extension;
-            $target_file = $target_dir . $new_filename;
-
-            if (move_uploaded_file($_FILES["photo"]["tmp_name"], $target_file)) {
-                $image_path = $target_file;
-            }
+            $stored = secure_image_upload($_FILES['photo'], __DIR__ . '/uploads');
+            $image_path = 'uploads/' . $stored['filename'];
         }
 
         // Insert into database
@@ -293,7 +284,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_product'])) {
 
     <!-- Search Box -->
     <div class="mb-4">
-        <form method="GET" action="<?php echo $_SERVER['PHP_SELF']; ?>">
+        <form method="GET" action="<?= e($_SERVER['PHP_SELF']) ?>">
             <div class="input-group">
                 <input type="text" 
                        name="search" 
@@ -341,7 +332,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_product'])) {
                                 <button type="button"
                                         class="btn btn-sm btn-success"
                                         onclick="selectCrop(
-                                            '<?= $product['id']; ?>',
+                                            '<?= e($product['id']) ?>',
                                             '<?= htmlspecialchars($product['name']); ?>',
                                             '<?= htmlspecialchars($product['quantity_type']); ?>'
                                         )">

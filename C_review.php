@@ -1,5 +1,5 @@
 <?php
-session_start();
+require_once __DIR__ . '/security/bootstrap.php';
 include('database.php');
 
 // Check if the customer is logged in
@@ -233,9 +233,9 @@ while ($row = $result->fetch_assoc()) {
 
     <!-- Success/Error Messages -->
     <?php if (isset($success_message)): ?>
-        <div class="message success"><?= $success_message; ?></div>
+        <div class="message success"><?= e($success_message) ?></div>
     <?php elseif (isset($error_message)): ?>
-        <div class="message error"><?= $error_message; ?></div>
+        <div class="message error"><?= e($error_message) ?></div>
     <?php endif; ?>
 
     <form method="POST" action="C_review.php">
@@ -244,10 +244,10 @@ while ($row = $result->fetch_assoc()) {
             <select id="product_id" name="product_id" style="width: 100%;" required>
                 <option value="" disabled selected>একটি পণ্য নির্বাচন করুন...</option>
                 <?php foreach ($eligible_products as $product): ?>
-                    <option value="<?= $product['product_id']; ?>" 
-                            data-farmer-id="<?= $product['farmer_id']; ?>">
-                        <?= $product['product_name']; ?> 
-                        (Farmer: <?= $product['farmer_name']; ?>)
+                    <option value="<?= e($product['product_id']) ?>"
+                            data-farmer-id="<?= e($product['farmer_id']) ?>">
+                        <?= e($product['product_name']) ?>
+                        (Farmer: <?= e($product['farmer_name']) ?>)
                     </option>
                 <?php endforeach; ?>
             </select>

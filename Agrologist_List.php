@@ -1,5 +1,5 @@
 <?php
-session_start();
+require_once __DIR__ . '/security/bootstrap.php';
 include 'database.php';
 
 if (!isset($_SESSION['user_id'])) {
@@ -8,13 +8,16 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 $farmer_id = $_SESSION['user_id'];
-$farmer = mysqli_fetch_assoc(mysqli_query($conn, "SELECT district FROM agrologists WHERE user_id='$farmer_id'"));
+$farmerStatement = $pdo->prepare('SELECT district FROM agrologists WHERE user_id = ?');
+$farmerStatement->execute([$farmer_id]);
+$farmer = $farmerStatement->fetch() ?: [];
 $farmer_district = $farmer['district'] ?? '';
 
-$query = "SELECT a.*, u.name FROM agrologists a
-          JOIN users u ON a.user_id = u.user_id
-          WHERE a.user_id != '$farmer_id'";
-$result = mysqli_query($conn, $query);
+$statement = $pdo->prepare('SELECT a.*, u.name FROM agrologists a
+                            JOIN users u ON a.user_id = u.user_id
+                            WHERE a.user_id != ?');
+$statement->execute([$farmer_id]);
+$result = new DatabaseResult($statement->fetchAll());
 ?>
 <!DOCTYPE html>
 <html lang="bn">
@@ -111,7 +114,7 @@ $result = mysqli_query($conn, $query);
     <header>
         <h1>কৃষি-বিশেষজ্ঞ তালিকা</h1>
         <div class="user-info">
-            <span>স্বাগতম, <?php echo $_SESSION['username'] ?? 'ব্যবহারকারী'; ?></span>
+            <span>স্বাগতম, <?= e($_SESSION['username'] ?? 'ব্যবহারকারী') ?></span>
             <a href="logout.php"><i class="fas fa-sign-out-alt"></i> লগ আউট</a>
         </div>
     </header>
@@ -160,15 +163,15 @@ $result = mysqli_query($conn, $query);
     <div class="main-content">
         <h2 class="mb-4">উপলভ্য কৃষি-বিশেষজ্ঞগণ</h2>
         <div class="row">
-            <?php while ($row = mysqli_fetch_assoc($result)): ?>
+            <?php while ($row = $result->fetch_assoc()): ?>
             <div class="col-md-6 mb-4">
                 <div class="card p-3">
                     <div class="d-flex align-items-center">
-                        <img src="uploads/<?php echo $row['photo']; ?>" class="photo me-3" alt="প্রোফাইল ছবি">
+                        <img src="uploads/<?= e($row['photo']) ?>" class="photo me-3" alt="প্রোফাইল ছবি">
                         <div>
-                            <h5><?php echo $row['name']; ?></h5>
-                            <p>সেক্টর: <?php echo $row['sector']; ?><br>
-                               জেলা: <?php echo $row['district']; ?></p>
+                            <h5><?= e($row['name']) ?></h5>
+                            <p>সেক্টর: <?= e($row['sector']) ?><br>
+                               জেলা: <?= e($row['district']) ?></p>
                             <?php if ($row['district'] == $farmer_district): ?>
                                 <span class="badge bg-success">নিকটবর্তী</span>
                             <?php endif; ?>
@@ -177,7 +180,7 @@ $result = mysqli_query($conn, $query);
 
                     <!-- Appointment Form -->
                     <form action="A_book_agrologist.php" method="post" class="mt-3">
-                        <input type="hidden" name="agrologist_id" value="<?php echo $row['user_id']; ?>">
+                        <input type="hidden" name="agrologist_id" value="<?= e($row['user_id']) ?>">
 
                         <div class="mb-2">
                             <label class="form-label">অ্যাপয়েন্টমেন্টের ধরন</label>

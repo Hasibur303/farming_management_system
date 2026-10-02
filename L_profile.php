@@ -1,6 +1,7 @@
 <?php
-session_start();
+require_once __DIR__ . '/security/bootstrap.php';
 include 'database.php';
+require_once __DIR__ . '/security/upload.php';
 
 
 $user_id = $_SESSION['user_id'];
@@ -67,13 +68,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $photo = '';
 
     if (!empty($_FILES["photo"]["name"])) {
-        $target_dir = "uploads/";
-        $photo = basename($_FILES["photo"]["name"]);
-        $target_file = $target_dir . $photo;
-        move_uploaded_file($_FILES["photo"]["tmp_name"], $target_file);
+        $stored = secure_image_upload($_FILES['photo'], __DIR__ . '/uploads');
+        $photo = $stored['filename'];
     }
 
-    $check = $conn->query("SELECT user_id FROM labour WHERE user_id = $user_id");
+    $checkStatement = $pdo->prepare('SELECT user_id FROM labour WHERE user_id = ?');
+    $checkStatement->execute([$user_id]);
+    $check = new DatabaseResult($checkStatement->fetchAll());
     if ($check->num_rows > 0) {
         // Update
         if (!empty($photo)) {
@@ -101,7 +102,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 
 // Fetch existing data
-$result = $conn->query("SELECT * FROM labour WHERE user_id = $user_id");
+$profileStatement = $pdo->prepare('SELECT * FROM labour WHERE user_id = ?');
+$profileStatement->execute([$user_id]);
+$result = new DatabaseResult($profileStatement->fetchAll());
 $data = $result->fetch_assoc();
 ?>
 
@@ -109,7 +112,7 @@ $data = $result->fetch_assoc();
 <html lang="<?= $lang ?>">
 <head>
     <meta charset="UTF-8">
-    <title><?= $current_text['title'] ?></title>
+    <title><?= e($current_text['title']) ?></title>
     <style>
            body {
                margin: 0;
@@ -290,22 +293,22 @@ $data = $result->fetch_assoc();
 
 <div class="sidebar">
     <h2>SmartKirshi</h2>
-    <a href="labour.php">🏠 <span><?= $current_text['dashboard'] ?></span></a>
-    <a href="L_profile.php">🧑‍🌾 <span><?= $current_text['profile'] ?></span></a>
-    <a href="L_job.php">📋 <span><?= $current_text['jobs'] ?></span></a>
-    <a href="L_contract_message.php">💬 <span><?= $current_text['messages'] ?></span></a>
-    <a href="notifications.php">🔔 <span><?= $current_text['notifications'] ?></span></a>
-    <a href="settings.php">⚙ <span><?= $current_text['settings'] ?></span></a>
-    <a class="logout-sidebar" href="logout.php">🚪 <span><?= $current_text['logout'] ?></span></a>
+    <a href="labour.php">🏠 <span><?= e($current_text['dashboard']) ?></span></a>
+    <a href="L_profile.php">🧑‍🌾 <span><?= e($current_text['profile']) ?></span></a>
+    <a href="L_job.php">📋 <span><?= e($current_text['jobs']) ?></span></a>
+    <a href="L_contract_message.php">💬 <span><?= e($current_text['messages']) ?></span></a>
+    <a href="notifications.php">🔔 <span><?= e($current_text['notifications']) ?></span></a>
+    <a href="settings.php">⚙ <span><?= e($current_text['settings']) ?></span></a>
+    <a class="logout-sidebar" href="logout.php">🚪 <span><?= e($current_text['logout']) ?></span></a>
 </div>
 
 <div class="main">
     <div class="top-bar">
-        <h2><?= $current_text['title'] ?></h2>
+        <h2><?= e($current_text['title']) ?></h2>
         <div>
             <a href="?lang=bn"><button class="logout-button language-btn">🇧🇩 Bn</button></a>
             <a href="?lang=en"><button class="logout-button language-btn">🇬🇧 En</button></a>
-            <a href="logout.php"><button class="logout-button">🚪 <?= $current_text['logout'] ?></button></a>
+            <a href="logout.php"><button class="logout-button">🚪 <?= e($current_text['logout']) ?></button></a>
         </div>
     </div>
 
@@ -314,18 +317,18 @@ $data = $result->fetch_assoc();
     <div class="profile-card">
         <div class="profile-image">
             <?php if (!empty($data['photo'])): ?>
-                <img src="uploads/<?= $data['photo'] ?>" alt="Profile Photo">
+                <img src="uploads/<?= e($data['photo']) ?>" alt="Profile Photo">
             <?php else: ?>
                 <img src="default.png" alt="Default Photo">
             <?php endif; ?>
         </div>
         <h3><?= htmlspecialchars($data['name']) ?></h3>
-        <p><strong><?= $current_text['age'] ?>:</strong> <?= htmlspecialchars($data['age']) ?></p>
-        <p><strong><?= $current_text['salary'] ?>:</strong> <?= htmlspecialchars($data['salary_per_day']) ?> BDT</p>
-        <p><strong><?= $current_text['desc'] ?>:</strong> <?= htmlspecialchars($data['description']) ?></p>
-        <p><strong><?= $current_text['experience'] ?>:</strong> <?= htmlspecialchars($data['job_experience']) ?></p>
-        <p><strong><?= $current_text['location'] ?>:</strong> <?= htmlspecialchars($data['location']) ?></p>
-        <p><strong><?= $current_text['district'] ?>:</strong> <?= htmlspecialchars($data['district'] ?? '') ?></p>
+        <p><strong><?= e($current_text['age']) ?>:</strong> <?= htmlspecialchars($data['age']) ?></p>
+        <p><strong><?= e($current_text['salary']) ?>:</strong> <?= htmlspecialchars($data['salary_per_day']) ?> BDT</p>
+        <p><strong><?= e($current_text['desc']) ?>:</strong> <?= htmlspecialchars($data['description']) ?></p>
+        <p><strong><?= e($current_text['experience']) ?>:</strong> <?= htmlspecialchars($data['job_experience']) ?></p>
+        <p><strong><?= e($current_text['location']) ?>:</strong> <?= htmlspecialchars($data['location']) ?></p>
+        <p><strong><?= e($current_text['district']) ?>:</strong> <?= htmlspecialchars($data['district'] ?? '') ?></p>
 
     </div>
     <?php endif; ?>
@@ -336,15 +339,15 @@ $data = $result->fetch_assoc();
         <?= $error ?>
         <form action="L_profile.php" method="POST" enctype="multipart/form-data">
             <div class="form-group">
-                <label><?= $current_text['name'] ?>:</label>
+                <label><?= e($current_text['name']) ?>:</label>
                 <input type="text" name="name" value="<?= htmlspecialchars($data['name'] ?? '') ?>" required>
             </div>
 
             <div class="form-group">
-                <label><?= $current_text['upload'] ?>:</label>
+                <label><?= e($current_text['upload']) ?>:</label>
                 <input type="file" name="photo">
                 <?php if (!empty($data['photo'])): ?>
-                    <p>Current: <img src="uploads/<?= $data['photo'] ?>" height="80"></p>
+                    <p>Current: <img src="uploads/<?= e($data['photo']) ?>" height="80"></p>
                 <?php endif; ?>
             </div>
             <div class="form-group">
@@ -370,31 +373,31 @@ $data = $result->fetch_assoc();
             </div>
 
             <div class="form-group">
-                <label><?= $current_text['age'] ?>:</label>
+                <label><?= e($current_text['age']) ?>:</label>
                 <input type="text" name="age" value="<?= htmlspecialchars($data['age'] ?? '') ?>" required>
             </div>
 
             <div class="form-group">
-                <label><?= $current_text['salary'] ?>:</label>
+                <label><?= e($current_text['salary']) ?>:</label>
                 <input type="text" name="salary_per_day" value="<?= htmlspecialchars($data['salary_per_day'] ?? '') ?>" required>
             </div>
 
             <div class="form-group">
-                <label><?= $current_text['desc'] ?>:</label>
+                <label><?= e($current_text['desc']) ?>:</label>
                 <textarea name="description"><?= htmlspecialchars($data['description'] ?? '') ?></textarea>
             </div>
 
             <div class="form-group">
-                <label><?= $current_text['experience'] ?>:</label>
+                <label><?= e($current_text['experience']) ?>:</label>
                 <textarea name="job_experience"><?= htmlspecialchars($data['job_experience'] ?? '') ?></textarea>
             </div>
 
             <div class="form-group">
-                <label><?= $current_text['location'] ?>:</label>
+                <label><?= e($current_text['location']) ?>:</label>
                 <input type="text" name="location" value="<?= htmlspecialchars($data['location'] ?? '') ?>" required>
             </div>
 
-            <input type="submit" value="<?= $current_text['save'] ?>">
+            <input type="submit" value="<?= e($current_text['save']) ?>">
         </form>
     </div>
 </div>

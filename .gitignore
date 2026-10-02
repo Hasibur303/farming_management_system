@@ -1,5 +1,9 @@
 # Local environment and secrets
 .env
+storage/logs/*.jsonl
+storage/quarantine/*
+storage/reports/*
+storage/logs/modsecurity-audit.log
 .env.*
 !.env.example
 

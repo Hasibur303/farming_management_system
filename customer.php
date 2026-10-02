@@ -1,5 +1,5 @@
 <?php
-session_start();
+require_once __DIR__ . '/security/bootstrap.php';
 include 'database.php';
 
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'Customer') {
@@ -416,7 +416,7 @@ $monthly_spend = $monthly_spend_result['total_spend'] ?? 0;
                         <h4><?= htmlspecialchars($product['product_name']); ?></h4>
                         <p><span data-key="by">প্রদানকারী:</span> <?= htmlspecialchars($product['farmer_name']); ?></p>
                         <p>মূল্য: ৳<?= htmlspecialchars($product['price']); ?></p>
-                        <a href="C_market.php?product_id=<?= $product['product_id'] ?>" class="btn-view" data-key="view_product">বিস্তারিত দেখুন</a>
+                        <a href="C_market.php?product_id=<?= e($product['product_id']) ?>" class="btn-view" data-key="view_product">বিস্তারিত দেখুন</a>
                     </div>
                 <?php endforeach; ?>
             <?php endif; ?>
@@ -436,7 +436,7 @@ $monthly_spend = $monthly_spend_result['total_spend'] ?? 0;
                             <strong><?= htmlspecialchars($review['product_name']); ?></strong>
                             <span data-key="by">প্রদানকারী:</span> <?= htmlspecialchars($review['farmer_name']); ?>
                         </p>
-                        <a href="C_review.php?product_id=<?= $review['product_id']; ?>" class="btn-view" data-key="write_review">পর্যালোচনা প্রদান করুন</a>
+                        <a href="C_review.php?product_id=<?= e($review['product_id']) ?>" class="btn-view" data-key="write_review">পর্যালোচনা প্রদান করুন</a>
                     </li>
                 <?php endforeach; ?>
             </ul>

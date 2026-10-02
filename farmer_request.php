@@ -1,6 +1,6 @@
 <?php
 // farmer_request.php — Agrologist handles farmer booking requests (no location column)
-session_start();
+require_once __DIR__ . '/security/bootstrap.php';
 require_once 'database.php';
 
 // 🔐 Auth check: only logged‑in agrologist
@@ -290,21 +290,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['reply'])) {
     <hr class="text-light mt-4">
 
     <h4>📋 Farmer Requests</h4>
-    <?php while ($row = mysqli_fetch_assoc($requests)): ?>
+    <?php while ($row = $requests->fetch_assoc()): ?>
         <div class="request-box">
-            <p><strong>Farmer Name:</strong> <?php echo $row['farmer_name']; ?></p>
-            <p><strong>Message:</strong> <?php echo nl2br($row['message']); ?></p>
-            <p><strong>Date:</strong> <?php echo $row['request_date']; ?></p>
-            <p><strong>Appointment Type:</strong> <?php echo $row['appointment_mode']; ?></p>
+            <p><strong>Farmer Name:</strong> <?= e($row['farmer_name']) ?></p>
+            <p><strong>Message:</strong> <?= nl2br(e($row['message'])) ?></p>
+            <p><strong>Date:</strong> <?= e($row['request_date']) ?></p>
+            <p><strong>Appointment Type:</strong> <?= e($row['appointment_mode']) ?></p>
 
-            <p><strong>Status:</strong> <?php echo $row['status']; ?></p>
+            <p><strong>Status:</strong> <?= e($row['status']) ?></p>
             <?php if ($row['status'] === 'pending'): ?>
-                <button class="btn btn-reply btn-sm" data-bs-toggle="modal" data-bs-target="#replyModal<?php echo $row['id']; ?>">Reply</button>
+                <button class="btn btn-reply btn-sm" data-bs-toggle="modal" data-bs-target="#replyModal<?= e($row['id']) ?>">Reply</button>
             <?php endif; ?>
         </div>
 
       <!-- Reply Modal -->
-      <div class="modal fade" id="replyModal<?php echo $row['id']; ?>" tabindex="-1">
+      <div class="modal fade" id="replyModal<?= e($row['id']) ?>" tabindex="-1">
           <div class="modal-dialog modal-dialog-centered">
               <div class="modal-content bg-dark text-light">
                   <div class="modal-header">
@@ -313,18 +313,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['reply'])) {
                   </div>
                   <form method="post">
                       <div class="modal-body">
-                          <input type="hidden" name="request_id" value="<?php echo $row['id']; ?>">
+                          <input type="hidden" name="request_id" value="<?= e($row['id']) ?>">
 
                           <div class="mb-3">
                               <label class="form-label">Decision:</label>
-                              <select name="decision" class="form-select" required onchange="handleDecisionChange(this, <?php echo $row['id']; ?>)">
+                              <select name="decision" class="form-select" required onchange="handleDecisionChange(this, <?= e($row['id']) ?>)">
                                   <option value="">-- Select --</option>
                                   <option value="accepted">Accept</option>
                                   <option value="declined">Decline</option>
                               </select>
                           </div>
 
-                          <div id="acceptFields<?php echo $row['id']; ?>" style="display: none;">
+                          <div id="acceptFields<?= e($row['id']) ?>" style="display: none;">
                               <div class="mb-3">
                                   <label class="form-label">Appointment Time:</label>
                                   <input type="datetime-local" name="appointment_time" class="form-control">

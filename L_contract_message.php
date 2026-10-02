@@ -1,5 +1,5 @@
 <?php
-session_start();
+require_once __DIR__ . '/security/bootstrap.php';
 include 'database.php';
 
 $user_id = $_SESSION['user_id'];
@@ -84,7 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <html lang="<?= $lang ?>">
 <head>
     <meta charset="UTF-8">
-    <title><?= $current_text['title'] ?></title>
+    <title><?= e($current_text['title']) ?></title>
     <style>
         body {
             margin: 0;
@@ -126,35 +126,35 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <body>
 <div class="sidebar">
     <h2>SmartKirshi</h2>
-    <a href="labour.php">🏠 <span><?= $current_text['dashboard'] ?></span></a>
-    <a href="L_profile.php">🧑‍🌾 <span><?= $current_text['profile'] ?></span></a>
-    <a href="L_job.php">📋 <span><?= $current_text['jobs'] ?></span></a>
-    <a href="L_contract_message.php">💬 <span><?= $current_text['messages'] ?></span></a>
-    <a href="notifications.php">🔔 <span><?= $current_text['notifications'] ?></span></a>
-    <a href="settings.php">⚙ <span><?= $current_text['settings'] ?></span></a>
-    <a class="logout-sidebar" href="logout.php">🚪 <span><?= $current_text['logout'] ?></span></a>
+    <a href="labour.php">🏠 <span><?= e($current_text['dashboard']) ?></span></a>
+    <a href="L_profile.php">🧑‍🌾 <span><?= e($current_text['profile']) ?></span></a>
+    <a href="L_job.php">📋 <span><?= e($current_text['jobs']) ?></span></a>
+    <a href="L_contract_message.php">💬 <span><?= e($current_text['messages']) ?></span></a>
+    <a href="notifications.php">🔔 <span><?= e($current_text['notifications']) ?></span></a>
+    <a href="settings.php">⚙ <span><?= e($current_text['settings']) ?></span></a>
+    <a class="logout-sidebar" href="logout.php">🚪 <span><?= e($current_text['logout']) ?></span></a>
 </div>
 <div class="main">
     <div class="top-bar">
-        <h2><?= $current_text['title'] ?></h2>
+        <h2><?= e($current_text['title']) ?></h2>
         <div>
             <a href="?lang=bn"><button class="logout-button language-btn">🇧🇩 Bn</button></a>
             <a href="?lang=en"><button class="logout-button language-btn">🇬🇧 En</button></a>
-            <a href="logout.php"><button class="logout-button">🚪 <?= $current_text['logout'] ?></button></a>
+            <a href="logout.php"><button class="logout-button">🚪 <?= e($current_text['logout']) ?></button></a>
         </div>
     </div>
 
     <?php while ($row = $result->fetch_assoc()): ?>
         <form method="post" action="L_contract_message.php">
-            <input type="hidden" name="contract_id" value="<?= $row['id'] ?>">
-            <div class="card" id="contract_<?= $row['id'] ?>">
+            <input type="hidden" name="contract_id" value="<?= e($row['id']) ?>">
+            <div class="card" id="contract_<?= e($row['id']) ?>">
                 <h3>কৃষকের নাম: <?= htmlspecialchars($row['name']) ?></h3>
                 <p><strong>জেলা:</strong> <?= htmlspecialchars($row['district']) ?></p>
                 <p><strong>শুরু তারিখ:</strong> <?= htmlspecialchars($row['start_date']) ?></p>
                 <p><strong>বিবরণ:</strong> <?= nl2br(htmlspecialchars($row['description'])) ?></p>
                 <p><strong>টাকা:</strong> ৳<?= number_format($row['amount'], 2) ?></p>
                 <p><strong>ঠিকানা:</strong> <?= htmlspecialchars($row['address']) ?></p>
-                <p><strong>অবস্থা:</strong> <?= $row['status'] ?></p>
+                <p><strong>অবস্থা:</strong> <?= e($row['status']) ?></p>
                 <?php if (!empty($row['photo'])): ?>
                     <p><strong>ছবি:</strong><br><img src="uploads/<?= htmlspecialchars($row['photo']) ?>" alt="Contract Image"></p>
                 <?php endif; ?>
@@ -162,7 +162,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <button type="submit" name="accept" class="btn btn-success">গ্রহণ করুন</button>
                     <button type="submit" name="reject" class="btn btn-danger">প্রত্যাখ্যান করুন</button>
                 <?php endif; ?>
-                <button type="button" class="btn btn-primary" onclick="printContract('contract_<?= $row['id'] ?>')">প্রিন্ট করুন</button>
+                <button type="button" class="btn btn-primary" onclick="printContract('contract_<?= e($row['id']) ?>')">প্রিন্ট করুন</button>
             </div>
         </form>
     <?php endwhile; ?>

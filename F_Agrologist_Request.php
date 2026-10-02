@@ -1,5 +1,5 @@
 <?php
-session_start();
+require_once __DIR__ . '/security/bootstrap.php';
 include 'database.php';
 
 if (!isset($_SESSION['user_id'])) {
@@ -11,17 +11,18 @@ $user_id = $_SESSION['user_id']; // assuming this is farmer id
 
 // Handle request form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['request_text'])) {
-    $farmer_name = $_SESSION['username']; // assuming username stored in session
-    $request_text = mysqli_real_escape_string($conn, $_POST['request_text']);
-    $query = "INSERT INTO farmer_requests (farmer_name, request_text)
-              VALUES ('$farmer_name', '$request_text')";
-    mysqli_query($conn, $query);
+    $farmer_name = (string) $_SESSION['username'];
+    $request_text = trim((string) $_POST['request_text']);
+    $statement = $pdo->prepare('INSERT INTO farmer_requests (farmer_name, request_text) VALUES (?, ?)');
+    $statement->execute([$farmer_name, $request_text]);
     header("Location: farmer.php");
     exit();
 }
 
 // Fetch previous requests
-$result = mysqli_query($conn, "SELECT * FROM farmer_requests WHERE farmer_name = '{$_SESSION['username']}' ORDER BY request_date DESC");
+$statement = $pdo->prepare('SELECT * FROM farmer_requests WHERE farmer_name = ? ORDER BY request_date DESC');
+$statement->execute([(string) $_SESSION['username']]);
+$result = new DatabaseResult($statement->fetchAll());
 
 ?>
 
@@ -604,12 +605,12 @@ header h1 {
                 </tr>
             </thead>
             <tbody>
-                <?php while ($row = mysqli_fetch_assoc($result)) { ?>
+                <?php while ($row = $result->fetch_assoc()) { ?>
                     <tr>
                         <td><?= date("d M Y, h:i A", strtotime($row['request_date'])) ?></td>
                         <td><?= htmlspecialchars($row['request_text']) ?></td>
                         <td><span class="badge bg-<?= $row['status'] === 'Pending' ? 'warning' : 'success' ?>">
-                            <?= $row['status'] ?></span></td>
+                            <?= e($row['status']) ?></span></td>
                         <td><?= $row['agrologist_response'] ? htmlspecialchars($row['agrologist_response']) : '⏳ অপেক্ষায়' ?></td>
                     </tr>
                 <?php } ?>

@@ -1,5 +1,5 @@
 <?php
-session_start();
+require_once __DIR__ . '/security/bootstrap.php';
 include 'database.php';
 
 // Check login
@@ -8,28 +8,36 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 // Sample agrologist ID
-$agrologist_id = $_SESSION['user_id'];
+$agrologist_id = (int) $_SESSION['user_id'];
 
 // Fetch farmer requests
-$requests = mysqli_query($conn, "
+$requestsStatement = $pdo->prepare("
     SELECT b.*, u.name AS farmer_name
     FROM bookings b
     JOIN users u ON b.farmer_id = u.user_id
-    WHERE b.agrologist_id = $agrologist_id
+    WHERE b.agrologist_id = ?
     ORDER BY b.request_date DESC
 ");
+$requestsStatement->execute([$agrologist_id]);
+$requestRows = $requestsStatement->fetchAll();
+$requests = new DatabaseResult($requestRows);
 
 // Count metrics
-$total = mysqli_num_rows($requests);
-$responded = mysqli_num_rows(mysqli_query($conn, "SELECT * FROM bookings WHERE agrologist_id=$agrologist_id AND status='Responded'"));
-$pending = mysqli_num_rows(mysqli_query($conn, "SELECT * FROM bookings WHERE agrologist_id=$agrologist_id AND status='Pending'"));
+$total = count($requestRows);
+$metricStatement = $pdo->prepare('SELECT status, COUNT(*) AS total FROM bookings WHERE agrologist_id = ? GROUP BY status');
+$metricStatement->execute([$agrologist_id]);
+$metrics = array_column($metricStatement->fetchAll(), 'total', 'status');
+$responded = (int) ($metrics['Responded'] ?? 0);
+$pending = (int) ($metrics['Pending'] ?? $metrics['pending'] ?? 0);
 
-$posts = mysqli_query($conn, "
+$postsStatement = $pdo->prepare("
     SELECT p.*, u.name AS farmer_name
     FROM help_posts p
     JOIN users u ON p.farmer_id = u.user_id
     ORDER BY p.created_at DESC
 ");
+$postsStatement->execute();
+$posts = new DatabaseResult($postsStatement->fetchAll());
 
 
 
@@ -283,23 +291,24 @@ $posts = mysqli_query($conn, "
        <?php
 
        // Assuming $posts is a result of a query fetching all posts from all farmers
-       while ($post = mysqli_fetch_assoc($posts)):
+       while ($post = $posts->fetch_assoc()):
            $post_id = $post['post_id'];
            $collapse_id = 'collapse-comments-' . $post_id;
 
            // Fetch comments for this post
-          $comments_query = mysqli_query($conn, "
+          $commentsStatement = $pdo->prepare("
               SELECT c.*, u.name AS agrologist_name, a.photo
               FROM help_comments c
               JOIN users u ON c.user_id = u.user_id
               LEFT JOIN agrologists a ON c.user_id = a.user_id
 
-               WHERE c.post_id = $post_id
+               WHERE c.post_id = ?
                ORDER BY c.comment_date DESC
            ");
+           $commentsStatement->execute([$post_id]);
 
            $comments_array = [];
-           while ($row = mysqli_fetch_assoc($comments_query)) {
+           while ($row = $commentsStatement->fetch()) {
                $comments_array[] = $row;
            }
            $comment_count = count($comments_array);
@@ -316,7 +325,7 @@ $posts = mysqli_query($conn, "
 
                <small class="text-muted">
                    Posted by: <?php echo htmlspecialchars($post['farmer_name']); ?>
-                   on <?php echo $post['created_at']; ?>
+                   on <?= e($post['created_at']) ?>
                </small>
 
 

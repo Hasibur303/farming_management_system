@@ -1,6 +1,7 @@
 <?php
-session_start();
+require_once __DIR__ . '/security/bootstrap.php';
 include('database.php');
+require_once __DIR__ . '/security/upload.php';
 
 // Dummy farmer session values (replace with actual session later)
 $farmer_id = $_SESSION['user_id'];
@@ -28,8 +29,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $message = "❗ জেলা নির্বাচন করা আবশ্যক।";
     } else {
         if (!empty($_FILES['photo']['name'])) {
-            $photo = 'uploads/' . basename($_FILES['photo']['name']);
-            move_uploaded_file($_FILES['photo']['tmp_name'], $photo);
+            $stored = secure_image_upload($_FILES['photo'], __DIR__ . '/uploads');
+            $photo = 'uploads/' . $stored['filename'];
         }
 
         $stmt = $conn->prepare("INSERT INTO labour_jobpost (farmer_id, farmer_name, photo, caption, district) VALUES (?, ?, ?, ?, ?)");
@@ -264,7 +265,7 @@ $pending_count = $notif_result['pending_count'];
 
     <?php while ($row = $posts->fetch_assoc()): ?>
         <div class="post">
-            <p><strong><?= htmlspecialchars($row['farmer_name']) ?></strong> 🕒 <?= $row['post_date'] ?> | District: <?= htmlspecialchars($row['district']) ?></p>
+            <p><strong><?= htmlspecialchars($row['farmer_name']) ?></strong> 🕒 <?= e($row['post_date']) ?> | District: <?= htmlspecialchars($row['district']) ?></p>
             <?php if (!empty($row['photo'])): ?>
                 <img src="<?= htmlspecialchars($row['photo']) ?>" alt="Post Image">
             <?php endif; ?>

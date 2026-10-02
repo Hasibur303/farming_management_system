@@ -1,5 +1,5 @@
 <?php
-session_start();
+require_once __DIR__ . '/security/bootstrap.php';
 include 'database.php';
 
 
@@ -91,10 +91,11 @@ $supplies = $conn->query("SELECT * FROM supplies ORDER BY supply_id DESC");
 $cart_items = [];
 
 if (!empty($_SESSION['cart'])) {
-    $ids = implode(',', array_keys($_SESSION['cart']));
-    $cart_sql = "SELECT * FROM supplies WHERE supply_id IN ($ids)";
-    $cart_items_result = $conn->query($cart_sql);
-    while ($item = $cart_items_result->fetch_assoc()) {
+    $ids = array_values(array_filter(array_map('intval', array_keys($_SESSION['cart'])), static fn (int $id): bool => $id > 0));
+    $placeholders = implode(',', array_fill(0, count($ids), '?'));
+    $cartStatement = $pdo->prepare("SELECT * FROM supplies WHERE supply_id IN ($placeholders)");
+    $cartStatement->execute($ids);
+    while ($item = $cartStatement->fetch()) {
         $item['quantity'] = $_SESSION['cart'][$item['supply_id']];
         $cart_items[] = $item;
     }
@@ -105,7 +106,7 @@ if (!empty($_SESSION['cart'])) {
 <html lang="<?= $lang ?>">
 <head>
     <meta charset="UTF-8">
-    <title><?= $current_text['title'] ?></title>
+    <title><?= e($current_text['title']) ?></title>
     <style>
            body {
                margin: 0;
@@ -358,27 +359,27 @@ body {
 
 <div class="sidebar">
     <h2>SmartKirshi</h2>
-    <a href="labour.php">🏠 <span><?= $current_text['dashboard'] ?></span></a>
-    <a href="L_profile.php">🧑‍🌾 <span><?= $current_text['profile'] ?></span></a>
-    <a href="L_job.php">📋 <span><?= $current_text['jobs'] ?></span></a>
-    <a href="L_supplier_product.php">📋 <span><?= $current_text['buyfromsupplier'] ?></span></a>
-    <a href="L_contract_message.php">💬 <span><?= $current_text['messages'] ?></span></a>
-    <a href="notifications.php">🔔 <span><?= $current_text['notifications'] ?></span></a>
-    <a href="settings.php">⚙ <span><?= $current_text['settings'] ?></span></a>
-    <a class="logout-sidebar" href="logout.php">🚪 <span><?= $current_text['logout'] ?></span></a>
+    <a href="labour.php">🏠 <span><?= e($current_text['dashboard']) ?></span></a>
+    <a href="L_profile.php">🧑‍🌾 <span><?= e($current_text['profile']) ?></span></a>
+    <a href="L_job.php">📋 <span><?= e($current_text['jobs']) ?></span></a>
+    <a href="L_supplier_product.php">📋 <span><?= e($current_text['buyfromsupplier']) ?></span></a>
+    <a href="L_contract_message.php">💬 <span><?= e($current_text['messages']) ?></span></a>
+    <a href="notifications.php">🔔 <span><?= e($current_text['notifications']) ?></span></a>
+    <a href="settings.php">⚙ <span><?= e($current_text['settings']) ?></span></a>
+    <a class="logout-sidebar" href="logout.php">🚪 <span><?= e($current_text['logout']) ?></span></a>
 </div>
 
 <div class="main">
     <div class="top-bar">
-        <h2><?= $current_text['title'] ?></h2>
+        <h2><?= e($current_text['title']) ?></h2>
         <div>
             <a href="?lang=bn"><button class="logout-button language-btn">🇧🇩 Bn</button></a>
             <a href="?lang=en"><button class="logout-button language-btn">🇬🇧 En</button></a>
-            <a href="logout.php"><button class="logout-button">🚪 <?= $current_text['logout'] ?></button></a>
+            <a href="logout.php"><button class="logout-button">🚪 <?= e($current_text['logout']) ?></button></a>
 
         </div>
         <div class="cart-icon" onclick="toggleCart()">
-                                    🛒 <?= $current_text['cart'] ?> (<?= count($_SESSION['cart']) ?>)
+                                    🛒 <?= e($current_text['cart']) ?> (<?= count($_SESSION['cart']) ?>)
                                 </div>
 
     </div>
@@ -388,13 +389,13 @@ body {
         <div class="product-grid">
             <?php while ($row = $supplies->fetch_assoc()) { ?>
                 <div class="product-card">
-                    <img src="<?= $row['image'] ?>" alt="<?= htmlspecialchars($row['supply_name']) ?>">
+                    <img src="<?= e($row['image']) ?>" alt="<?= htmlspecialchars($row['supply_name']) ?>">
                     <h4><?= htmlspecialchars($row['supply_name']) ?></h4>
-                    <p>৳ <?= $row['price'] ?> / <?= $row['quantity_type'] ?></p>
-                    <p>Available: <?= $row['quantity'] ?></p>
+                    <p>৳ <?= e($row['price']) ?> / <?= e($row['quantity_type']) ?></p>
+                    <p>Available: <?= e($row['quantity']) ?></p>
                     <form method="post">
-                        <input type="hidden" name="supply_id" value="<?= $row['supply_id'] ?>">
-                        <button type="submit" name="add_to_cart"><?= $current_text['addtocart'] ?></button>
+                        <input type="hidden" name="supply_id" value="<?= e($row['supply_id']) ?>">
+                        <button type="submit" name="add_to_cart"><?= e($current_text['addtocart']) ?></button>
                     </form>
                 </div>
             <?php } ?>
@@ -403,15 +404,15 @@ body {
 
   <!-- Cart Modal -->
   <div class="cart-modal" id="cartModal">
-      <h3><?= $current_text['cart'] ?></h3>
+      <h3><?= e($current_text['cart']) ?></h3>
 
       <?php if (!empty($cart_items)) { ?>
           <?php foreach ($cart_items as $item) { ?>
               <div class="cart-item">
-                  <span><?= $item['supply_name'] ?> × <?= $item['quantity'] ?></span>
+                  <span><?= e($item['supply_name']) ?> × <?= e($item['quantity']) ?></span>
                   <form method="post" style="display:inline;">
-                      <input type="hidden" name="remove" value="<?= $item['supply_id'] ?>">
-                      <button class="remove-btn"><?= $current_text['remove'] ?></button>
+                      <input type="hidden" name="remove" value="<?= e($item['supply_id']) ?>">
+                      <button class="remove-btn"><?= e($current_text['remove']) ?></button>
                   </form>
               </div>
           <?php } ?>
@@ -419,7 +420,7 @@ body {
           <!-- Full Form for Payment -->
           <form id="paymentForm" method="post">
               <div class="payment-options">
-                  <h4><?= $current_text['pay'] ?>:</h4>
+                  <h4><?= e($current_text['pay']) ?>:</h4>
                   <div class="payment-icons">
                       <label>
                           <input type="radio" name="payment_method" value="bkash" required hidden>
@@ -440,7 +441,7 @@ body {
                   </div>
               </div>
 
-              <button type="submit" class="confirm-btn"><?= $current_text['confirm'] ?></button>
+              <button type="submit" class="confirm-btn"><?= e($current_text['confirm']) ?></button>
           </form>
 
           <script>

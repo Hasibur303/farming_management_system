@@ -1,6 +1,7 @@
 <?php
-session_start();
+require_once __DIR__ . '/security/bootstrap.php';
 include 'database.php';
+require_once __DIR__ . '/security/upload.php';
 
 // Check login
 if (!isset($_SESSION['user_id'])) {
@@ -17,10 +18,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $image = '';
 
     if ($_FILES['image']['name']) {
-        $target_dir = "uploads/articles/";
-        if (!is_dir($target_dir)) mkdir($target_dir, 0777, true);
-        $image = $target_dir . time() . '_' . basename($_FILES["image"]["name"]);
-        move_uploaded_file($_FILES["image"]["tmp_name"], $image);
+        $stored = secure_image_upload($_FILES['image'], __DIR__ . '/uploads/articles');
+        $image = 'uploads/articles/' . $stored['filename'];
     }
 
     $stmt = $conn->prepare("INSERT INTO agro_articles (agrologist_id, title, content, image) VALUES (?, ?, ?, ?)");
@@ -29,12 +28,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 
 // Fetch own articles
-$own_articles = $conn->query("SELECT * FROM agro_articles WHERE agrologist_id = $agrologist_id ORDER BY created_at DESC");
+$ownStatement = $pdo->prepare('SELECT * FROM agro_articles WHERE agrologist_id = ? ORDER BY created_at DESC');
+$ownStatement->execute([$agrologist_id]);
+$own_articles = new DatabaseResult($ownStatement->fetchAll());
 
 // Fetch others' articles
-$others_articles = $conn->query("SELECT a.*, ag.full_name FROM agro_articles a
-JOIN agrologists ag ON a.agrologist_id = ag.user_id
-WHERE a.agrologist_id != $agrologist_id ORDER BY a.created_at DESC");
+$othersStatement = $pdo->prepare('SELECT a.*, ag.full_name FROM agro_articles a
+                                  JOIN agrologists ag ON a.agrologist_id = ag.user_id
+                                  WHERE a.agrologist_id != ? ORDER BY a.created_at DESC');
+$othersStatement->execute([$agrologist_id]);
+$others_articles = new DatabaseResult($othersStatement->fetchAll());
 
 ?>
 
@@ -290,7 +293,7 @@ WHERE a.agrologist_id != $agrologist_id ORDER BY a.created_at DESC");
                 <small class="text-muted">তারিখ: <?= date('d M Y', strtotime($row['created_at'])) ?></small>
                 <p><?= nl2br(htmlspecialchars($row['content'])) ?></p>
                 <?php if ($row['image']): ?>
-                    <img src="<?= $row['image'] ?>" class="img-fluid">
+                    <img src="<?= e($row['image']) ?>" class="img-fluid">
                 <?php endif; ?>
             </div>
         <?php endwhile; ?>
@@ -303,7 +306,7 @@ WHERE a.agrologist_id != $agrologist_id ORDER BY a.created_at DESC");
                 <small class="text-muted">লেখক: <?= htmlspecialchars($row['full_name']) ?> | তারিখ: <?= date('d M Y', strtotime($row['created_at'])) ?></small>
                 <p><?= nl2br(htmlspecialchars($row['content'])) ?></p>
                 <?php if ($row['image']): ?>
-                    <img src="<?= $row['image'] ?>" class="img-fluid">
+                    <img src="<?= e($row['image']) ?>" class="img-fluid">
                 <?php endif; ?>
             </div>
         <?php endwhile; ?>

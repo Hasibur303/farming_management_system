@@ -1,5 +1,5 @@
 <?php
-session_start();
+require_once __DIR__ . '/security/bootstrap.php';
 include 'database.php';
 
 if (!isset($_SESSION['user_id'])) {
@@ -211,7 +211,7 @@ $(function () {
         $.ajax({
             url: 'chatbot_api.php',  // 🔁 Path Fixed Here (very important!)
             type: 'POST',
-            data: { message: text },
+            data: { message: text, _csrf_token: '<?= e(csrf_token()) ?>' },
             dataType: 'json',
             success: function(response) {
                 hideTyping(typingIndicator);

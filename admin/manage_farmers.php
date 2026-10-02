@@ -1,5 +1,5 @@
 <?php
-session_start();
+require_once dirname(__DIR__) . '/security/bootstrap.php';
 include '../database.php'; // Include database connection
 
 // Fetch all farmers
@@ -103,7 +103,7 @@ $result = $stmt->get_result();
                     <td><?= htmlspecialchars($row['email']); ?></td>
                     <td><?= htmlspecialchars($row['phone_number']); ?></td>
                     <td>
-                        <a href="delete_farmer.php?farmer_id=<?= $row['farmer_id']; ?>" class="delete-btn" onclick="return confirm('Are you sure you want to delete this farmer?')">Delete</a>
+                        <a href="delete_farmer.php?farmer_id=<?= e($row['farmer_id']) ?>" class="delete-btn" onclick="return confirm('Are you sure you want to delete this farmer?')">Delete</a>
                     </td>
                 </tr>
             <?php endwhile; ?>
