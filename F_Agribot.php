@@ -87,6 +87,7 @@ if (isset($_GET['latest'])) {
     </style>
 </head>
 <body>
+<?php require_once __DIR__ . '/includes/farmer_sidebar.php'; ?>
 <!-- ---------- Header ---------- -->
 <header>
     <h1>Agribot সেন্সর ড্যাশবোর্ড</h1>

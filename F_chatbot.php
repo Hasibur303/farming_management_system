@@ -114,6 +114,7 @@ if (!isset($_SESSION['user_id'])) {
     </style>
 </head>
 <body>
+<?php require_once __DIR__ . '/includes/farmer_sidebar.php'; ?>
 
 <!-- ---------- Header ---------- -->
 <header>

@@ -475,6 +475,7 @@ while ($row = $notificationsStatement->fetch()) {
     <a href="L_apply_job_list.php">📋 <span><?= e($current_text['appliedjobs']) ?></span></a>
     <a href="notifications.php">🔔 <span><?= e($current_text['notifications']) ?></span></a>
     <a href="settings.php">⚙️ <span><?= e($current_text['settings']) ?></span></a>
+    <a href="security_settings.php">🛡️ <span>Account Security</span></a>
     <a class="logout-sidebar" href="logout.php">🚪 <span><?= e($current_text['logout']) ?></span></a>
 </div>
 

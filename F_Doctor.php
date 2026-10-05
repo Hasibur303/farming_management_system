@@ -15,6 +15,8 @@ $errorMsg  = null;
 
 // ---------- 1) File upload & API Call ----------
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['crop_image'])) {
+    require_once __DIR__ . '/security/activity.php';
+    activity_ai_guard('crop');
     try {
         $stored = secure_image_upload($_FILES['crop_image'], __DIR__ . '/uploads');
         $newNameAbs = $stored['path'];
@@ -141,6 +143,7 @@ function identifyCrop(string $path): array
     </style>
 </head>
 <body>
+<?php require_once __DIR__ . '/includes/farmer_sidebar.php'; ?>
 <!-- ---------- Header ---------- -->
 <header>
     <h1>স্মার্ট ফসল ডাক্তার</h1>

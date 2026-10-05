@@ -186,6 +186,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_product'])) {
 
 </head>
 <body>
+<?php require_once __DIR__ . '/includes/farmer_sidebar.php'; ?>
 
 <div class="sidebar">
         <h2>ন্যাভিগেশন</h2>

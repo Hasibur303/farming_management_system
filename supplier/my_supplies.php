@@ -80,6 +80,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['edit_supply'])) {
     $price = $_POST['price'];
     $existing_image = $_POST['existing_image'];
 
+    $before = $pdo->prepare('SELECT price FROM supplies WHERE supply_id = ? AND supplier_id = ?');
+    $before->execute([(int) $supply_id, (int) $_SESSION['user_id']]);
+    $previousSupply = $before->fetch();
+    if (!$previousSupply) {
+        security_log('authorization.ownership_denied', ['resource' => 'supply', 'resource_id' => (int) $supply_id]);
+        http_response_code(403);
+        exit('You do not own this supply.');
+    }
+
     $image_path = $existing_image;
 
     // Handle image upload
@@ -100,6 +109,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['edit_supply'])) {
 
         if ($stmt->execute()) {
             $success_message = "Supply updated successfully!";
+            if ((float) $previousSupply['price'] !== (float) $price) {
+                security_log('market.price_changed', ['resource_id' => (int) $supply_id, 'old_price' => (float) $previousSupply['price'], 'new_price' => (float) $price], 'info');
+            }
         } else {
             $error = "Failed to update supply.";
         }

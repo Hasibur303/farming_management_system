@@ -18,6 +18,7 @@ $stmt->close();
 
 
 $message = '';
+$message_type = 'success';
 
 // Handle new job post submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -27,19 +28,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (empty($district)) {
         $message = "❗ জেলা নির্বাচন করা আবশ্যক।";
+        $message_type = 'error';
     } else {
-        if (!empty($_FILES['photo']['name'])) {
-            $stored = secure_image_upload($_FILES['photo'], __DIR__ . '/uploads');
-            $photo = 'uploads/' . $stored['filename'];
+        try {
+            if (!empty($_FILES['photo']['name'])) {
+                $stored = secure_image_upload($_FILES['photo'], __DIR__ . '/uploads');
+                $photo = 'uploads/' . $stored['filename'];
+            }
+        } catch (RuntimeException $exception) {
+            http_response_code(422);
+            $message_type = 'error';
+            $uploadMessages = [
+                'Only genuine JPG, PNG, GIF, or WebP images are allowed.' => '❌ নির্বাচিত ফাইলটি আসল JPG, PNG, GIF বা WebP ছবি নয়। অনুগ্রহ করে একটি বৈধ ছবি নির্বাচন করুন।',
+                'The uploaded file is not a valid image.' => '❌ ফাইলটির নাম ছবির মতো হলেও এর ভেতরের ডেটা বৈধ ছবি নয়।',
+                'The image must be smaller than 5 MB.' => '❌ ছবির আকার ৫ MB-এর কম হতে হবে।',
+                'The uploaded file contains malware.' => '❌ নিরাপত্তার কারণে ফাইলটি বাতিল করা হয়েছে: malware শনাক্ত হয়েছে।',
+                'The uploaded file could not be scanned safely.' => '❌ ফাইলটির নিরাপত্তা যাচাই সম্পন্ন করা যায়নি। পরে আবার চেষ্টা করুন।',
+                'The file upload did not complete successfully.' => '❌ ফাইল upload সম্পন্ন হয়নি। অনুগ্রহ করে আবার চেষ্টা করুন।',
+                'Invalid uploaded file.' => '❌ Upload করা ফাইলটি বৈধ নয়।',
+            ];
+            $message = $uploadMessages[$exception->getMessage()]
+                ?? '❌ ছবিটি নিরাপদভাবে upload করা যায়নি। অন্য একটি বৈধ ছবি দিয়ে চেষ্টা করুন।';
         }
 
-        $stmt = $conn->prepare("INSERT INTO labour_jobpost (farmer_id, farmer_name, photo, caption, district) VALUES (?, ?, ?, ?, ?)");
-        $stmt->bind_param("issss", $farmer_id, $farmer_name, $photo, $caption, $district);
+        if ($message_type !== 'error') {
+            $stmt = $conn->prepare("INSERT INTO labour_jobpost (farmer_id, farmer_name, photo, caption, district) VALUES (?, ?, ?, ?, ?)");
+            $stmt->bind_param("issss", $farmer_id, $farmer_name, $photo, $caption, $district);
 
-        if ($stmt->execute()) {
-            $message = "✅ পোস্ট সফলভাবে প্রকাশিত হয়েছে!";
-        } else {
-            $message = "❌ সমস্যা হয়েছে: " . $stmt->error;
+            if ($stmt->execute()) {
+                $message = "✅ পোস্ট সফলভাবে প্রকাশিত হয়েছে!";
+            } else {
+                $message_type = 'error';
+                $message = "❌ পোস্ট প্রকাশ করা যায়নি। অনুগ্রহ করে আবার চেষ্টা করুন।";
+            }
         }
     }
 }
@@ -166,6 +187,15 @@ $pending_count = $notif_result['pending_count'];
             font-weight: bold;
             color: green;
             margin-bottom: 10px;
+            padding: 12px 14px;
+            border-radius: 8px;
+            background: #e8f5e9;
+        }
+
+        .message.error {
+            color: #9f1d1d;
+            background: #ffebee;
+            border: 1px solid #ef9a9a;
         }
 
         .notification {
@@ -184,6 +214,7 @@ $pending_count = $notif_result['pending_count'];
     </style>
 </head>
 <body>
+<?php require_once __DIR__ . '/includes/farmer_sidebar.php'; ?>
 <div class="sidebar">
         <h2>ন্যাভিগেশন</h2>
         <a href="farmer.php">
@@ -240,7 +271,9 @@ $pending_count = $notif_result['pending_count'];
     <?php endif; ?>
 
     <div class="post-form">
-        <?php if ($message) echo "<div class='message'>$message</div>"; ?>
+        <?php if ($message !== ''): ?>
+            <div class="message <?= $message_type === 'error' ? 'error' : '' ?>" role="alert"><?= e($message) ?></div>
+        <?php endif; ?>
         <form method="POST" enctype="multipart/form-data">
             <label for="caption">ক্যাপশন (বর্ণনা)*:</label>
             <textarea name="caption" id="caption" required rows="3"></textarea>

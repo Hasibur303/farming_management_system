@@ -110,6 +110,7 @@ header h1 {
 
 </head>
 <body>
+<?php require_once __DIR__ . '/includes/farmer_sidebar.php'; ?>
 
 
 <div class="sidebar">

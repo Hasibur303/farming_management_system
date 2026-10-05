@@ -18,6 +18,25 @@
   storage. Executable extensions are denied by `uploads/.htaccess`.
 - Security events are JSON Lines in `storage/logs/security.jsonl`, suitable for
   Wazuh JSON ingestion. Secrets and raw login identifiers are not logged.
+- TOTP multi-factor authentication is mandatory for Administrators and optional
+  for other roles. Secrets are encrypted with AES-256-GCM, verification is rate
+  limited, and eight hashed one-use recovery codes are created during enrollment.
+  QR codes are generated locally in the browser by the vendored MIT-licensed
+  QRCode.js library, so the authenticator secret is not sent to an external API.
+
+## Authenticator MFA
+
+Generate a unique 32-byte key for each deployment and store its base64 value only
+in `.env` as `MFA_ENCRYPTION_KEY`. Losing or changing this key makes existing MFA
+enrollments unreadable. Never commit it. Administrator accounts are directed to
+enrollment after password verification and cannot disable MFA in the application.
+Other users can manage MFA from `security_settings.php`.
+
+The second-factor pending session remains valid long enough to complete a configured
+rate-limit lockout (15 minutes with the default 10-minute window). TOTP accepts only
+the current 30-second interval plus one interval on either side for clock drift.
+Security events include `authentication.mfa_enabled`, `mfa_succeeded`,
+`mfa_failed`, `mfa_rate_limited`, `mfa_recovery_used`, and `mfa_disabled`.
 
 ## ClamAV on Windows
 
@@ -66,8 +85,9 @@ automation plan checks the public attack surface. Configure
 separate authenticated ZAP contexts for each test account to verify horizontal
 and vertical authorization boundaries. Never store passwords in this repository.
 
-The 2026-10-03 unauthenticated scan completed successfully across 84 discovered
-URLs. It reported 0 High, 7 Medium, 5 Low, and 6 Informational alert categories.
+The latest 2026-10-03 unauthenticated scan completed successfully across 84
+discovered URLs after the server remediations and MFA implementation. It reported
+0 High, 4 Medium, 3 Low, and 6 Informational alert categories.
 No confirmed SQL injection or XSS alert was reported. The root `.htaccess` added
 after that scan disables directory indexes, blocks `.git`, `.env`, `security`,
 and `storage` web access, applies security headers to static files, and removes

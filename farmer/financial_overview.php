@@ -149,6 +149,12 @@ $financial_result = $financial_query->get_result();
                     margin-bottom: 30px;
                     font-weight: 600;
                     transition: opacity 0.3s ease;
+                    opacity: 0;
+                }
+
+                .sidebar:hover h2,
+                .sidebar:focus-within h2 {
+                    opacity: 1;
                 }
 
                 /* Links inside sidebar */
@@ -225,8 +231,9 @@ $financial_result = $financial_query->get_result();
 
         /* Main Content Area */
         .main-content {
-            margin-left: 250px;
+            margin-left: 80px;
             padding: 20px;
+            transition: margin-left 0.3s ease;
         }
 
         /* Card Styles */
@@ -381,6 +388,7 @@ $financial_result = $financial_query->get_result();
 
 
 <body>
+<?php require_once dirname(__DIR__) . '/includes/farmer_sidebar.php'; ?>
     <!-- Sidebar -->
     <div class="sidebar">
         <ul class="sidebar-menu">

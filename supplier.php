@@ -244,6 +244,7 @@ try {
       <li><a href="supplier/supplier_orders.php" class="<?= $current==='supplier_orders.php'    ? 'active':'' ?>">অর্ডার ম্যানেজমেন্ট</a></li>
       <li><a href="supplier/add_new_supply.php"  class="<?= $current==='add_new_supply.php'     ? 'active':'' ?>">নতুন সরবরাহ যোগ করুন</a></li>
       <li><a href="supplier/my_supplies.php"     class="<?= $current==='my_supplies.php'        ? 'active':'' ?>">আমার সরবরাহ</a></li>
+      <li><a href="security_settings.php"><i class="fa-solid fa-shield-halved"></i> অ্যাকাউন্ট নিরাপত্তা</a></li>
       <li><a href="logout.php" class="logout-btn"><i class="fa-solid fa-right-from-bracket"></i> লগআউট</a></li>
     </ul>
   </aside>

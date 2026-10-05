@@ -70,6 +70,12 @@ function security_client_ip(): string
 
 function security_log(string $event, array $context = [], string $level = 'warning'): void
 {
+    require_once __DIR__ . '/activity.php';
+    try {
+        activity_record($event, $context);
+    } catch (Throwable $exception) {
+        error_log('SmartKrishi activity monitoring could not persist an event.');
+    }
     $logDir = dirname(__DIR__) . '/storage/logs';
     if (!is_dir($logDir)) {
         @mkdir($logDir, 0750, true);
@@ -90,7 +96,11 @@ function security_log(string $event, array $context = [], string $level = 'warni
 
     $json = json_encode($record, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
     if ($json !== false) {
-        @file_put_contents($logDir . '/security.jsonl', $json . PHP_EOL, FILE_APPEND | LOCK_EX);
+        // Wazuh's Windows logcollector keeps this file open for tailing. An
+        // exclusive advisory lock can therefore make every application write
+        // fail while monitoring is active. Append each JSON event as one line;
+        // PHP closes the handle immediately after the write.
+        @file_put_contents($logDir . '/security.jsonl', $json . PHP_EOL, FILE_APPEND);
         error_log('[SmartKrishi Security] ' . $json);
     }
 }
@@ -239,4 +249,3 @@ csrf_validate_request();
 if (PHP_SAPI !== 'cli') {
     ob_start('security_inject_csrf_fields');
 }
-

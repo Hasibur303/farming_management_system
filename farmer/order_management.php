@@ -21,6 +21,7 @@ $farmer_id = $_SESSION['user_id'];
     <title>Order Management</title>
     <!-- Bootstrap CSS for styling -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
         .order-card {
             border: 2px solid #007bff;
@@ -48,28 +49,49 @@ $farmer_id = $_SESSION['user_id'];
         }
 
         .sidebar {
-            width: 250px;
+            width: 60px;
             background-color: #1f2937;
             color: white;
             height: 100vh;
-            padding: 20px;
+            padding: 15px 5px;
             position: fixed;
+            top: 0;
+            left: 0;
+            overflow-x: hidden;
+            overflow-y: auto;
+            transition: width 0.3s ease;
+            z-index: 999;
+        }
+
+        .sidebar:hover,
+        .sidebar:focus-within {
+            width: 250px;
         }
 
         .sidebar h2 {
-            font-size: 1.5rem;
+            font-size: 1.2rem;
             margin-bottom: 30px;
             font-weight: 600;
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .sidebar:hover h2,
+        .sidebar:focus-within h2 {
+            opacity: 1;
         }
 
         .sidebar a {
             color: #b0bec5;
             text-decoration: none;
-            padding: 10px 15px;
-            display: block;
+            padding: 12px 10px;
+            display: flex;
+            align-items: center;
             border-radius: 5px;
             margin-bottom: 10px;
             font-weight: 500;
+            white-space: nowrap;
         }
 
         .sidebar a:hover {
@@ -77,9 +99,34 @@ $farmer_id = $_SESSION['user_id'];
             color: white;
         }
 
+        .sidebar .icon {
+            width: 30px;
+            min-width: 30px;
+            text-align: center;
+            margin-right: 15px;
+        }
+
+        .sidebar .text {
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .sidebar:hover .text,
+        .sidebar:focus-within .text {
+            opacity: 1;
+        }
+
+        body > .container {
+            width: calc(100% - 90px);
+            max-width: none;
+            margin-left: 75px;
+            margin-right: 15px;
+        }
+
     </style>
 </head>
 <body>
+<?php require_once dirname(__DIR__) . '/includes/farmer_sidebar.php'; ?>
     
 <div class="sidebar">
         <h2>ন্যাভিগেশন</h2>

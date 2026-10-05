@@ -344,6 +344,7 @@ $monthly_spend = $monthly_spend_result['total_spend'] ?? 0;
     <h1 id="title">গ্রাহক ড্যাশবোর্ড - স্মার্টকৃষি</h1>
     <div class="header-right">
         <span class="customer-name" id="welcome">আপনাকে স্বাগতম</span>
+        <a href="security_settings.php" class="logout-btn">Security</a>
         <a href="logout.php" class="logout-btn">লগআউট</a>
     </div>
 </header>

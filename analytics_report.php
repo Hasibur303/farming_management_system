@@ -407,6 +407,7 @@ function getDetailedSalesAnalysis($farmer_id) {
 
 </head>
 <body>
+<?php require_once __DIR__ . '/includes/farmer_sidebar.php'; ?>
     <div class="analytics-container">
         <!-- Page Header -->
         <div class="analytics-header d-flex justify-content-between align-items-center mb-4">

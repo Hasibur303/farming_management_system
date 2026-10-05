@@ -370,6 +370,7 @@ header h1 {
 
 </head>
 <body>
+<?php require_once __DIR__ . '/includes/farmer_sidebar.php'; ?>
 <header>
     <h1>  শ্রমিক তালিকা </h1>
     <div class="user-info">

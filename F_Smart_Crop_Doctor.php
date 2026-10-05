@@ -97,6 +97,7 @@ if ($err) {
     </style>
 </head>
 <body>
+<?php require_once __DIR__ . '/includes/farmer_sidebar.php'; ?>
 
 <div class="container">
     <h1>Smart Crop Doctor</h1>

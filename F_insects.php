@@ -13,6 +13,8 @@ $errorMsg  = null;
 
 // ---------- 1) File upload + API call ----------
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['insect_image'])) {
+    require_once __DIR__ . '/security/activity.php';
+    activity_ai_guard('insect');
     try {
         $stored = secure_image_upload($_FILES['insect_image'], __DIR__ . '/uploads');
         $absolute = $stored['path'];
@@ -132,6 +134,7 @@ function identifyInsect(string $path): array
   </style>
 </head>
 <body>
+<?php require_once __DIR__ . '/includes/farmer_sidebar.php'; ?>
   <header>
     <h1>কীটপতঙ্গ শনাকতকরণ</h1>
     <div class="user-info d-flex align-items-center gap-2">

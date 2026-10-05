@@ -112,6 +112,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Farmers Inventory Management</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
     <style>
@@ -280,28 +281,49 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         .sidebar {
-            width: 250px;
+            width: 60px;
             background-color: #1f2937;
             color: white;
             height: 100vh;
-            padding: 20px;
+            padding: 15px 5px;
             position: fixed;
+            top: 0;
+            left: 0;
+            overflow-x: hidden;
+            overflow-y: auto;
+            transition: width 0.3s ease;
+            z-index: 999;
+        }
+
+        .sidebar:hover,
+        .sidebar:focus-within {
+            width: 250px;
         }
 
         .sidebar h2 {
-            font-size: 1.5rem;
+            font-size: 1.2rem;
             margin-bottom: 30px;
             font-weight: 600;
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .sidebar:hover h2,
+        .sidebar:focus-within h2 {
+            opacity: 1;
         }
 
         .sidebar a {
             color: #b0bec5;
             text-decoration: none;
-            padding: 10px 15px;
-            display: block;
+            padding: 12px 10px;
+            display: flex;
+            align-items: center;
             border-radius: 5px;
             margin-bottom: 10px;
             font-weight: 500;
+            white-space: nowrap;
         }
 
         .sidebar a:hover {
@@ -309,9 +331,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             color: white;
         }
 
+        .sidebar .icon {
+            width: 30px;
+            min-width: 30px;
+            text-align: center;
+            margin-right: 15px;
+        }
+
+        .sidebar .text {
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .sidebar:hover .text,
+        .sidebar:focus-within .text {
+            opacity: 1;
+        }
+
+        body > .container {
+            box-sizing: border-box;
+            width: calc(100% - 90px);
+            max-width: none;
+            margin-left: 75px;
+            margin-right: 15px;
+        }
+
     </style>
 </head>
 <body>
+<?php require_once dirname(__DIR__) . '/includes/farmer_sidebar.php'; ?>
 <div class="sidebar">
         <h2>ন্যাভিগেশন</h2>
         <a href="../farmer.php">

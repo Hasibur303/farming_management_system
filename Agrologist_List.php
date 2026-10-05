@@ -110,6 +110,7 @@ $result = new DatabaseResult($statement->fetchAll());
 </head>
 
 <body>
+<?php require_once __DIR__ . '/includes/farmer_sidebar.php'; ?>
     <!-- ---------- Header ---------- -->
     <header>
         <h1>কৃষি-বিশেষজ্ঞ তালিকা</h1>

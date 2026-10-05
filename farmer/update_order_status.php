@@ -73,6 +73,7 @@ if ($current_status === 'pending' && $new_status === 'Processing') {
          
             // Commit transaction
             $conn->commit();
+            security_log('market.order_status_changed', ['resource_id' => $order_id, 'old_status' => $current_status, 'new_status' => $new_status], 'info');
             
             // Redirect or show success message
             header("Location: order_management.php?success=1");
@@ -94,6 +95,9 @@ if ($current_status === 'pending' && $new_status === 'Processing') {
     
     // Redirect or show success message
     header("Location: update_order_status.php?success=1");
+    if ($current_status !== $new_status) {
+        security_log('market.order_status_changed', ['resource_id' => $order_id, 'old_status' => $current_status, 'new_status' => $new_status], 'info');
+    }
     exit();
 }
 

@@ -476,6 +476,12 @@ form input[type="submit"]:hover {
                 </a>
             </li>
             <li class="nav-item">
+                <a class="nav-link" href="security_activity.php">Security Activity</a>
+                <a class="nav-link" href="../security_settings.php">
+                    <i class="fas fa-shield-alt"></i> <span>Account Security</span>
+                </a>
+            </li>
+            <li class="nav-item">
                 <a class="nav-link" href="../logout.php">
                     <i class="fas fa-sign-out-alt"></i> <span id="nav-logout">লগআউট</span>
                 </a>

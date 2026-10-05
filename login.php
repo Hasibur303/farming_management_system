@@ -2,8 +2,10 @@
 require_once __DIR__ . '/security/bootstrap.php';
 include 'database.php';
 require_once __DIR__ . '/security/auth.php';
+require_once __DIR__ . '/security/mfa.php';
 
 ensure_login_attempts_table($pdo);
+ensure_mfa_tables($pdo);
 
 $error = '';
 
@@ -23,17 +25,34 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         if ($user && password_verify($password, $user['password'])) {
             record_login_attempt($pdo, $phone_number, true);
-            session_regenerate_id(true);
-            $_SESSION['user_id'] = $user['user_id'];
-            $_SESSION['username'] = $user['name'];
-            $_SESSION['role'] = $user['role'];
-            $_SESSION['_created_at'] = time();
-
             if (password_needs_rehash($user['password'], preferred_password_algorithm())) {
                 $newHash = password_hash($password, preferred_password_algorithm());
                 $rehash = $pdo->prepare('UPDATE users SET password = ? WHERE user_id = ?');
                 $rehash->execute([$newHash, (int) $user['user_id']]);
             }
+
+            if (mfa_is_enabled($pdo, (int) $user['user_id'])) {
+                session_regenerate_id(true);
+                mfa_store_pending_user($user);
+                security_log('authentication.password_accepted', ['mfa_required' => true], 'info');
+                header('Location: mfa_challenge.php');
+                exit();
+            }
+
+            if ($user['role'] === 'Admin') {
+                session_regenerate_id(true);
+                mfa_store_pending_user($user);
+                security_log('authentication.mfa_enrollment_required', ['role' => 'Admin'], 'notice');
+                header('Location: mfa_setup.php');
+                exit();
+            }
+
+            session_regenerate_id(true);
+            $_SESSION['user_id'] = $user['user_id'];
+            $_SESSION['username'] = $user['name'];
+            $_SESSION['role'] = $user['role'];
+            $_SESSION['_created_at'] = time();
+            $_SESSION['_last_activity'] = time();
             security_log('authentication.login_succeeded', [], 'info');
 
             $role = $user['role'];

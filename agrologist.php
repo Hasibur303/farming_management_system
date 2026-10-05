@@ -268,6 +268,7 @@ $posts = new DatabaseResult($postsStatement->fetchAll());
 <div class="main-content">
     <div class="topbar">
         <h2>🌾 Agrologist Dashboard</h2>
+        <a href="security_settings.php" class="logout-btn">Security</a>
         <a href="logout.php" class="logout-btn">Logout</a>
     </div>
 

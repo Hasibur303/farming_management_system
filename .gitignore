@@ -1,5 +1,6 @@
 # Local environment and secrets
 .env
+storage/activity/
 storage/logs/*.jsonl
 storage/quarantine/*
 storage/reports/*

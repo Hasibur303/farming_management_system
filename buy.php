@@ -283,6 +283,7 @@ body {
 
 </head>
 <body>
+<?php require_once __DIR__ . '/includes/farmer_sidebar.php'; ?>
 <header>
     <h3>সরবরাহ থেকে কিনুন</h3>
 </header>

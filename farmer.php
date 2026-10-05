@@ -612,10 +612,12 @@ header h1 {
     </script>
 </head>
 <body>
+<?php require_once __DIR__ . '/includes/farmer_sidebar.php'; ?>
 <header>
     <h1>কৃষক ড্যাশবোর্ড</h1>
     <div class="user-info">
         <span>স্বাগতম, <?php echo htmlspecialchars($_SESSION['username']); ?></span>
+        <a href="security_settings.php" class="btn btn-success ms-3">Security</a>
         <a href="logout.php" class="btn btn-danger ms-3">Logout</a>
     </div>
 </header>

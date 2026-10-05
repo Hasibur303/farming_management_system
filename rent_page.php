@@ -168,6 +168,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['rent_now'])) {
     </style>
 </head>
 <body>
+<?php require_once __DIR__ . '/includes/farmer_sidebar.php'; ?>
     <!-- Sidebar -->
     <div class="sidebar">
             <h2>ন্যাভিগেশন</h2>

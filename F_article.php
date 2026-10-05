@@ -541,6 +541,7 @@ body {
     </style>
 </head>
 <body>
+<?php require_once __DIR__ . '/includes/farmer_sidebar.php'; ?>
 <header>
     <h1>কৃষক ড্যাশবোর্ড</h1>
     <div class="user-info">

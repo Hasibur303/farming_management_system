@@ -6,6 +6,7 @@ suppliers, labourers, administrators, and agricultural specialists.
 ## Features
 
 - Role-based registration, login, and dashboards
+- Authenticator-app MFA, mandatory for Administrators and optional for other roles
 - Crop and inventory management
 - Product marketplace and order management
 - Supplier product and equipment management
@@ -20,7 +21,7 @@ suppliers, labourers, administrators, and agricultural specialists.
 - PHP 8.0 or newer
 - MySQL or MariaDB
 - HTML, CSS, JavaScript, and Bootstrap
-- PHP extensions: `mysqli`, `curl`, `fileinfo`, and `mbstring`
+- PHP extensions: `pdo_mysql`, `openssl`, `curl`, `fileinfo`, and `mbstring`
 
 ## Local setup with XAMPP
 
@@ -41,6 +42,10 @@ suppliers, labourers, administrators, and agricultural specialists.
    ```bash
    mysql -u root -p farming_management < farming_management.sql
    ```
+
+   For an existing database, also import `security/schema.sql` to create the
+   login-rate-limit and MFA tables. The application creates them automatically
+   when the database user has schema permissions.
 
 5. Copy the example environment file:
 
@@ -70,6 +75,9 @@ suppliers, labourers, administrators, and agricultural specialists.
 | `KINDWISE_ENDPOINT` | Crop API endpoint | Kindwise crop endpoint |
 | `INSECT_API_KEY` | Insect identification API key | none |
 | `INSECT_ENDPOINT` | Insect API endpoint | Kindwise insect endpoint |
+| `MFA_ENCRYPTION_KEY` | Base64-encoded 32-byte key protecting TOTP secrets | none |
+| `MFA_MAX_ATTEMPTS` | Failed MFA attempts before temporary blocking | `5` |
+| `MFA_WINDOW_MINUTES` | MFA attempt tracking window | `10` |
 
 ## Project layout
 
@@ -96,6 +104,8 @@ reuse `database.php` for the database connection and keep credentials in `.env`.
   ClamAV scanning.
 - Role policies and security event logging are applied by the shared security
   bootstrap.
+- TOTP secrets are encrypted with AES-256-GCM; recovery codes and passwords are
+  stored as one-way hashes.
 - Do not enable PHP error display in production.
 - Ensure `uploads/` cannot execute PHP files in the production web server.
 
